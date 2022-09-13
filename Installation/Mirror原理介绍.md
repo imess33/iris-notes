@@ -8,7 +8,7 @@ Mirror是从Cache2012年版本开始引入的，到2016版本基本稳定，之�
 
 
 
-###Mirror是数据库复制(Database Replication)
+### Mirror是数据库复制(Database Replication)
 
 IRIS不单单是数据库，而是一个带有数据库的开发平台。Mirror, 从理论上只是做了数据库的拷贝，而开发平台这部分的高可用，Mirror是不负责了。 
 
@@ -16,13 +16,9 @@ IRIS里什么是开发平台，也就是非数据库部分的内容？
 
 首先就是**命名空间(namespace)**。命名空间是应用开发的概念，它使用数据库，但本身不属于数据库，因此它是不被mirror的。这里还包括一个命名空间里的“**定时任务**”，程序中使用的"**外部文件**"，各种“**命名空间相关的配置**，比如其中工作的**"production是否自动启动“**，等等等等。因此，如果您的IRIS不是简单的做数据库使用，而是其中有应用在跑，和应用相关的内容都需要人工去做mirror镜像成员间的同步，否则您的备用IRIS上的应用是很可能不正常工作的。
 
-
-
 Purging a cached query on a local system does not purge copies of that cached query on mirror systems. Copies of a purged cached query on a remote system must be manually purged.
 
 CachedLocal Data， 这个要mirror吗？
-
-
 
 除此之外还有IRIS本身的配置，各种gateway的配置， 用户，权限的配置等等，这些也需要人工在机器间同步。 虽然这些数据在IRIS数据库里是保存的， 但这个数据库并不允许加入mirror的数据库列表。
 
@@ -30,7 +26,7 @@ CachedLocal Data， 这个要mirror吗？
 
 Two types of backup copies are supported. A failover copy is a copy of only one mirror and mirrored databases on this system are read-only unless the system is the primary server for the mirror. A second type of backup node is support which is not eligible to become a primary server for the mirror. This type of backup can be a copy of more than one mirror which allows multiple servers to be coalesced on a single instance for reporting or data mining purposes. The databases on this second type of mirror are mounted read/write. 
 
-###Mirror是Single leadership拷贝
+### Mirror是Single leadership拷贝
 
 数据库的拷贝， 也就是Replication有单leader, 多leader, 没有leader(leaderless)3种类型。IRIS是典型的单leader的方案。这个方案经常被称为**主从方案**，或者称为"**Activt-Standby**",主备方案。 单leader的方案中只有一个主， 也就是Active库，可以有多个standby。 IRIS是最简单的方案， 也就是**一个主， 一个备，若干个异步成员**。主库如果出故障， 切换到备库， 而异步成员只做容灾或者分析数据库用， 不能接手主库的工作。 
 
@@ -41,10 +37,6 @@ Two types of backup copies are supported. A failover copy is a copy of only one 
 ### Mirror不复制什么
 
 **哪些不能复制的数据库**
-
-
-
-
 
 **那些不属于数据库概念的内容**
 
@@ -64,7 +56,7 @@ IRIS里什么是开发平台，也就是非数据库部分的内容？
 
 在官方文档中， 这张图应该是最有代表性的部署：
 
-![mirror with dr](Mirror介绍.assets/gha_mirror_async_multiple.png)
+![mirror with dr](./Mirror介绍.assets/gha_mirror_async_multiple.png)
 
 
 
@@ -124,17 +116,17 @@ Mirror的切换时间是秒级，一般在10秒以内。而有的客户会问这
 
 
 
-##Mirror成员间是怎么通信的
+## Mirror成员间是怎么通信的
 
 
 
-###Arbiter Controlled模式
+### Arbiter Controlled模式
 
 主备之间有连接； 都连到arbiter; backup is active, 进入arbiter controlled mode
 
 如果主备的任一方，失去了和arbiter的连接，或者备用侧丢了active, 开始尝试连接另一方，并进入agent-controlled模式。
 
-###Agent Controlled模式
+### Agent Controlled模式
 
 Mirror启动时的模式。
 
@@ -183,7 +175,7 @@ Mirror的核心是自动切换。如果不考虑用作分析，容灾功能部�
 
 
 
-##Mirror的状态
+## Mirror的状态
 
 
 
@@ -203,12 +195,8 @@ END
 
 ### 问题
 
-
-
 - 在mirror backup上查看all journals 得到的比mirror journal还少。
-
 - primary上就不该出现‘降价为dr会员‘，‘在这个成员上终止镜像’
-
 - 以下提示非常不靠谱：真的会down
 
   ```bash
@@ -237,8 +225,6 @@ END
 - 再试就都成功了， 不知道当时为什么不成功了。
 
 - poweroff A , 成功后从B的SMP上看, 服务器状态对， 但下面3项里， 连接状态很久才改成正确的，之前一直是两个都连接到arbiter, 还有， 代理已控制的翻译有问题。还是agent-controlled比较好。
-
-
 
 仲裁程序地址	172.16.58.100|2188
 故障转移模式	代理已控制

@@ -1,7 +1,3 @@
-
-
-
-
 [TOC]
 
 # 配置前的准备
@@ -77,7 +73,7 @@ ens36            UP             172.16.159.102/24
 
 这里我们先确定172.16.58.*网段为公网网段， 172.16.159.xxx为上图紫色的Private Lan for Mirror Communication. 
 
-##在所有的镜像成员启动ISCAgent服务
+## 在所有的镜像成员启动ISCAgent服务
 
 这里说的所有的服务器是指要加到mirror中的同步成员，异步成员，还包括Arbiter。，
 
@@ -87,7 +83,7 @@ ISCAgent是一个独立于IRIS的小程序。 在有IRIS安装实例的机器上
 
 默认配置下， ISCAgent通过TCP的2188端口和远端连接，启动ISC Agent后请检查防火墙，保证端口访问是正常的。
 
-###ServerA, ServerB,以及其他Async服务器
+### ServerA, ServerB,以及其他Async服务器
 
 IRIS服务器不需要单独安装ISCAgent。 你需要做的事启动服务
 
@@ -120,7 +116,7 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/ISCAgent.servic
 [root@servera isc]#
 ```
 
-###Arbiter(仲裁服务)
+### Arbiter(仲裁服务)
 
 你需要到WRC的下载网址下载ISCAgent的软件。下面是在Linux下安装ISCAgent的过程。
 
@@ -177,7 +173,7 @@ iris.key  iscCA.cer  iscCASignedserverb.cer  iscCASignedserverb.key
 
 
 
-#Mirror的配置
+# Mirror的配置
 
 这里先留个stub, 肯定后面要写些什么
 
@@ -201,7 +197,7 @@ iris.key  iscCA.cer  iscCASignedserverb.cer  iscCASignedserverb.key
 
 ### 镜像的设置
 
-<img src="Mirror安装配置.assets/image-20220803171131292.png" alt="image-20220803171131292" style="zoom: 33%;" />
+<img src="./Mirror安装配置.assets/image-20220803171131292.png" alt="image-20220803171131292" style="zoom: 33%;" />
 
 如上图，创建镜像需要这些数据：
 
@@ -262,7 +258,7 @@ iris.key  iscCA.cer  iscCASignedserverb.cer  iscCASignedserverb.key
 
 1. 确认状态
 
-<img src="image-20220426154450827.png" alt="image-20220426154450827" style="zoom: 33%;" />
+<img src="./image-20220426154450827.png" alt="image-20220426154450827" style="zoom: 33%;" />
 
 图中连接状态显示：此成员未连接仲裁程序，这是正常的。在这个阶段，Mirror中只配置了一个Primary Member，它不会去尝试连接Arbiter。这个方式叫Agent-Control方式。只有在有主备都配置成功后，系统才会尝试两个mirror members和arbiter通信，成功后进入arbiter-control方式。
 
@@ -296,7 +292,7 @@ ens36            UP             172.16.159.101/24
 
 
 
-##3. 添加Backup镜像成员
+## 3. 添加Backup镜像成员
 
 您要在要第二台IRIS服务器做配置工作，然后添加到已有的MIRROR，最后去主镜像(Primary Member)上去检查是否添加成功。 上一个步骤里我的演示是在servera操作的， 而以下是在Serverb上操作怎么把这个服务器上的iris加入mirror。进入管理界面"系统管理>配置>镜像配置"， 启动镜像服务。
 
@@ -330,13 +326,13 @@ ens36            UP             172.16.159.101/24
 
 > Warning: 在主镜像成员，也就是servera的镜像编辑页面，最上面有个“添加新异步成员”的按钮，它和您当前的操作无关。您正在添加的serverb是第二个同步成员。
 
-![servera批准请求](Mirror安装配置.assets/image-20220427144800614.png)
+![servera批准请求](./Mirror安装配置.assets/image-20220427144800614.png)
 
 - 验证添加成功
 
   通常需要10秒钟以上的时间，两台机器会协商各自的镜像状态，会尝试连接Arbiter，成功后将镜像的自动切换模式由Agent-Control, 提升到Arbiter-Control。通常是通过查看主成员(这里是servera)的管理页面的镜像状态页面确认，如下面这张图：
 
-![image-20220427150617245](Mirror安装配置.assets/image-20220427150617245.png)
+![image-20220427150617245](./Mirror安装配置.assets/image-20220427150617245.png)
 
 > Warning: 镜像配置成功后，您还是可以登录Backup成员的维护管理页面。其中的“镜像监视器”显示的内容，如您从下图所见， 和主成员的相同页面是一致的。唯一的区别是顶部的按钮， 多了”设置no failover"和“降级为DR成员“两个按钮。 记住这一点有助于您日常维护中清楚的分辨您登录的是那个mirror成员的SMP。
 
@@ -394,11 +390,11 @@ TODO
 
 
 
-##5. 把已有数据库加入镜像
+## 5. 把已有数据库加入镜像
 
  
 
-###从菜单中选择 Configure Databases
+### 从菜单中选择 Configure Databases
 
 ![A picture containing graphical user interface, table  Description automatically generated](Mirror安装配置.assets/clip_image024.png)
 
@@ -406,13 +402,13 @@ TODO
 
 ![A picture containing graphical user interface  Description automatically generated](Mirror安装配置.assets/clip_image025.png)
 
-###6.3 选择需要添加进入Mirror 的数据库并点击add
+### 6.3 选择需要添加进入Mirror 的数据库并点击add
 
 ![Graphical user interface, text, application, email  Description automatically generated](Mirror安装配置.assets/clip_image026.png)
 
  
 
-###6.4 此时从Mirror Monitor 中可以看到 Mirrored Database 增加了我们刚才添加的数据库
+### 6.4 此时从Mirror Monitor 中可以看到 Mirrored Database 增加了我们刚才添加的数据库
 
 ![Graphical user interface, application  Description automatically generated](Mirror安装配置.assets/clip_image027.png)
 
@@ -420,7 +416,7 @@ TODO
 
 ![Graphical user interface, application, Word  Description automatically generated](Mirror安装配置.assets/clip_image028.png)
 
-###6.5 对此主服务器的需要mirror 的数据库进行备份并获取备份文件，并拷贝至备机。
+### 6.5 对此主服务器的需要mirror 的数据库进行备份并获取备份文件，并拷贝至备机。
 
 执行备份可以通过management portal 运行实现。
 
@@ -430,7 +426,7 @@ management portal -> 系统管理 -> 配置-> 数据库备份 ->备份数据库�
 
 注意：这里需要关注主机本身journal 的保存时间，因为mirror 的同步机制是主机推journal 给备机，所以如果备份的时间为1月1 日零点，主机journal 保存时间为1天，备份需要2天，则中间1天的时间差所产生的数据是没有办法恢复的。
 
-###6.6 在备机的%SYS 命名空间下使用^BACKUP routine, 将备份文件恢复至备机,则可在备机中看到恢复的数据库已只读方式被挂载
+### 6.6 在备机的%SYS 命名空间下使用^BACKUP routine, 将备份文件恢复至备机,则可在备机中看到恢复的数据库已只读方式被挂载
 
  
 
@@ -450,7 +446,7 @@ management portal -> 系统管理 -> 配置-> 数据库备份 ->备份数据库�
 
 ![Graphical user interface, text, application, email  Description automatically generated](Mirror安装配置.assets/clip_image032.png)
 
-###6.9 最终可见备机为 active，caught up 状态。
+### 6.9 最终可见备机为 active，caught up 状态。
 
  
 
@@ -460,7 +456,7 @@ management portal -> 系统管理 -> 配置-> 数据库备份 ->备份数据库�
 
 
 
-###配置Async镜像成员(可选)
+### 配置Async镜像成员(可选)
 
 选择System Administration – Configuration – Mirror Settings – Join as Async。如果选项为灰不可选，先点击Enable Mirror Service，再选择Service Enable。
 
@@ -476,7 +472,7 @@ management portal -> 系统管理 -> 配置-> 数据库备份 ->备份数据库�
 
 
 
-###从mirror里删除备机： 
+### 从mirror里删除备机： 
 
 System>Configure>Edit Mirror, "Remove Other Mirror Member" button
 
@@ -521,11 +517,11 @@ Promote在Secondary的Mirror监控页面
 
 
 
-##Appendix: 删除镜像配置
+## Appendix: 删除镜像配置
 
 删除镜像配置必须按照下面顺序执行：删除Async成员删除备份failover成员删除主failover成员。
 
-###1. 删除Async成员
+### 1. 删除Async成员
 
 进入菜单System Administration – Configuration – Mirror Settings – Edit Async：
 
@@ -537,7 +533,7 @@ Promote在Secondary的Mirror监控页面
 
 ![img](Mirror安装配置.assets/clip_image035.png)
 
-###2   移除备份failover成员
+### 2   移除备份failover成员
 
 想要移除failover成员必须在%SYS命名空间下 执行^MIRROR routine。
 
@@ -549,7 +545,7 @@ c. 选择Remove This Failover Member(如果在主failover服务器上操作则�
 
 d. 按照提示操作，最后重启Caché.
 
-###3 移除主failover成员
+### 3 移除主failover成员
 
 想要移除failover主成员必须在%SYS命名空间下 执行^MIRROR routine。
 
@@ -565,7 +561,7 @@ e. 选择Remove This Failover Member
 
 f. 按照提示操作，最后重启Caché.
 
-###4. 移除镜像数据库
+### 4. 移除镜像数据库
 
 从Async成员中移除数据库不会对failover成员的数据库有任何影响，但是如果从failover成员中移除数据库，也必须从其他failover成员以及Async成员中移除相应的数据库。想要从镜像配置中整体移除数据库需要遵循下面的顺序：主Primary failover成员备份Backup failover成员Async成员。
 
@@ -577,7 +573,7 @@ b. 在Mirrored databases中选择Remove
 
 ![img](Mirror安装配置.assets/clip_image037.png)
 
-###5. 断开连接/开始连接镜像成员
+### 5. 断开连接/开始连接镜像成员
 
 可以临时断开备份backup镜像成员或者Async镜像成员。
 
