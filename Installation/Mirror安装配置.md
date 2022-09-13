@@ -22,7 +22,7 @@
 
 它的配置地址表如下：
 
-![](https://docs.intersystems.com/iris20221/csp/docbook/images/gha_mirror_netconfig_ecp_table.png)
+![mirror网络配置](https://docs.intersystems.com/iris20221/csp/docbook/images/gha_mirror_netconfig_ecp_table.png)
 
 
 
@@ -89,7 +89,7 @@ IRIS服务器不需要单独安装ISCAgent。 你需要做的事启动服务
 
 - Windows： 进入管理工具—服务，选择ISCAgent，将启动类型改为自动。点启动ISCAgent，并确认服务已启动。
 
-<img src="clip_image007.png" alt="img" style="zoom:67%;" />
+<img src="./Mirror安装配置.assets/clip_image007.png" alt="img" style="zoom:67%;" />
 
 
 
@@ -258,13 +258,13 @@ iris.key  iscCA.cer  iscCASignedserverb.cer  iscCASignedserverb.key
 
 1. 确认状态
 
-<img src="./image-20220426154450827.png" alt="image-20220426154450827" style="zoom: 33%;" />
+<img src="./Mirror安装配置.assets/image-20220426154450827.png" alt="image-20220426154450827" style="zoom: 33%;" />
 
 图中连接状态显示：此成员未连接仲裁程序，这是正常的。在这个阶段，Mirror中只配置了一个Primary Member，它不会去尝试连接Arbiter。这个方式叫Agent-Control方式。只有在有主备都配置成功后，系统才会尝试两个mirror members和arbiter通信，成功后进入arbiter-control方式。
 
 2. 确认Journal文件已经切换，并使用了新名称。（从上图中的设置镜像journal文件可以跳转到journal查看页面，下图显示的是所有Journal文件， 而且是已经配置了journal第2天的抓图。) 
 
-<img src="image-20220426154751902.png" alt="image-20220426154751902" style="zoom:33%;" />
+<img src="./Mirror安装配置.assets/image-20220426154751902.png" alt="image-20220426154751902" style="zoom:33%;" />
 
 3. 查看虚拟IP
 
@@ -300,7 +300,7 @@ ens36            UP             172.16.159.101/24
 
 ​		您需要填写mirror name和“其他故障转移成员的信息”。简单说，要填写这个Mirror的Primary成员的信息。 包括： Primary member的**Agent地址, 端口(Agent Port), IRIS实例名**。 如下图所示：( 注意这里的Agent的IP地址是ens33的地址）。
 
-<img src="image-20220427133147896.png" alt="image-20220427133147896" style="zoom:50%;" />
+<img src="./Mirror安装配置.assets/image-20220427133147896.png" alt="image-20220427133147896" style="zoom:50%;" />
 
 - 这之后您会被要求配置本机作为第2个mirror成员的信息 包括：
 
@@ -374,11 +374,11 @@ TODO
 
 在每一个failover成员服务器以及Async成员服务器按照上面步骤同样创建本地数据库。注意在Enter details about the database中确保每一个成员的Mirror DB Name相同(本地的数据库名称可以不同)。
 
-![image-20220804143113616](Mirror安装配置.assets/image-20220804143113616.png)
+![image-20220804143113616](./Mirror安装配置.assets/image-20220804143113616.png)
 
 去servera检查
 
-![image-20220804143313310](Mirror安装配置.assets/image-20220804143313310.png)
+![image-20220804143313310](./Mirror安装配置.assets/image-20220804143313310.png)
 
 
 
