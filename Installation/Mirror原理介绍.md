@@ -6,7 +6,11 @@ Mirror是从Cache2012年版本开始引入的，到2016版本基本稳定，之�
 
 ## Mirror的原理
 
+[Mirror配置Guideline](https://docs.intersystems.com/iris20221/csp/docbook/DocBook.UI.Page.cls?KEY=GHA_mirror_set_config#GHA_mirror_set_config_guidelines)
 
+
+
+A mirrored database’s file streams, located by default in the stream subdirectory of the database directory, are not mirrored.
 
 ### Mirror是数据库复制(Database Replication)
 
