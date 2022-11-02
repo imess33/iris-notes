@@ -1,0 +1,2037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:loadui-project label="SDM REST SOAP" id="2d0ad9b5-cafd-416d-aa50-2f7f12145b2d" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.reportFolder" type="java.lang.String"/><con:property propagates="true" key="ModelItem.reportFormat" type="java.lang.String"/><con:property propagates="true" key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property></con:properties><con:attributes><con:property key="gui.statistics.view">statistics.manage</con:property><con:property key="limits">Time=300;</con:property><con:property key="miniature">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
+</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="REST Statistics" id="d0e21006-f47b-43a1-af25-3e0d8a4ba8c3" category="analysis"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String"><![CDATA[// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Displays statistical information  
+ * 
+ * @id com.eviware.Statistics
+ * @help http://www.loadui.org/Analysis/statistics.html
+ * @category analysis
+ * @nonBlocking true
+ * @deprecated
+ */
+
+import java.util.Calendar
+import java.util.Date
+import java.util.List
+import java.util.HashMap
+import java.util.Map
+import java.util.ArrayList
+
+import com.eviware.loadui.api.component.ComponentContext
+
+import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.api.model.ProjectItem
+import com.eviware.loadui.api.chart.CustomTimeRange
+import com.eviware.loadui.api.chart.CustomNumericRange
+import com.eviware.loadui.api.chart.ChartModel
+import com.eviware.loadui.api.chart.ChartAdapter
+
+import com.eviware.loadui.api.terminal.InputTerminal
+import com.eviware.loadui.api.terminal.OutputTerminal
+import com.eviware.loadui.api.terminal.TerminalMessage
+
+import com.eviware.loadui.api.layout.OptionsProvider
+import com.eviware.loadui.impl.layout.OptionsProviderImpl
+
+import java.util.concurrent.TimeUnit
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
+import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.events.ActionEvent
+
+import com.eviware.loadui.util.statistics.ValueStatistics
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.summary.MutableSection
+
+import com.eviware.loadui.api.chart.ChartSerie
+import com.eviware.loadui.api.chart.Point
+
+AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
+
+createOutput( 'output', 'Statistic data', 'Outputs the generated statistic data as text. Useful to connect e.g. to an Ouput or Assertion component.' )
+statisticsInput = createInput( 'statistics', 'Runner Statistics', "Connect to a Runner's Statistics Terminal to get general statistics from the Runner." ) {
+	it.name == "statisticsOutput"
+}
+inputTerminal.label = 'Input values'
+inputTerminal.description = 'Messages sent here will be aggregated into statistics.'
+
+//Properties
+createProperty( 'period', Long, 1 )
+createProperty( 'rate', Long, 500 )
+createProperty( 'chartPeriod', Long, 1 )
+
+createProperty( 'enableAverage', Boolean, true )
+createProperty( 'enableMin', Boolean, true )
+createProperty( 'enableMax', Boolean, true )
+createProperty( 'enableStdDev', Boolean, true )
+createProperty( 'enableTPS', Boolean, true )
+createProperty( 'enableBPS', Boolean, true )
+createProperty( 'enableAvgTPS', Boolean, true )
+createProperty( 'enableAvgBPS', Boolean, true )
+createProperty( 'enablePercentile', Boolean, true )
+createProperty( 'enableAvgResponseSize', Boolean, true )
+createProperty( 'enableRequests', Boolean, true )
+createProperty( 'enableRunning', Boolean, true )
+createProperty( 'enableCompleted', Boolean, true )
+createProperty( 'enableQueued', Boolean, true )
+createProperty( 'enableDiscarded', Boolean, true )
+createProperty( 'enableFailed', Boolean, true )
+createProperty( 'currentSourceID', String, "none" )
+createProperty( 'addtoSummary', Boolean, false )
+
+createProperty( 'selectedAgent', String, AGGREGATE )
+
+OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
+sourceIDs = ["none"]
+
+double timeScaleFactor = 1 //seconds
+double bytesScaleFactor = 1/(1024D) //KBytes
+
+xRange = new CustomTimeRange(chartPeriod.value * 60000, rate.value)
+xRange.visible = true
+
+yRange = new CustomNumericRange(0, 10, 20)
+yRange.visible = true
+yRange.title = 'ms KB'
+
+y2Range = new CustomNumericRange(0, 5, 20)
+y2Range.visible = true
+y2Range.title = 'requests'
+
+ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
+			resetBuffers()
+		}
+		catch(Throwable e2) {
+			log.error( 'chartCleared', e2 )
+		}
+	}
+} )
+
+chartModel.addSerie('Max', enableMax.value, true)
+chartModel.addSerie('Min', enableMin.value, true)
+chartModel.addSerie('Avg', enableAverage.value, true)
+chartModel.addSerie('StdDev', enableStdDev.value, true)
+chartModel.addSerie('TPS', enableTPS.value, true)
+chartModel.addSerie('BPS', enableBPS.value, true)
+chartModel.addSerie('AvgTPS', enableAvgTPS.value, true)
+chartModel.addSerie('AvgBPS', enableAvgBPS.value, true)
+chartModel.addSerie('Percentile', enablePercentile.value, true)
+chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value, true)
+chartModel.addSerie('Requests', enableRequests.value, false)
+chartModel.addSerie('Running', enableRunning.value, false)
+chartModel.addSerie('Completed', enableCompleted.value, false)
+chartModel.addSerie('Queued', enableQueued.value, false)
+chartModel.addSerie('Discarded', enableDiscarded.value, false)
+chartModel.addSerie('Failed', enableFailed.value, false)
+chartModel.legendColumns = 3
+
+timeStats = new ValueStatistics( period.value * 60000 )
+byteStats = new ValueStatistics( period.value * 60000 )
+
+long max = 0
+long min = Long.MAX_VALUE
+
+agentData = [:]
+agentStatistics = null
+
+future = null
+boolean connected = true
+
+avgDisplay = 0
+minDisplay = 0
+maxDisplay = 0
+stdDevDisplay = 0
+tpsDisplay = 0
+bpsDisplay = 0
+avgTpsDisplay = 0
+avgBpsDisplay = 0
+percentileDisplay = 0
+avgRespSizeDisplay = 0
+
+analyze = { message ->
+	try {
+		long timestamp = System.currentTimeMillis()
+		
+		if( !message['TimeTaken'] )
+			return
+		
+		String sourceID = message['id'] == null ? message['ID'] : message['id'] 
+		
+		if( sourceID && !sourceIDs.contains( sourceID ) ) {
+			sourceIDs.add( sourceID )
+			availableSourceIDs.options = sourceIDs
+		}
+		
+		if( currentSourceID.value == "none" || currentSourceID.value == sourceID ) {
+			long timeTaken = message['TimeTaken']
+			timeStats.addValue( timestamp, timeTaken )
+		
+			long bytesCount = message['Bytes'] ?: -1
+			if( bytesCount < 0 && message.containsKey( 'Response' ) )
+				bytesCount = message['Response'].length
+			if( bytesCount < 0 ) bytesCount = 0
+			byteStats.addValue( timestamp, bytesCount )
+		}
+	} catch( Exception e ) {
+		log.error( 'analyze', e )
+	}
+}
+
+onMessage = { o, i, m ->
+	if(i == remoteTerminal) {
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis()
+		agentData[o.label] = data
+	}
+	
+	if( i == statisticsInput ) {
+		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
+			agentStatistics = new HashMap(m)
+		} 
+	}
+}
+
+onConnect = { outgoing, incoming ->
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
+}
+
+onDisconnect = { outgoing, incoming ->
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
+}
+
+calculate = {
+	if( !connected || !running )
+		return
+	
+	long currentTime = System.currentTimeMillis()
+	
+	try {
+		if( timeStats.size() > 0 || agentData.size() > 0 || agentStatistics?.size() > 0 ) {
+			def message = newMessage()
+			data = timeStats.getData( currentTime )
+			message['Max'] = data['Max']
+			message['Min'] = data['Min']
+			message['Avg'] = data['Avg']
+			message['Std-Dev'] = data['Std-Dev']
+			message['Tps'] = data['Tps']
+			message['Avg-Tps'] = data['Avg-Tps']
+			message['Percentile'] = data['Percentile']
+			
+			bdata = byteStats.getData( currentTime )
+			message['Bps'] = bdata['Vps']
+			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['AvgResponseSize'] = bdata['AvgResponseSize']
+			message['id'] = "test"
+			
+			message['Timestamp'] = currentTime
+			message['ID'] = currentSourceID.value
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+
+			send(output, message)
+			send(controllerTerminal, message)
+		}
+	} catch( Throwable e1 ) {
+		log.error( 'calculate', e1 )
+	}
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
+	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
+		updateChart( currentTime )
+}
+
+updateChart = { currentTime ->
+	def data = [:]
+	if( selectedAgent.value == AGGREGATE ) {
+		try {
+			int count = 0
+			def local = canvas instanceof ProjectItem || canvas.project?.workspace.localMode
+			if (inputTerminal.connections.size() > 0 || statisticsInput.connections.size() > 0) {
+				for( k in agentData.keySet() ) {
+					//if in dist mode ignore data received on controllerTerminal, in local take only from data from it
+					if(!local && !k.equals("controllerTerminal") || local && k.equals("controllerTerminal")){
+						def d = agentData[k]
+						//size gt 1 because sometimes messages contain only timestamp but there is no actual data
+						if( !d.isEmpty() && d.size() > 1 ) {	
+							data['Max'] = Math.max( d['Max'] ?: 0, data['Max'] ?: 0 )
+							data['Min'] = Math.min( d['Min'] ?: Long.MAX_VALUE, data['Min'] ?: Long.MAX_VALUE )
+							data['Avg'] = (data['Avg'] ?: 0) + (d['Avg'] ?: 0)
+							data['Std-Dev'] = (data['Std-Dev'] ?: 0) + (d['Std-Dev'] ?: 0)
+							data['Tps'] = (data['Tps'] ?: 0) + (d['Tps'] ?: 0)
+							data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + (d['Avg-Tps'] ?: 0)
+							data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+							data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+							data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+							data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+							data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+							data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+							data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+							data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+							data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+							data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
+							count++
+						}
+					}
+				}
+			}
+			if( count != 0 ) {
+				data['Avg'] /= count
+				data['Std-Dev'] /= count
+			}
+		} catch( e ) {
+			log.error( 'Aggregating', e )
+		}
+	} else {
+		data = agentData[selectedAgent.value]
+	}
+	if( !data ) {
+		return
+	}
+	try {
+		if (inputTerminal.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
+			if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
+			if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
+			if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
+			if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
+			if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
+			if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
+			if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
+			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		}
+		
+		if (statisticsInput.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
+			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
+			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
+			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
+			if(enableQueued.value) chartModel.addPoint(13, currentTime, data['Queued'])
+			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
+			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
+		}
+		
+		if (inputTerminal.connections.size() > 0) {
+			avgDisplay = data['Avg'] * timeScaleFactor
+			minDisplay = data['Min']  * timeScaleFactor
+			maxDisplay = data['Max'] * timeScaleFactor
+			stdDevDisplay = data['Std-Dev'] * timeScaleFactor
+			tpsDisplay = data['Tps']
+			bpsDisplay = data['Bps'] * bytesScaleFactor
+			avgTpsDisplay = data['Avg-Tps']
+			avgBpsDisplay = data['Avg-Bps'] * bytesScaleFactor
+			percentileDisplay = data['Percentile']
+			avgRespSizeDisplay = data['AvgResponseSize']  * bytesScaleFactor
+		}
+	} catch( e ) {
+		e.printStackTrace()
+	}
+
+}
+
+schedule = {
+	future?.cancel( true )
+	future = scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
+}
+
+addEventListener(PropertyEvent) { event ->
+	try {
+		if (event.event == PropertyEvent.Event.VALUE) {
+			if(event.property == rate) {
+				xRange.setRate(rate.value)
+				schedule()
+			}
+			else if(event.property == chartPeriod) {
+				xRange.setPeriod(chartPeriod.value * 60000)
+			}
+			else if(event.property == enableMin) {
+				chartModel.enableSerie('Min', enableMin.value)
+				buildSignature()
+			}
+			else if(event.property == enableMax) {
+				chartModel.enableSerie('Max', enableMax.value)
+				buildSignature()
+			}
+			else if(event.property == enableAverage) {
+				chartModel.enableSerie('Avg', enableAverage.value)
+				buildSignature()
+			}
+			else if(event.property == enableStdDev) {
+				chartModel.enableSerie('StdDev', enableStdDev.value)
+				buildSignature()
+			}
+			else if(event.property == enableTPS) {
+				chartModel.enableSerie('TPS', enableTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableBPS) {
+				chartModel.enableSerie('BPS', enableBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgTPS) {
+				chartModel.enableSerie('AvgTPS', enableAvgTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgBPS) {
+				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enablePercentile) {
+				chartModel.enableSerie('Percentile', enablePercentile.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgResponseSize) {
+				chartModel.enableSerie('AvgResponseSize', enableAvgResponseSize.value)
+				buildSignature()
+			}
+			else if(event.property == enableRequests) {
+				chartModel.enableSerie('Requests', enableRequests.value)
+			}
+			else if(event.property == enableRunning) {
+				chartModel.enableSerie('Running', enableRunning.value)
+			}
+			else if(event.property == enableCompleted) {
+				chartModel.enableSerie('Completed', enableCompleted.value)
+			}
+			else if(event.property == enableQueued) {
+				chartModel.enableSerie('Queued', enableQueued.value)
+			}
+			else if(event.property == enableDiscarded) {
+				chartModel.enableSerie('Discarded', enableDiscarded.value)
+			}
+			else if(event.property == enableFailed) {
+				chartModel.enableSerie('Failed', enableFailed.value)
+			}
+		}
+	}
+	catch( Throwable e2 ) {
+		log.error( 'addEventListener', e2 )
+	}
+}
+
+buildSignature = {
+	def signature = [:]
+	if(enableAverage.value) signature['Avg'] = Long
+	if(enableMin.value) signature['Min'] = Long
+	if(enableMax.value) signature['Max'] = Long
+	if(enableTPS.value) signature['Tps'] = Double
+	if(enableBPS.value) signature['Bps'] = Double
+	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
+	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
+	if(enableStdDev.value) signature['Std-Dev'] = Long
+	if(enablePercentile.value) signature['Percentile'] = Long
+	if(enablePercentile.value) signature['AvgResponseSize'] = Long
+	setSignature(output, signature)
+}
+
+resetComponent = {
+	chartModel.clear()
+	sourceIDs = ["none"]
+	currentSourceID.value = "none"
+	availableSourceIDs.options = sourceIDs 
+	avgDisplay = 0
+	minDisplay = 0
+	maxDisplay = 0
+	stdDevDisplay = 0
+	tpsDisplay = 0
+	bpsDisplay = 0
+	avgTpsDisplay = 0
+	avgBpsDisplay = 0
+	percentileDisplay = 0
+	avgRespSizeDisplay = 0
+}
+
+resetBuffers = {
+	timeStats.reset()
+	byteStats.reset()
+	agentData = [:]
+	agentStatistics = null
+}
+
+fixOptions = {
+	def options = [ AGGREGATE ]
+	options.addAll( agentTerminals.collect { it.label }.sort() )
+	availableAgents.options = options
+}
+
+addEventListener( ActionEvent ) { event ->
+	if( event.key == 'RESET' ) resetComponent()
+	else if( event.key == 'STOP' ) {
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
+		if( !controller )
+			send( controllerTerminal, newMessage() )
+	}
+	//else if ( event.key == 'START' ) {
+	//	schedule()
+	//}
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( CollectionEvent ) { event ->
+	if( event.key == ComponentContext.AGENT_TERMINALS ) {
+		fixOptions()
+	}
+}
+
+//Layout
+layout(layout:'fillx, wrap 2') {
+	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
+	property( property: selectedAgent, label: 'Agents', options: availableAgents, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
+		constraints: "w 100!" )
+}
+
+compactLayout {
+	box( widget:'display', layout:'align left, wrap 5' ) {
+		node( label:'Average ', content: { sprintf( "%.2f", avgDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Minimum ', content: { sprintf( "%.0f", minDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Maximum ', content: { sprintf( "%.0f", maxDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Std Dev ', content: { sprintf( "%.2f", stdDevDisplay as float ) }, constraints:'w 60!' )
+		node( label:'TPS     ', content: { sprintf( "%.2f", tpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'BPS     ', content: { sprintf( "%.0f", bpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg TPS ', content: { sprintf( "%.0f", avgTpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg BPS ', content: { sprintf( "%.0f", avgBpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Perc    ', content: { sprintf( "%.2f", percentileDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg Size', content: { sprintf( "%.0f", avgRespSizeDisplay as float ) }, constraints:'w 60!' )
+	}
+}
+
+settings( label: 'Properties' ) {
+	property(property: addtoSummary, label: "Add last result to summary?")
+	box {
+		property(property: enableAverage, label: 'Enable Average' )
+		property(property: enableMin, label: 'Enable Min' )
+		property(property: enableMax, label: 'Enable Max' )
+		property(property: enableStdDev, label: 'Enable Std Dev' )
+		property(property: enableTPS, label: 'Enable TPS' )
+		property(property: enableBPS, label: 'Enable BPS' )
+		property(property: enableAvgTPS, label: 'Enable Average TPS' )
+		property(property: enableAvgBPS, label: 'Enable Average BPS' )
+		property(property: enablePercentile, label: '90% Percentile' )
+		property(property: enableAvgResponseSize, label: 'Average Response Size' )
+		property(property: currentSourceID, label: 'Source ID' )
+	}
+} 
+
+settings( label: 'Statistics' ) {
+	box {
+		property(property: enableRequests, label: 'Enable Requests' )
+		property(property: enableRunning, label: 'Enable Running' )
+		property(property: enableCompleted, label: 'Enable Completed' )
+		property(property: enableQueued, label: 'Enable Queued' )
+		property(property: enableDiscarded, label: 'Enable Discarded' )
+		property(property: enableFailed, label: 'Enable Failed' )
+	}
+} 
+
+settings( label: "Periods" ) {
+	property(property: rate, label: 'Refresh rate (ms)' )
+	property(property: chartPeriod, label: 'Chart period (min)' )
+	property(property: period, label: 'History (min)' )
+} 
+
+generateSummary = { chapter ->
+	if (addtoSummary.value) {
+		LTableModel table = new LTableModel(1, false);
+		ArrayList values = new ArrayList();
+		table.addColumn("SourceID");
+		values.add(currentSourceID.value);
+		if(enableAverage.value) {
+			table.addColumn("Avg");
+			values.add(data['Avg'].round(2));
+		}
+		if(enableMin.value) {
+			table.addColumn("Min");
+			values.add(data['Min']);
+		}
+		if(enableMax.value) {
+			table.addColumn("Max");
+			values.add(data['Max']);
+		}
+		if(enableTPS.value) {
+			table.addColumn("TPS");
+			values.add(data['Tps'].round(2));
+		}
+		if(enableBPS.value) {
+			table.addColumn("BPS");
+			values.add(bpsDisplay.toString());
+		}
+		if(enableAvgTPS.value) {
+			table.addColumn("Avg TPS");
+			values.add(data['Avg-Tps']);
+		}
+		if(enableAvgBPS.value) {
+			table.addColumn("Avg BPS");
+			values.add(avgBpsDisplay.toString());
+		}
+		if(enableStdDev.value) {
+			table.addColumn("Std-Dev");
+			values.add(data['Std-Dev'].round(2));
+		}
+		if(enablePercentile.value) {
+			table.addColumn("Perc");
+			values.add(data['Percentile'].round(2));
+		}
+		if(enableAvgResponseSize.value) {
+			table.addColumn("Avg Size");
+			values.add(data['AvgResponseSize']);
+		}
+		
+		table.addRow(values);
+		
+		MutableSection sect = chapter.addSection(getLabel());
+		sect.addTable(getLabel(), table)
+   	}
+
+}
+
+//disable it here, because sometimes when you initialize chart
+//whithout enabling series it wasn't working correctly, so it is
+//safer to enable everythig first and then disable what is not needed
+enableMax.value = false
+enableMin.value = false
+enableBPS.value = false
+enableAvgTPS.value = false
+enableAvgBPS.value = false
+enablePercentile.value = false
+enableAvgResponseSize.value = false
+enableRequests.value = false
+enableCompleted.value = false
+enableDiscarded.value = false
+
+buildSignature()
+fixOptions()
+schedule()
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property propagates="true" key="period" type="java.lang.Long">1</con:property><con:property propagates="true" key="rate" type="java.lang.Long">500</con:property><con:property propagates="true" key="chartPeriod" type="java.lang.Long">1</con:property><con:property propagates="true" key="enableAverage" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableMin" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableMax" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableTPS" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableBPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableRequests" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableRunning" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableQueued" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableFailed" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="currentSourceID" type="java.lang.String">none</con:property><con:property propagates="true" key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="selectedAgent" type="java.lang.String">Aggregate</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_digest">dd59512e2271598229adaa03b169dfd8</con:property><con:property key="_id">com.eviware.Statistics</con:property><con:property key="_classLoader">com.eviware.Statistics</con:property><con:property key="gui.layoutX">1036</con:property><con:property key="gui.layoutY">195</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="REST Controller" id="32ea25cf-e43e-4fd5-ae8f-6b6b4c166fac" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an empty message periodically, at a set rate
+ * 
+ * @id com.eviware.FixedRate
+ * @help http://www.loadui.org/Generators/fixed-rate-component.html
+ * @name Fixed Rate
+ * @category generators
+ * @nonBlocking true
+ */
+
+import java.util.concurrent.TimeUnit
+
+//Properties
+createProperty( 'rate', Long, 10 ) { schedule() }
+createProperty( 'unit', String, 'Sec' ) { schedule() }
+
+onReplace( stateProperty ) { value ->
+	if( value ) schedule()
+	else future?.cancel( true )
+}
+
+createProperty( 'burstSize', Long, 1 )
+
+triggerBurst = { 
+	burstSize.value.times {
+		trigger() 
+	} 
+}
+
+future = null
+schedule = {
+	if( stateProperty.value ) {
+		long microsecondsPerUnit = unit.value == 'Sec' ? 1000000 : unit.value == 'Min' ? 60000000 : 3600000000
+		long delay = Math.max( 1, (long)(microsecondsPerUnit / rate.value) )
+		future?.cancel( true )
+		future = scheduleAtFixedRate( triggerBurst, delay, delay, TimeUnit.MICROSECONDS )
+	}
+}
+
+onAction( "START" ) { schedule() }
+onAction( "STOP" ) { future?.cancel( true ) }
+
+//Layout
+layout { 
+	property( property:rate, label:'Rate', min:1 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" }, constraints:'wmin 75' )
+	}
+}
+
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" } )
+	}
+}
+
+//Settings
+settings( label: "General" ) {
+	property( property: burstSize, label: 'Burst size' ) 
+}
+
+if( running ) schedule()</con:property><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="rate" type="java.lang.Long">5</con:property><con:property propagates="true" key="unit" type="java.lang.String">Sec</con:property><con:property propagates="true" key="burstSize" type="java.lang.Long">1</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_digest">c7926addaeaab3d091fd733b87da44d4</con:property><con:property key="_id">com.eviware.FixedRate</con:property><con:property key="_classLoader">com.eviware.FixedRate</con:property><con:property key="gui.layoutX">192</con:property><con:property key="gui.layoutY">194</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="REST Runner" id="6bc18f80-b1eb-4fad-8031-f889bbce0c97"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File">C:\SOAPUI\SDM-REST-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File">C:\SOAPUI\SDM-REST-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\mamccaff\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String">..\..\SOAPUI\SDM-REST-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String">SDM REST TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String">SDM REST TestSuite</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String">msisdn=33973715153|imsi=208033973715153|msisdnURI=33973715153</con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_msisdn" type="java.lang.String">33973715153</con:property><con:property propagates="true" key="_valueToOverride_imsi" type="java.lang.String">208033973715153</con:property><con:property propagates="true" key="_valueToOverride_msisdnURI" type="java.lang.String">33973715153</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">480</con:property><con:property key="gui.layoutY">196</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="REST Errors" id="ce1aa0fb-b0ec-4a5d-88a9-9a12345688ef" category="output"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String"><![CDATA[// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Tabulates incoming messages and creates a csv output 
+ * 
+ * @id com.eviware.TableLog
+ * @help http://www.loadui.org/Output/table-log-component.html
+ * @name Table Log
+ * @category output
+ * @dependency net.sf.opencsv:opencsv:2.3
+ * @nonBlocking true
+ */
+
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.events.PropertyEvent
+import au.com.bytecode.opencsv.CSVWriter
+import java.io.FileWriter
+import java.io.FileOutputStream
+import java.io.FileInputStream
+import com.eviware.loadui.api.events.ActionEvent
+import javax.swing.event.TableModelListener
+import javax.swing.event.TableModelEvent
+import java.text.SimpleDateFormat
+
+import com.eviware.loadui.api.summary.MutableSection
+
+inputTerminal.description = 'Messages sent here will be displayed in the table.'
+likes( inputTerminal ) { true }
+
+createProperty( 'maxRows', Long, 1000 ) { value ->
+	myTableModel.maxRow = value
+}
+createProperty 'logFilePath', String
+createProperty 'saveFile', Boolean, false
+createProperty( 'follow', Boolean, false ) { value ->
+	if( myTableModel.follow != value as Boolean ) myTableModel.follow = value
+}
+createProperty( 'enabledInDistMode', Boolean, false ) { value ->
+	if( myTableModel.enabledInDistMode != value as Boolean ) myTableModel.enabledInDistMode = value
+}
+createProperty 'summaryRows', Long, 0
+createProperty 'appendSaveFile', Boolean, false
+createProperty 'formatTimestamps', Boolean, true
+createProperty 'addHeaders', Boolean, false
+
+def latestHeader
+
+myTableModel = new LTableModel(1000, follow.value as Boolean, enabledInDistMode.value as Boolean)
+myTableModel.addTableModelListener(new TableModelListener() {
+	public void tableChanged(TableModelEvent e){
+		updateProperties()
+	}
+});
+
+String saveFileName = null
+
+writer = null
+def formater = new SimpleDateFormat( "HH:mm:ss:SSS" )
+myTableModel.maxRow = maxRows.value
+
+updateProperties = {
+	follow.value = myTableModel.follow
+	enabledInDistMode.value = myTableModel.enabledInDistMode
+}
+
+onMessage = { o, i, m ->
+	if( controller && i == remoteTerminal ) {
+		//controller received message from agent
+		m["Source"] = o.label
+		output( m )
+	}
+}
+
+output = { message ->
+	def writeLog = saveFile.value && saveFileName
+	if( controller || writeLog ) {
+		message.keySet().each { k -> myTableModel.addColumn( k ) }
+		lastMsgDate = new Date();
+		
+		if ( formatTimestamps.value ) {
+			message.each() { key, value ->
+				if ( key.toLowerCase().contains("timestamp") ) {
+					try {
+						message[key] = formater.format( new Date( value ) )
+					} catch ( IllegalArgumentException e ) {
+						log.info( "Failed to format Timestamp in a column whose name hinted about it containing a Timestamp" )
+					}
+				}
+			}
+		}
+
+		result = myTableModel.addRow( message )
+		if( writeLog && result ) {
+			if( writer == null ) {
+				writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' );
+			}
+			try {
+				String[] header = myTableModel.header
+				if( addHeaders.value && !Arrays.equals( latestHeader, header ) ) {
+					writer.writeNext( header )
+					latestHeader = header
+				}
+				String[] entries = myTableModel.lastRow
+				writer.writeNext( entries )
+			} catch ( Exception e ) {
+				log.error( "Error writing to log file", e )
+			}
+		}
+	}
+	
+	if( ! controller && myTableModel.enabledInDistMode ) {
+		// on agent and enabled, so send message to controller
+		send( controllerTerminal, message )
+	}
+}
+
+onAction( "START" ) { buildFileName() }
+
+onAction( "COMPLETE" ) {
+	writer?.close()
+	writer = null
+}
+
+onAction( "RESET" ) {
+	myTableModel.reset()
+	buildFileName()
+}
+
+onRelease = {
+	writer?.close()
+}
+
+buildFileName = {
+	if( !saveFile.value ) {
+		writer?.close()
+		writer = null
+		return
+	}
+	if( writer != null ) {
+		return
+	}
+	def filePath = "${getBaseLogDir()}${File.separator}${logFilePath.value}"
+	if( !validateLogFilePath( filePath ) ) {
+		filePath = "${getBaseLogDir()}${File.separator}logs${File.separator}table-log${File.separator}${getDefaultLogFileName()}"
+		log.warn( "Log file path wasn't specified properly. Try default path: [$filePath]" )
+		if( !validateLogFilePath( filePath ) ) {
+			log.error("Path: [$filePath] can't be used either. Table log component name contains invalid characters. Log file won't be saved.")
+			saveFileName = null
+			return
+		}
+	}
+	if( !appendSaveFile.value ) {
+		def f = new File( filePath )
+		filePath = "${f.parent}${File.separator}${addTimestampToFileName( f.name )}"
+	}
+	new File( filePath ).parentFile.mkdirs()
+	saveFileName = filePath
+}
+
+getBaseLogDir = {
+	def dir = System.getProperty("loadui.home")
+	if(dir == null || dir.trim().length() == 0) {
+		dir = "."
+	}
+	return dir
+}
+				
+getDefaultLogFileName = {
+	return getLabel().replaceAll( " ","" )
+}
+				
+validateLogFilePath = { filePath ->
+	try {
+		// the only good way to check if file path 
+		// is correct is to try read and writing
+		def temp = new File( filePath )
+		temp.parentFile.mkdirs()
+		if( !temp.exists() ) {
+			def fos = new FileOutputStream( temp )
+			fos.write( [0] )
+			fos.close()
+			temp.delete()
+		} else {
+			def fis = new FileInputStream( temp )
+			fis.read()
+			fis.close()
+		}
+		return true
+	}
+	catch( Exception e ) {
+		return false
+	}	
+}
+
+addTimestampToFileName = { name ->
+	def ext = ""
+	def ind = name.lastIndexOf( "." )
+	if( ind > -1 ){
+		ext = name.substring( ind, name.length() )
+		name = name.substring( 0, ind )
+	}
+	def timestamp = new Date().time
+	if( name.length() > 0 ) {
+		name = "${name}-"
+	}
+	return "$name$timestamp$ext"
+}
+
+layout { 
+	node( widget: 'tableWidget', model: myTableModel ) 
+}
+
+compactLayout {
+	box( widget: 'display' ) {
+		node( label: 'Rows', content: { myTableModel.rowCount } )
+		node( label: 'Output File', content: { saveFileName ?: '-' } )
+	}
+}
+
+// settings
+settings( label: "General" ) {
+	box {
+		property(property: maxRows, label: 'Max Rows in Table' )
+	}
+	box {
+		property(property: summaryRows, label: 'Max Rows in Summary' )
+	}	
+}
+
+settings(label:'Logging') {
+	box {
+		property(property: saveFile, label: 'Save Logs?' )
+		property(property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
+		property(property: appendSaveFile, label: 'Check to append selected file', )
+		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
+		property(property: addHeaders, label: 'Check to add headers to a file')
+		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
+	}
+}
+
+generateSummary = { chapter ->
+	if( summaryRows.value > 0 ) {
+   	MutableSection sect = chapter.addSection( getLabel() )
+   	sect.addTable( getLabel(), myTableModel.getLastRows( summaryRows.value ) )
+   }
+}]]></con:property><con:property propagates="true" key="maxRows" type="java.lang.Long">1000</con:property><con:property propagates="true" key="logFilePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="saveFile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="follow" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enabledInDistMode" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="summaryRows" type="java.lang.Long">0</con:property><con:property propagates="true" key="appendSaveFile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="formatTimestamps" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="addHeaders" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Table Log</con:property><con:property key="_digest">ac7721974d2dcc8d4bf3924602136155</con:property><con:property key="_id">com.eviware.TableLog</con:property><con:property key="_classLoader">com.eviware.TableLog</con:property><con:property key="gui.layoutX">1442</con:property><con:property key="gui.layoutY">196</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="SOAP Runner" id="80f06548-b44a-4024-adec-229348e22365"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File">C:\SOAPUI\SDM SOAP Provisioning-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File">C:\SOAPUI\SDM SOAP Provisioning-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\mamccaff\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String">..\..\SOAPUI\SDM SOAP Provisioning-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String">SDM SOAP TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String">TestCase 1</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String">msisdnURI=33945199485|msisdn=33945199485|imsi=208033945199485</con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_msisdnURI" type="java.lang.String">33945199485</con:property><con:property propagates="true" key="_valueToOverride_msisdn" type="java.lang.String">33945199485</con:property><con:property propagates="true" key="_valueToOverride_imsi" type="java.lang.String">208033945199485</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">483</con:property><con:property key="gui.layoutY">556</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="SOAP Controller" id="2f706ae1-4360-4473-81e4-370f25dfd30d" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an empty message periodically, at a set rate
+ * 
+ * @id com.eviware.FixedRate
+ * @help http://www.loadui.org/Generators/fixed-rate-component.html
+ * @name Fixed Rate
+ * @category generators
+ * @nonBlocking true
+ */
+
+import java.util.concurrent.TimeUnit
+
+//Properties
+createProperty( 'rate', Long, 10 ) { schedule() }
+createProperty( 'unit', String, 'Sec' ) { schedule() }
+
+onReplace( stateProperty ) { value ->
+	if( value ) schedule()
+	else future?.cancel( true )
+}
+
+createProperty( 'burstSize', Long, 1 )
+
+triggerBurst = { 
+	burstSize.value.times {
+		trigger() 
+	} 
+}
+
+future = null
+schedule = {
+	if( stateProperty.value ) {
+		long microsecondsPerUnit = unit.value == 'Sec' ? 1000000 : unit.value == 'Min' ? 60000000 : 3600000000
+		long delay = Math.max( 1, (long)(microsecondsPerUnit / rate.value) )
+		future?.cancel( true )
+		future = scheduleAtFixedRate( triggerBurst, delay, delay, TimeUnit.MICROSECONDS )
+	}
+}
+
+onAction( "START" ) { schedule() }
+onAction( "STOP" ) { future?.cancel( true ) }
+
+//Layout
+layout { 
+	property( property:rate, label:'Rate', min:1 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" }, constraints:'wmin 75' )
+	}
+}
+
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" } )
+	}
+}
+
+//Settings
+settings( label: "General" ) {
+	property( property: burstSize, label: 'Burst size' ) 
+}
+
+if( running ) schedule()</con:property><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="rate" type="java.lang.Long">5</con:property><con:property propagates="true" key="unit" type="java.lang.String">Sec</con:property><con:property propagates="true" key="burstSize" type="java.lang.Long">1</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_digest">c7926addaeaab3d091fd733b87da44d4</con:property><con:property key="_id">com.eviware.FixedRate</con:property><con:property key="_classLoader">com.eviware.FixedRate</con:property><con:property key="gui.layoutX">186</con:property><con:property key="gui.layoutY">559</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="SOAP Errors" id="2aecb1fb-2a2f-422f-a6fa-8903aa906d52" category="output"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String"><![CDATA[// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Tabulates incoming messages and creates a csv output 
+ * 
+ * @id com.eviware.TableLog
+ * @help http://www.loadui.org/Output/table-log-component.html
+ * @name Table Log
+ * @category output
+ * @dependency net.sf.opencsv:opencsv:2.3
+ * @nonBlocking true
+ */
+
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.events.PropertyEvent
+import au.com.bytecode.opencsv.CSVWriter
+import java.io.FileWriter
+import java.io.FileOutputStream
+import java.io.FileInputStream
+import com.eviware.loadui.api.events.ActionEvent
+import javax.swing.event.TableModelListener
+import javax.swing.event.TableModelEvent
+import java.text.SimpleDateFormat
+
+import com.eviware.loadui.api.summary.MutableSection
+
+inputTerminal.description = 'Messages sent here will be displayed in the table.'
+likes( inputTerminal ) { true }
+
+createProperty( 'maxRows', Long, 1000 ) { value ->
+	myTableModel.maxRow = value
+}
+createProperty 'logFilePath', String
+createProperty 'saveFile', Boolean, false
+createProperty( 'follow', Boolean, false ) { value ->
+	if( myTableModel.follow != value as Boolean ) myTableModel.follow = value
+}
+createProperty( 'enabledInDistMode', Boolean, false ) { value ->
+	if( myTableModel.enabledInDistMode != value as Boolean ) myTableModel.enabledInDistMode = value
+}
+createProperty 'summaryRows', Long, 0
+createProperty 'appendSaveFile', Boolean, false
+createProperty 'formatTimestamps', Boolean, true
+createProperty 'addHeaders', Boolean, false
+
+def latestHeader
+
+myTableModel = new LTableModel(1000, follow.value as Boolean, enabledInDistMode.value as Boolean)
+myTableModel.addTableModelListener(new TableModelListener() {
+	public void tableChanged(TableModelEvent e){
+		updateProperties()
+	}
+});
+
+String saveFileName = null
+
+writer = null
+def formater = new SimpleDateFormat( "HH:mm:ss:SSS" )
+myTableModel.maxRow = maxRows.value
+
+updateProperties = {
+	follow.value = myTableModel.follow
+	enabledInDistMode.value = myTableModel.enabledInDistMode
+}
+
+onMessage = { o, i, m ->
+	if( controller && i == remoteTerminal ) {
+		//controller received message from agent
+		m["Source"] = o.label
+		output( m )
+	}
+}
+
+output = { message ->
+	def writeLog = saveFile.value && saveFileName
+	if( controller || writeLog ) {
+		message.keySet().each { k -> myTableModel.addColumn( k ) }
+		lastMsgDate = new Date();
+		
+		if ( formatTimestamps.value ) {
+			message.each() { key, value ->
+				if ( key.toLowerCase().contains("timestamp") ) {
+					try {
+						message[key] = formater.format( new Date( value ) )
+					} catch ( IllegalArgumentException e ) {
+						log.info( "Failed to format Timestamp in a column whose name hinted about it containing a Timestamp" )
+					}
+				}
+			}
+		}
+
+		result = myTableModel.addRow( message )
+		if( writeLog && result ) {
+			if( writer == null ) {
+				writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' );
+			}
+			try {
+				String[] header = myTableModel.header
+				if( addHeaders.value && !Arrays.equals( latestHeader, header ) ) {
+					writer.writeNext( header )
+					latestHeader = header
+				}
+				String[] entries = myTableModel.lastRow
+				writer.writeNext( entries )
+			} catch ( Exception e ) {
+				log.error( "Error writing to log file", e )
+			}
+		}
+	}
+	
+	if( ! controller && myTableModel.enabledInDistMode ) {
+		// on agent and enabled, so send message to controller
+		send( controllerTerminal, message )
+	}
+}
+
+onAction( "START" ) { buildFileName() }
+
+onAction( "COMPLETE" ) {
+	writer?.close()
+	writer = null
+}
+
+onAction( "RESET" ) {
+	myTableModel.reset()
+	buildFileName()
+}
+
+onRelease = {
+	writer?.close()
+}
+
+buildFileName = {
+	if( !saveFile.value ) {
+		writer?.close()
+		writer = null
+		return
+	}
+	if( writer != null ) {
+		return
+	}
+	def filePath = "${getBaseLogDir()}${File.separator}${logFilePath.value}"
+	if( !validateLogFilePath( filePath ) ) {
+		filePath = "${getBaseLogDir()}${File.separator}logs${File.separator}table-log${File.separator}${getDefaultLogFileName()}"
+		log.warn( "Log file path wasn't specified properly. Try default path: [$filePath]" )
+		if( !validateLogFilePath( filePath ) ) {
+			log.error("Path: [$filePath] can't be used either. Table log component name contains invalid characters. Log file won't be saved.")
+			saveFileName = null
+			return
+		}
+	}
+	if( !appendSaveFile.value ) {
+		def f = new File( filePath )
+		filePath = "${f.parent}${File.separator}${addTimestampToFileName( f.name )}"
+	}
+	new File( filePath ).parentFile.mkdirs()
+	saveFileName = filePath
+}
+
+getBaseLogDir = {
+	def dir = System.getProperty("loadui.home")
+	if(dir == null || dir.trim().length() == 0) {
+		dir = "."
+	}
+	return dir
+}
+				
+getDefaultLogFileName = {
+	return getLabel().replaceAll( " ","" )
+}
+				
+validateLogFilePath = { filePath ->
+	try {
+		// the only good way to check if file path 
+		// is correct is to try read and writing
+		def temp = new File( filePath )
+		temp.parentFile.mkdirs()
+		if( !temp.exists() ) {
+			def fos = new FileOutputStream( temp )
+			fos.write( [0] )
+			fos.close()
+			temp.delete()
+		} else {
+			def fis = new FileInputStream( temp )
+			fis.read()
+			fis.close()
+		}
+		return true
+	}
+	catch( Exception e ) {
+		return false
+	}	
+}
+
+addTimestampToFileName = { name ->
+	def ext = ""
+	def ind = name.lastIndexOf( "." )
+	if( ind > -1 ){
+		ext = name.substring( ind, name.length() )
+		name = name.substring( 0, ind )
+	}
+	def timestamp = new Date().time
+	if( name.length() > 0 ) {
+		name = "${name}-"
+	}
+	return "$name$timestamp$ext"
+}
+
+layout { 
+	node( widget: 'tableWidget', model: myTableModel ) 
+}
+
+compactLayout {
+	box( widget: 'display' ) {
+		node( label: 'Rows', content: { myTableModel.rowCount } )
+		node( label: 'Output File', content: { saveFileName ?: '-' } )
+	}
+}
+
+// settings
+settings( label: "General" ) {
+	box {
+		property(property: maxRows, label: 'Max Rows in Table' )
+	}
+	box {
+		property(property: summaryRows, label: 'Max Rows in Summary' )
+	}	
+}
+
+settings(label:'Logging') {
+	box {
+		property(property: saveFile, label: 'Save Logs?' )
+		property(property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
+		property(property: appendSaveFile, label: 'Check to append selected file', )
+		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
+		property(property: addHeaders, label: 'Check to add headers to a file')
+		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
+	}
+}
+
+generateSummary = { chapter ->
+	if( summaryRows.value > 0 ) {
+   	MutableSection sect = chapter.addSection( getLabel() )
+   	sect.addTable( getLabel(), myTableModel.getLastRows( summaryRows.value ) )
+   }
+}]]></con:property><con:property propagates="true" key="maxRows" type="java.lang.Long">1000</con:property><con:property propagates="true" key="logFilePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="saveFile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="follow" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enabledInDistMode" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="summaryRows" type="java.lang.Long">0</con:property><con:property propagates="true" key="appendSaveFile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="formatTimestamps" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="addHeaders" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Table Log</con:property><con:property key="_digest">ac7721974d2dcc8d4bf3924602136155</con:property><con:property key="_id">com.eviware.TableLog</con:property><con:property key="_classLoader">com.eviware.TableLog</con:property><con:property key="gui.layoutX">1436</con:property><con:property key="gui.layoutY">556</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="SOAP Statistics" id="2923450b-8d5d-46d4-a4a2-ca7a14ce5114" category="analysis"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String"><![CDATA[// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Displays statistical information  
+ * 
+ * @id com.eviware.Statistics
+ * @help http://www.loadui.org/Analysis/statistics.html
+ * @category analysis
+ * @nonBlocking true
+ * @deprecated
+ */
+
+import java.util.Calendar
+import java.util.Date
+import java.util.List
+import java.util.HashMap
+import java.util.Map
+import java.util.ArrayList
+
+import com.eviware.loadui.api.component.ComponentContext
+
+import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.api.model.ProjectItem
+import com.eviware.loadui.api.chart.CustomTimeRange
+import com.eviware.loadui.api.chart.CustomNumericRange
+import com.eviware.loadui.api.chart.ChartModel
+import com.eviware.loadui.api.chart.ChartAdapter
+
+import com.eviware.loadui.api.terminal.InputTerminal
+import com.eviware.loadui.api.terminal.OutputTerminal
+import com.eviware.loadui.api.terminal.TerminalMessage
+
+import com.eviware.loadui.api.layout.OptionsProvider
+import com.eviware.loadui.impl.layout.OptionsProviderImpl
+
+import java.util.concurrent.TimeUnit
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
+import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.events.ActionEvent
+
+import com.eviware.loadui.util.statistics.ValueStatistics
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.summary.MutableSection
+
+import com.eviware.loadui.api.chart.ChartSerie
+import com.eviware.loadui.api.chart.Point
+
+AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
+
+createOutput( 'output', 'Statistic data', 'Outputs the generated statistic data as text. Useful to connect e.g. to an Ouput or Assertion component.' )
+statisticsInput = createInput( 'statistics', 'Runner Statistics', "Connect to a Runner's Statistics Terminal to get general statistics from the Runner." ) {
+	it.name == "statisticsOutput"
+}
+inputTerminal.label = 'Input values'
+inputTerminal.description = 'Messages sent here will be aggregated into statistics.'
+
+//Properties
+createProperty( 'period', Long, 1 )
+createProperty( 'rate', Long, 500 )
+createProperty( 'chartPeriod', Long, 1 )
+
+createProperty( 'enableAverage', Boolean, true )
+createProperty( 'enableMin', Boolean, true )
+createProperty( 'enableMax', Boolean, true )
+createProperty( 'enableStdDev', Boolean, true )
+createProperty( 'enableTPS', Boolean, true )
+createProperty( 'enableBPS', Boolean, true )
+createProperty( 'enableAvgTPS', Boolean, true )
+createProperty( 'enableAvgBPS', Boolean, true )
+createProperty( 'enablePercentile', Boolean, true )
+createProperty( 'enableAvgResponseSize', Boolean, true )
+createProperty( 'enableRequests', Boolean, true )
+createProperty( 'enableRunning', Boolean, true )
+createProperty( 'enableCompleted', Boolean, true )
+createProperty( 'enableQueued', Boolean, true )
+createProperty( 'enableDiscarded', Boolean, true )
+createProperty( 'enableFailed', Boolean, true )
+createProperty( 'currentSourceID', String, "none" )
+createProperty( 'addtoSummary', Boolean, false )
+
+createProperty( 'selectedAgent', String, AGGREGATE )
+
+OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
+sourceIDs = ["none"]
+
+double timeScaleFactor = 1 //seconds
+double bytesScaleFactor = 1/(1024D) //KBytes
+
+xRange = new CustomTimeRange(chartPeriod.value * 60000, rate.value)
+xRange.visible = true
+
+yRange = new CustomNumericRange(0, 10, 20)
+yRange.visible = true
+yRange.title = 'ms KB'
+
+y2Range = new CustomNumericRange(0, 5, 20)
+y2Range.visible = true
+y2Range.title = 'requests'
+
+ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
+			resetBuffers()
+		}
+		catch(Throwable e2) {
+			log.error( 'chartCleared', e2 )
+		}
+	}
+} )
+
+chartModel.addSerie('Max', enableMax.value, true)
+chartModel.addSerie('Min', enableMin.value, true)
+chartModel.addSerie('Avg', enableAverage.value, true)
+chartModel.addSerie('StdDev', enableStdDev.value, true)
+chartModel.addSerie('TPS', enableTPS.value, true)
+chartModel.addSerie('BPS', enableBPS.value, true)
+chartModel.addSerie('AvgTPS', enableAvgTPS.value, true)
+chartModel.addSerie('AvgBPS', enableAvgBPS.value, true)
+chartModel.addSerie('Percentile', enablePercentile.value, true)
+chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value, true)
+chartModel.addSerie('Requests', enableRequests.value, false)
+chartModel.addSerie('Running', enableRunning.value, false)
+chartModel.addSerie('Completed', enableCompleted.value, false)
+chartModel.addSerie('Queued', enableQueued.value, false)
+chartModel.addSerie('Discarded', enableDiscarded.value, false)
+chartModel.addSerie('Failed', enableFailed.value, false)
+chartModel.legendColumns = 3
+
+timeStats = new ValueStatistics( period.value * 60000 )
+byteStats = new ValueStatistics( period.value * 60000 )
+
+long max = 0
+long min = Long.MAX_VALUE
+
+agentData = [:]
+agentStatistics = null
+
+future = null
+boolean connected = true
+
+avgDisplay = 0
+minDisplay = 0
+maxDisplay = 0
+stdDevDisplay = 0
+tpsDisplay = 0
+bpsDisplay = 0
+avgTpsDisplay = 0
+avgBpsDisplay = 0
+percentileDisplay = 0
+avgRespSizeDisplay = 0
+
+analyze = { message ->
+	try {
+		long timestamp = System.currentTimeMillis()
+		
+		if( !message['TimeTaken'] )
+			return
+		
+		String sourceID = message['id'] == null ? message['ID'] : message['id'] 
+		
+		if( sourceID && !sourceIDs.contains( sourceID ) ) {
+			sourceIDs.add( sourceID )
+			availableSourceIDs.options = sourceIDs
+		}
+		
+		if( currentSourceID.value == "none" || currentSourceID.value == sourceID ) {
+			long timeTaken = message['TimeTaken']
+			timeStats.addValue( timestamp, timeTaken )
+		
+			long bytesCount = message['Bytes'] ?: -1
+			if( bytesCount < 0 && message.containsKey( 'Response' ) )
+				bytesCount = message['Response'].length
+			if( bytesCount < 0 ) bytesCount = 0
+			byteStats.addValue( timestamp, bytesCount )
+		}
+	} catch( Exception e ) {
+		log.error( 'analyze', e )
+	}
+}
+
+onMessage = { o, i, m ->
+	if(i == remoteTerminal) {
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis()
+		agentData[o.label] = data
+	}
+	
+	if( i == statisticsInput ) {
+		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
+			agentStatistics = new HashMap(m)
+		} 
+	}
+}
+
+onConnect = { outgoing, incoming ->
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
+}
+
+onDisconnect = { outgoing, incoming ->
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
+}
+
+calculate = {
+	if( !connected || !running )
+		return
+	
+	long currentTime = System.currentTimeMillis()
+	
+	try {
+		if( timeStats.size() > 0 || agentData.size() > 0 || agentStatistics?.size() > 0 ) {
+			def message = newMessage()
+			data = timeStats.getData( currentTime )
+			message['Max'] = data['Max']
+			message['Min'] = data['Min']
+			message['Avg'] = data['Avg']
+			message['Std-Dev'] = data['Std-Dev']
+			message['Tps'] = data['Tps']
+			message['Avg-Tps'] = data['Avg-Tps']
+			message['Percentile'] = data['Percentile']
+			
+			bdata = byteStats.getData( currentTime )
+			message['Bps'] = bdata['Vps']
+			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['AvgResponseSize'] = bdata['AvgResponseSize']
+			message['id'] = "test"
+			
+			message['Timestamp'] = currentTime
+			message['ID'] = currentSourceID.value
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+
+			send(output, message)
+			send(controllerTerminal, message)
+		}
+	} catch( Throwable e1 ) {
+		log.error( 'calculate', e1 )
+	}
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
+	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
+		updateChart( currentTime )
+}
+
+updateChart = { currentTime ->
+	def data = [:]
+	if( selectedAgent.value == AGGREGATE ) {
+		try {
+			int count = 0
+			def local = canvas instanceof ProjectItem || canvas.project?.workspace.localMode
+			if (inputTerminal.connections.size() > 0 || statisticsInput.connections.size() > 0) {
+				for( k in agentData.keySet() ) {
+					//if in dist mode ignore data received on controllerTerminal, in local take only from data from it
+					if(!local && !k.equals("controllerTerminal") || local && k.equals("controllerTerminal")){
+						def d = agentData[k]
+						//size gt 1 because sometimes messages contain only timestamp but there is no actual data
+						if( !d.isEmpty() && d.size() > 1 ) {	
+							data['Max'] = Math.max( d['Max'] ?: 0, data['Max'] ?: 0 )
+							data['Min'] = Math.min( d['Min'] ?: Long.MAX_VALUE, data['Min'] ?: Long.MAX_VALUE )
+							data['Avg'] = (data['Avg'] ?: 0) + (d['Avg'] ?: 0)
+							data['Std-Dev'] = (data['Std-Dev'] ?: 0) + (d['Std-Dev'] ?: 0)
+							data['Tps'] = (data['Tps'] ?: 0) + (d['Tps'] ?: 0)
+							data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + (d['Avg-Tps'] ?: 0)
+							data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+							data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+							data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+							data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+							data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+							data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+							data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+							data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+							data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+							data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
+							count++
+						}
+					}
+				}
+			}
+			if( count != 0 ) {
+				data['Avg'] /= count
+				data['Std-Dev'] /= count
+			}
+		} catch( e ) {
+			log.error( 'Aggregating', e )
+		}
+	} else {
+		data = agentData[selectedAgent.value]
+	}
+	if( !data ) {
+		return
+	}
+	try {
+		if (inputTerminal.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
+			if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
+			if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
+			if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
+			if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
+			if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
+			if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
+			if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
+			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		}
+		
+		if (statisticsInput.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
+			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
+			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
+			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
+			if(enableQueued.value) chartModel.addPoint(13, currentTime, data['Queued'])
+			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
+			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
+		}
+		
+		if (inputTerminal.connections.size() > 0) {
+			avgDisplay = data['Avg'] * timeScaleFactor
+			minDisplay = data['Min']  * timeScaleFactor
+			maxDisplay = data['Max'] * timeScaleFactor
+			stdDevDisplay = data['Std-Dev'] * timeScaleFactor
+			tpsDisplay = data['Tps']
+			bpsDisplay = data['Bps'] * bytesScaleFactor
+			avgTpsDisplay = data['Avg-Tps']
+			avgBpsDisplay = data['Avg-Bps'] * bytesScaleFactor
+			percentileDisplay = data['Percentile']
+			avgRespSizeDisplay = data['AvgResponseSize']  * bytesScaleFactor
+		}
+	} catch( e ) {
+		e.printStackTrace()
+	}
+
+}
+
+schedule = {
+	future?.cancel( true )
+	future = scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
+}
+
+addEventListener(PropertyEvent) { event ->
+	try {
+		if (event.event == PropertyEvent.Event.VALUE) {
+			if(event.property == rate) {
+				xRange.setRate(rate.value)
+				schedule()
+			}
+			else if(event.property == chartPeriod) {
+				xRange.setPeriod(chartPeriod.value * 60000)
+			}
+			else if(event.property == enableMin) {
+				chartModel.enableSerie('Min', enableMin.value)
+				buildSignature()
+			}
+			else if(event.property == enableMax) {
+				chartModel.enableSerie('Max', enableMax.value)
+				buildSignature()
+			}
+			else if(event.property == enableAverage) {
+				chartModel.enableSerie('Avg', enableAverage.value)
+				buildSignature()
+			}
+			else if(event.property == enableStdDev) {
+				chartModel.enableSerie('StdDev', enableStdDev.value)
+				buildSignature()
+			}
+			else if(event.property == enableTPS) {
+				chartModel.enableSerie('TPS', enableTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableBPS) {
+				chartModel.enableSerie('BPS', enableBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgTPS) {
+				chartModel.enableSerie('AvgTPS', enableAvgTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgBPS) {
+				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enablePercentile) {
+				chartModel.enableSerie('Percentile', enablePercentile.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgResponseSize) {
+				chartModel.enableSerie('AvgResponseSize', enableAvgResponseSize.value)
+				buildSignature()
+			}
+			else if(event.property == enableRequests) {
+				chartModel.enableSerie('Requests', enableRequests.value)
+			}
+			else if(event.property == enableRunning) {
+				chartModel.enableSerie('Running', enableRunning.value)
+			}
+			else if(event.property == enableCompleted) {
+				chartModel.enableSerie('Completed', enableCompleted.value)
+			}
+			else if(event.property == enableQueued) {
+				chartModel.enableSerie('Queued', enableQueued.value)
+			}
+			else if(event.property == enableDiscarded) {
+				chartModel.enableSerie('Discarded', enableDiscarded.value)
+			}
+			else if(event.property == enableFailed) {
+				chartModel.enableSerie('Failed', enableFailed.value)
+			}
+		}
+	}
+	catch( Throwable e2 ) {
+		log.error( 'addEventListener', e2 )
+	}
+}
+
+buildSignature = {
+	def signature = [:]
+	if(enableAverage.value) signature['Avg'] = Long
+	if(enableMin.value) signature['Min'] = Long
+	if(enableMax.value) signature['Max'] = Long
+	if(enableTPS.value) signature['Tps'] = Double
+	if(enableBPS.value) signature['Bps'] = Double
+	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
+	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
+	if(enableStdDev.value) signature['Std-Dev'] = Long
+	if(enablePercentile.value) signature['Percentile'] = Long
+	if(enablePercentile.value) signature['AvgResponseSize'] = Long
+	setSignature(output, signature)
+}
+
+resetComponent = {
+	chartModel.clear()
+	sourceIDs = ["none"]
+	currentSourceID.value = "none"
+	availableSourceIDs.options = sourceIDs 
+	avgDisplay = 0
+	minDisplay = 0
+	maxDisplay = 0
+	stdDevDisplay = 0
+	tpsDisplay = 0
+	bpsDisplay = 0
+	avgTpsDisplay = 0
+	avgBpsDisplay = 0
+	percentileDisplay = 0
+	avgRespSizeDisplay = 0
+}
+
+resetBuffers = {
+	timeStats.reset()
+	byteStats.reset()
+	agentData = [:]
+	agentStatistics = null
+}
+
+fixOptions = {
+	def options = [ AGGREGATE ]
+	options.addAll( agentTerminals.collect { it.label }.sort() )
+	availableAgents.options = options
+}
+
+addEventListener( ActionEvent ) { event ->
+	if( event.key == 'RESET' ) resetComponent()
+	else if( event.key == 'STOP' ) {
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
+		if( !controller )
+			send( controllerTerminal, newMessage() )
+	}
+	//else if ( event.key == 'START' ) {
+	//	schedule()
+	//}
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( CollectionEvent ) { event ->
+	if( event.key == ComponentContext.AGENT_TERMINALS ) {
+		fixOptions()
+	}
+}
+
+//Layout
+layout(layout:'fillx, wrap 2') {
+	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
+	property( property: selectedAgent, label: 'Agents', options: availableAgents, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
+		constraints: "w 100!" )
+}
+
+compactLayout {
+	box( widget:'display', layout:'align left, wrap 5' ) {
+		node( label:'Average ', content: { sprintf( "%.2f", avgDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Minimum ', content: { sprintf( "%.0f", minDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Maximum ', content: { sprintf( "%.0f", maxDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Std Dev ', content: { sprintf( "%.2f", stdDevDisplay as float ) }, constraints:'w 60!' )
+		node( label:'TPS     ', content: { sprintf( "%.2f", tpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'BPS     ', content: { sprintf( "%.0f", bpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg TPS ', content: { sprintf( "%.0f", avgTpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg BPS ', content: { sprintf( "%.0f", avgBpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Perc    ', content: { sprintf( "%.2f", percentileDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg Size', content: { sprintf( "%.0f", avgRespSizeDisplay as float ) }, constraints:'w 60!' )
+	}
+}
+
+settings( label: 'Properties' ) {
+	property(property: addtoSummary, label: "Add last result to summary?")
+	box {
+		property(property: enableAverage, label: 'Enable Average' )
+		property(property: enableMin, label: 'Enable Min' )
+		property(property: enableMax, label: 'Enable Max' )
+		property(property: enableStdDev, label: 'Enable Std Dev' )
+		property(property: enableTPS, label: 'Enable TPS' )
+		property(property: enableBPS, label: 'Enable BPS' )
+		property(property: enableAvgTPS, label: 'Enable Average TPS' )
+		property(property: enableAvgBPS, label: 'Enable Average BPS' )
+		property(property: enablePercentile, label: '90% Percentile' )
+		property(property: enableAvgResponseSize, label: 'Average Response Size' )
+		property(property: currentSourceID, label: 'Source ID' )
+	}
+} 
+
+settings( label: 'Statistics' ) {
+	box {
+		property(property: enableRequests, label: 'Enable Requests' )
+		property(property: enableRunning, label: 'Enable Running' )
+		property(property: enableCompleted, label: 'Enable Completed' )
+		property(property: enableQueued, label: 'Enable Queued' )
+		property(property: enableDiscarded, label: 'Enable Discarded' )
+		property(property: enableFailed, label: 'Enable Failed' )
+	}
+} 
+
+settings( label: "Periods" ) {
+	property(property: rate, label: 'Refresh rate (ms)' )
+	property(property: chartPeriod, label: 'Chart period (min)' )
+	property(property: period, label: 'History (min)' )
+} 
+
+generateSummary = { chapter ->
+	if (addtoSummary.value) {
+		LTableModel table = new LTableModel(1, false);
+		ArrayList values = new ArrayList();
+		table.addColumn("SourceID");
+		values.add(currentSourceID.value);
+		if(enableAverage.value) {
+			table.addColumn("Avg");
+			values.add(data['Avg'].round(2));
+		}
+		if(enableMin.value) {
+			table.addColumn("Min");
+			values.add(data['Min']);
+		}
+		if(enableMax.value) {
+			table.addColumn("Max");
+			values.add(data['Max']);
+		}
+		if(enableTPS.value) {
+			table.addColumn("TPS");
+			values.add(data['Tps'].round(2));
+		}
+		if(enableBPS.value) {
+			table.addColumn("BPS");
+			values.add(bpsDisplay.toString());
+		}
+		if(enableAvgTPS.value) {
+			table.addColumn("Avg TPS");
+			values.add(data['Avg-Tps']);
+		}
+		if(enableAvgBPS.value) {
+			table.addColumn("Avg BPS");
+			values.add(avgBpsDisplay.toString());
+		}
+		if(enableStdDev.value) {
+			table.addColumn("Std-Dev");
+			values.add(data['Std-Dev'].round(2));
+		}
+		if(enablePercentile.value) {
+			table.addColumn("Perc");
+			values.add(data['Percentile'].round(2));
+		}
+		if(enableAvgResponseSize.value) {
+			table.addColumn("Avg Size");
+			values.add(data['AvgResponseSize']);
+		}
+		
+		table.addRow(values);
+		
+		MutableSection sect = chapter.addSection(getLabel());
+		sect.addTable(getLabel(), table)
+   	}
+
+}
+
+//disable it here, because sometimes when you initialize chart
+//whithout enabling series it wasn't working correctly, so it is
+//safer to enable everythig first and then disable what is not needed
+enableMax.value = false
+enableMin.value = false
+enableBPS.value = false
+enableAvgTPS.value = false
+enableAvgBPS.value = false
+enablePercentile.value = false
+enableAvgResponseSize.value = false
+enableRequests.value = false
+enableCompleted.value = false
+enableDiscarded.value = false
+
+buildSignature()
+fixOptions()
+schedule()
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property propagates="true" key="period" type="java.lang.Long">1</con:property><con:property propagates="true" key="rate" type="java.lang.Long">500</con:property><con:property propagates="true" key="chartPeriod" type="java.lang.Long">1</con:property><con:property propagates="true" key="enableAverage" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableMin" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableMax" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableTPS" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableBPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableRequests" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableRunning" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableQueued" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="enableFailed" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="currentSourceID" type="java.lang.String">none</con:property><con:property propagates="true" key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="selectedAgent" type="java.lang.String">Aggregate</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_digest">dd59512e2271598229adaa03b169dfd8</con:property><con:property key="_id">com.eviware.Statistics</con:property><con:property key="_classLoader">com.eviware.Statistics</con:property><con:property key="gui.layoutX">1033</con:property><con:property key="gui.layoutY">552</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:connection outputTerminalId="6bc18f80-b1eb-4fad-8031-f889bbce0c97/resultTerminal" inputTerminalId="d0e21006-f47b-43a1-af25-3e0d8a4ba8c3/inputTerminal"/><con:connection outputTerminalId="32ea25cf-e43e-4fd5-ae8f-6b6b4c166fac/triggerTerminal" inputTerminalId="6bc18f80-b1eb-4fad-8031-f889bbce0c97/triggerTerminal"/><con:connection outputTerminalId="6bc18f80-b1eb-4fad-8031-f889bbce0c97/samplerErrors" inputTerminalId="ce1aa0fb-b0ec-4a5d-88a9-9a12345688ef/inputTerminal"/><con:connection outputTerminalId="2f706ae1-4360-4473-81e4-370f25dfd30d/triggerTerminal" inputTerminalId="80f06548-b44a-4024-adec-229348e22365/triggerTerminal"/><con:connection outputTerminalId="80f06548-b44a-4024-adec-229348e22365/samplerErrors" inputTerminalId="2aecb1fb-2a2f-422f-a6fa-8903aa906d52/inputTerminal"/><con:connection outputTerminalId="80f06548-b44a-4024-adec-229348e22365/resultTerminal" inputTerminalId="2923450b-8d5d-46d4-a4a2-ca7a14ce5114/inputTerminal"/><con:statistics><con:page title="General"><con:chartGroup type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView" title="REST Response Times"><con:chart statisticHolder="6bc18f80-b1eb-4fad-8031-f889bbce0c97"><con:attributes><con:property key="_CHART_segments">77:36:6bc18f80-b1eb-4fad-8031-f889bbce0c9720:Get Quota: TimeTaken7:AVERAGE4:main82:36:6bc18f80-b1eb-4fad-8031-f889bbce0c9725:Get Subscriber: TimeTaken7:AVERAGE4:main85:36:6bc18f80-b1eb-4fad-8031-f889bbce0c9728:Create Subscriber: TimeTaken7:AVERAGE4:main77:36:6bc18f80-b1eb-4fad-8031-f889bbce0c9720:Set Quota: TimeTaken7:AVERAGE4:main92:36:6bc18f80-b1eb-4fad-8031-f889bbce0c9735:Delete Subscriber At End: TimeTaken7:AVERAGE4:main</con:property><con:property key="_CHART__SEGMENT_36:6bc18f80-b1eb-4fad-8031-f889bbce0c9728:Create Subscriber: TimeTaken7:AVERAGE4:main_color">#FF7B00</con:property><con:property key="_CHART__SEGMENT_36:6bc18f80-b1eb-4fad-8031-f889bbce0c9720:Set Quota: TimeTaken7:AVERAGE4:main_color">#FF2100</con:property><con:property key="_CHART__SEGMENT_36:6bc18f80-b1eb-4fad-8031-f889bbce0c9720:Get Quota: TimeTaken7:AVERAGE4:main_color">#00B700</con:property><con:property key="_CHART__SEGMENT_36:6bc18f80-b1eb-4fad-8031-f889bbce0c9725:Get Subscriber: TimeTaken7:AVERAGE4:main_color">#00B2D2</con:property><con:property key="_CHART__SEGMENT_36:6bc18f80-b1eb-4fad-8031-f889bbce0c9735:Delete Subscriber At End: TimeTaken7:AVERAGE4:main_color">#7826B5</con:property></con:attributes></con:chart><con:attributes><con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property><con:property key="_CHARTGROUP_timeSpan">68166</con:property><con:property key="_CHARTGROUP_position">13494</con:property></con:attributes></con:chartGroup><con:chartGroup type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView" title="SOAP RESPONSE TIMES"><con:chart statisticHolder="80f06548-b44a-4024-adec-229348e22365"><con:attributes><con:property key="_CHART_segments">82:36:80f06548-b44a-4024-adec-229348e2236525:Delete-Profile: TimeTaken7:AVERAGE4:main87:36:80f06548-b44a-4024-adec-229348e2236530:BillingDay - Update: TimeTaken7:AVERAGE4:main82:36:80f06548-b44a-4024-adec-229348e2236525:Fetch Custom10: TimeTaken7:AVERAGE4:main114:36:80f06548-b44a-4024-adec-229348e2236557:CreateSubscriber - All Possible Fields Present: TimeTaken7:AVERAGE4:main</con:property><con:property key="_CHART__SEGMENT_36:80f06548-b44a-4024-adec-229348e2236557:CreateSubscriber - All Possible Fields Present: TimeTaken7:AVERAGE4:main_color">#FF2100</con:property><con:property key="_CHART__SEGMENT_36:80f06548-b44a-4024-adec-229348e2236525:Fetch Custom10: TimeTaken7:AVERAGE4:main_color">#FF7B00</con:property><con:property key="_CHART__SEGMENT_36:80f06548-b44a-4024-adec-229348e2236530:BillingDay - Update: TimeTaken7:AVERAGE4:main_color">#00B700</con:property><con:property key="_CHART__SEGMENT_36:80f06548-b44a-4024-adec-229348e2236525:Delete-Profile: TimeTaken7:AVERAGE4:main_color">#00B2D2</con:property></con:attributes></con:chart><con:attributes><con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property><con:property key="_CHARTGROUP_timeSpan">68166</con:property><con:property key="_CHARTGROUP_position">0</con:property></con:attributes></con:chartGroup></con:page></con:statistics></con:loadui-project>

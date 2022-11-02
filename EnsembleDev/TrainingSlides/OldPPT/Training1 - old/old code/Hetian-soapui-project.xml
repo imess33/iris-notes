@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="3021ccf6-3d0c-42ff-8cb5-b4e1845d4b1c" activeEnvironment="Default" name="Hetian" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="ad196c97-3982-4f9c-9737-cb8a980c0819" wsaVersion="NONE" name="TestSaopSoap" type="wsdl" bindingName="{http://tempuri.org}TestSaopSoap" soapVersion="1_1" anonymous="optional" definition="http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls?wsdl"><con:part><con:url>http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://tempuri.org" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org">
+      <s:element name="Sample">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" name="pInput" type="s:string"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SampleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="SampleResult" type="s:string"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="SampleSoapIn">
+    <part name="parameters" element="s0:Sample"/>
+  </message>
+  <message name="SampleSoapOut">
+    <part name="parameters" element="s0:SampleResponse"/>
+  </message>
+  <portType name="TestSaopSoap">
+    <operation name="Sample">
+      <input message="s0:SampleSoapIn"/>
+      <output message="s0:SampleSoapOut"/>
+    </operation>
+  </portType>
+  <binding name="TestSaopSoap" type="s0:TestSaopSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="Sample">
+      <soap:operation soapAction="http://tempuri.org/JHIP.Test.TestSaop.Sample" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="TestSaop">
+    <port name="TestSaopSoap" binding="s0:TestSaopSoap">
+      <soap:address location="http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls</con:endpoint></con:endpoints><con:operation id="ca6c6185-709b-4691-b69c-36f9ea4cadbc" isOneWay="false" action="http://tempuri.org/JHIP.Test.TestSaop.Sample" name="Sample" bindingOperationName="Sample" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9cac43ed-e979-48d7-b807-06d0eaf04f1b" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:Sample>
+         <!--Optional:-->
+         <tem:pInput>ABC</tem:pInput>
+      </tem:Sample>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://tempuri.org/JHIP.Test.TestSaop.Sample"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite id="5478debb-9a05-4b28-8360-13a840a1aabf" name="TestSaopSoap TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="87b64892-f1d7-489e-8820-c021538ea4fa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Sample TestCase" searchProperties="true"><con:settings/><con:testStep type="request" id="2a827097-46d4-4086-9d69-2f42b1070dda" name="Sample"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>TestSaopSoap</con:interface><con:operation>Sample</con:operation><con:request name="Sample" id="8cc63e41-fa4f-4785-b93c-680671e14fcc"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://192.168.3.44/csp/jhip/JHIP.Test.TestSaop.cls</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:Sample>
+         <!--Optional:-->
+         <tem:pInput>duyinglei</tem:pInput>
+      </tem:Sample>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig action="http://tempuri.org/JHIP.Test.TestSaop.Sample" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

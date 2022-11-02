@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.1 (Build 792U)" ts="2017-08-02 13:51:57">
+<Document name="AlertTable.LUT">
+<lookupTable>
+<entry table="AlertTable" key="ABC_HL7FileService">temp_1@company.test</entry>
+<entry table="AlertTable" key="BadMessageHandler">temp_3@home.test</entry>
+<entry table="AlertTable" key="Extra_Observations">temp_5@company.test</entry>
+<entry table="AlertTable" key="MsgRouter ">temp_3@home.test</entry>
+<entry table="AlertTable" key="Priority_FileOperation ">temp_5@home.test</entry>
+<entry table="AlertTable" key="Regular_FileOperation">temp_4@company.test</entry>
+<entry table="AlertTable" key="XYZ_HL7FileService">temp_2@company.test</entry>
+</lookupTable>
+</Document></Export>

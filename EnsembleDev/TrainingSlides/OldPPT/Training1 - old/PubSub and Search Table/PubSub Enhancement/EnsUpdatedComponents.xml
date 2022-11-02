@@ -1,0 +1,3122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="24" zv="Cache for Windows (x86-32) 2010.1.1 (Build 503U)" ts="2010-07-01 20:35:37">
+<Class name="Ens.BusinessOperation">
+<Abstract>1</Abstract>
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Host,Ens.Util.IOLogger,Enh.PubSub</Super>
+<System>3</System>
+<TimeChanged>61908,40127.37477</TimeChanged>
+<TimeCreated>59262,38857.002</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="%RequestHeader">
+<Type>Ens.MessageHeader</Type>
+</Property>
+
+<Property name="ReplyCodeActions">
+<Description><![CDATA[
+A comma-separated list of codes specifying what action this Operation will take on various reply status conditions. <br/>
+The format of the list is: &lt;code&gt;=&lt;actions&gt;,(&lt;code&gt;,&lt;code&gt;)=&lt;actions&gt;,...<br/>
+Types of reply status condition are identified by a specification code defined as follows: <p/>
+E - Error status returned from message handler <br/>
+E#&lt;statuscode&gt; - Error status returned from message handler has status code equal to &lt;statuscode&gt; <br/>
+E*&lt;text&gt; - Error status returned from message handler contains text string &lt;text&gt; <br/>
+X - there is no reply message at all <br/>
+<p/>
+The following values for &lt;action&gt; may be used alone or in combinations: <p/>
+C - Treat the message as Completed OK. <br/>
+W - Log a warning but treat the message as Completed OK. <br/>
+R - Retry the message according to the configured RetryInterval and FailureTimeout; finally Fail unless a different action is also specified <br/>
+S - Suspend the message, log an error, and move on to try the next message <br/>
+D - Disable the Operation, log an error and restore the outbound message to the front of the Operation's queue <br/>
+F - Fail with an error and move on to try the next message <p/>
+For example:'E#6301=R,E#<Ens>ErrGeneral=R,E=F'
+The default behavior is 'E=F'<p/>
+All codes where the &lt;actions&gt; consists of only 'W' (for 'log a Warning') will be evaluated and warnings generated if they trigger.
+Other codes will be evaluated in left-to-right order, executing the first one that triggers that has a non-warning &lt;actions&gt; value.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="100"/>
+</Property>
+
+<Property name="RetryInterval">
+<Description>
+How frequently to retry access to the output system</Description>
+<Type>%Numeric</Type>
+<InitialExpression>5</InitialExpression>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="AlertRetryGracePeriod">
+<Description>
+When AlertOnError is True, and the Operation is retrying,
+refrain from alerting if the Operation succeeds within this number of seconds after an error</Description>
+<Type>%Numeric</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="FailureTimeout">
+<Description>
+How long to keep retrying before giving up and returning an error code</Description>
+<Type>%Numeric</Type>
+<InitialExpression>15</InitialExpression>
+<Parameter name="MINVAL" value="-1"/>
+</Property>
+
+<Parameter name="SETTINGS">
+<Default>ReplyCodeActions,RetryInterval,AlertRetryGracePeriod,FailureTimeout,TopicsToSubscribe,MessageTransformationRule,DropMsgOnTransformationError</Default>
+</Parameter>
+
+<UDLText name="T">
+<Content><![CDATA[/* Add this property to your SETTINGS list if your Adapter has a property 'Connected' and you want to expose this feature */
+]]></Content>
+</UDLText>
+
+<Property name="NoFailWhileDisconnected">
+<Description><![CDATA[
+Suspend counting seconds toward FailureTimeout while disconnected.<br/>
+Does not apply if FailureTimeout=-1 or StayConnected=0.]]></Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="Retry">
+<Description>
+Set this property to 1 if you want to retry the current message again</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="SuspendMessage">
+<Description>
+Set this property to 1 if you want to mark the current message as "Suspended"</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="DeferResponse">
+<Description>
+Set this property to 1 if you want to defer the response to the current message so that it can be completed asynchronously at a later time by a other code (usually a business service).</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="%AlertStartTime">
+<Description>
+Time from which to start Alert retry grace period</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="RetryCount">
+<Description>
+how many times have we retried?</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="%ActionHint">
+<Description>
+Subclasses can store hint values here for use in determining what ReplyCodeAction to apply</Description>
+<Internal>1</Internal>
+<MultiDimensional>1</MultiDimensional>
+</Property>
+
+<Method name="MessageHeaderHandler">
+<Internal>1</Internal>
+<FormalSpec>pRequestHeader:Ens.MessageHeader,*pResponseHeader:Ens.MessageHeader</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set $ZT="Trap",$EC="",(tSC,tSCSuspend)=$$$OK, tAborted=0, tDoAlert="", pResponseHeader=$$$NULLOREF
+	Do {
+		Set ..%RequestHeader=pRequestHeader
+		/* ++HID
+		If pRequestHeader.MessageBodyClassName'="" {
+			Set tRequest = $zobjclassmethod(pRequestHeader.MessageBodyClassName,"%OpenId",pRequestHeader.MessageBodyId)
+			If '$IsObject(tRequest) Set tSC=$$$ERROR($$$EnsErrGeneral,"MessageBody does not exist for MessageHeader #"_pRequestHeader.%Id()_" with body class "_pRequestHeader.MessageBodyClassName)  Quit
+		} Else {
+			Set tRequest=$$$NULLOREF, tSC=$$$ERROR($$$EnsErrGeneral,"No MessageBody classname for MessageHeader #"_pRequestHeader.%Id())  Quit
+		}
+		--HID */
+		Set tResponse = $$$NULLOREF
+		Do pRequestHeader.SetStatus($$$eMessageStatusDelivered)
+		Set (..%SessionId,$$$JobSessionId) = pRequestHeader.SessionId
+		Set tConfigName = ..%ConfigName
+		// ++HID
+		Set tRequest = ..getRequest(pRequestHeader)
+		If '$IsObject(tRequest) Set tSC=$$$ERROR($$$EnsErrGeneral,"MessageBody does not exist for MessageHeader #"_pRequestHeader.%Id()_" with body class "_pRequestHeader.MessageBodyClassName)  Quit
+		// --HID
+		
+		
+		Set (tEndTime,..%LastReportedError)="", ..RetryCount=1, (..Retry,..SuspendMessage,..DeferResponse,..%AlertStartTime,tFailureTimedOut,tTerminate)=0
+		While 1 { ; Retry loop
+			Set tTimeCalled=$ZH
+			Set:'tEndTime tEndTime = tTimeCalled + ..FailureTimeout
+			If $d($$$EnsCrashedMessage(pRequestHeader.%Id())) {
+				Kill $$$EnsCrashedMessage(pRequestHeader.%Id())
+				Set tSC=$$$EnsError($$$EnsErrPreviouslyCrashedMessage,pRequestHeader.%Id())
+			} Else {
+				Set tSC=..MessageHandler(tRequest,.tResponse)
+			}
+			If $$$ISERR(tSC) {
+				Set $ZT="OnErrTrap1",$EC=""
+				$$$sysTRACE("calling OnError 1")
+				Set tDoAlert=..OnError(.tSC)
+				Goto OnErrExit1
+OnErrTrap1		Set $ZT="Trap",tSC=$$$ADDSC(tSC,$$$EnsSystemError)
+				If $tlevel>0 Trollback
+OnErrExit1		Set $ZT="Trap"
+			}
+			Set tAction=..OnGetReplyAction(tRequest,.tResponse,.tSC)
+			Set:""'=tAction tSC=..doReplyAction(tAction, tRequest,.tResponse,tSC)
+			If ..SuspendMessage {
+				Set tSCSuspend=tSC
+				Set tSC=$$$ERROR($$$EnsErrSuspending,pRequestHeader.%Id(),$$$StatusDisplayString(tSC))
+				Quit
+			}
+			Quit:..DeferResponse
+			Quit:'..Retry
+			Set ..Retry=0
+
+			If $$$ISERR(tSC) {
+				Set tTxt=$P($$$StatusDisplayString(tSC)," -- ") ; strip off "logged as" varying text
+				Set:'..%AlertStartTime&&..AlertOnError&&..AlertRetryGracePeriod&&(tTxt'=..%LastReportedError) ..%AlertStartTime=$ZH
+				If ..%AlertStartTime {
+					If $ZH>=(..%AlertStartTime+..AlertRetryGracePeriod) {
+						Set ..%AlertStartTime=0
+						If tTxt'=..%LastReportedError { $$$LOGERROR("Alerting at expiration of retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+						Else { $$$LOGINFO("Alerting at expiration of retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+					}
+					Else {
+						Set tDoAlert=0
+						If tTxt'=..%LastReportedError { $$$LOGERROR("Not Alerting during retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+						Else { $$$LOGINFO("Not Alerting during retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+					}
+				} Else {
+					If tTxt'=..%LastReportedError { $$$LOGSTATUS(tSC) }
+					Else { Set tDoAlert=0 }
+				}
+				Do:tDoAlert&&..AlertOnError ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(tSC))))
+			} Else { Set ..%AlertStartTime=0, tTxt="" }
+			Set ..%LastReportedError=tTxt
+	
+			If ..%QuitTask { Set tTerminate=1 }
+			Else {
+				If ..FailureTimeout'=-1 {
+					Set tNow=$ZH
+					If ..NoFailWhileDisconnected {
+						Try { Set tStayConnected=..Adapter.StayConnected }
+						Catch { Set tStayConnected=1 }
+						If tStayConnected {
+							Try { Set tConnected=..Adapter.Connected }
+							Catch { Set tConnected=1 }
+							If 'tConnected {
+								If tNow>tEndTime $$$sysTRACE("Ignoring FailureTimeout while disconnected")
+								Set:$G(tLast) tEndTime=tEndTime+(tNow-tLast) ; keep up with our disconnected time
+								Set tLast=tNow
+							} ElseIf $G(tLast) {
+								#; give it time for at least one retry so we don't die immediately on reconnecting
+								Set tMinInterval=..RetryInterval+1  Set:..FailureTimeout<..RetryInterval&&(..FailureTimeout>0) tMinInterval=..FailureTimeout+1
+								If tEndTime-tNow<tMinInterval $$$sysTRACE("Extending FailureTimeout by "_(tNow+tMinInterval-tEndTime)_" after reconnecting")  Set tEndTime=tNow+tMinInterval
+								Kill tLast
+							}
+						}
+					}
+					If tNow>tEndTime {
+						Set tFailureTimedOut=1, tSC=$$$ERROR($$$EnsErrFailureTimeout, ..FailureTimeout, $$$StatusDisplayString(tSC), $$$CurrentClass)
+						Set tDoDefault=..OnFailureTimeout(tRequest,.tResponse,.tSC)
+						Set:tDoDefault tSC=$S(""=tAction:tSC,1:..finalReplyAction(tAction,tSC,1))
+						Set:..SuspendMessage tSCSuspend=tSC
+						Quit:'..%QuitTask
+					}
+				}
+				If ..%QuitTask { Set tTerminate=1 }
+				Else {
+					$$$SetHostMonitor(tConfigName,$$$eMonitorStatus,"Retry")
+#If ..#INVOCATION="Queue"
+					$$$SetJobMonitor(tConfigName,$$$SystemName_":"_$Job,$$$eMonitorStatus,"Retry")
+#EndIf
+					Set tWaitTime = tTimeCalled + ..RetryInterval - $ZH
+					Set tSC1=##class(Ens.Queue).DeQueue("SystemSignal:"_$Job,,$S(tWaitTime<0:0, 1:tWaitTime),,0)  If $$$ISERR(tSC1) Set tSC=$$$ADDSC(tSC,tSC1)  Quit
+					Set tTerminate=##class(Ens.Job).ShouldTerminate()
+				} ; %QuitTask
+			} ; %QuitTask
+			Set tSBQ=##class(Ens.Job).ShouldBeQuiescent()
+			If tSBQ || tTerminate {
+				If pRequestHeader.Priority>$$$eMessagePriorityHigh||tTerminate {
+					Set tTerminate=1
+					$$$LOGINFO("Retry loop exited due to shutdown request for message "_..%RequestHeader.%Id()_" ; re-queueing"_$S($$$ISOK(tSC):"",1:" - original error: "_$$$StatusDisplayString(tSC)))
+					Set tSC1=##class(Ens.Queue).PutBackToQueue(pRequestHeader)
+					If $$$ISERR(tSC1) { Set tSC=$$$ADDSC(tSC1,tSC) }
+					Else { If 'tFailureTimedOut Set tSC=$$$OK } ; blow away the original error
+					Quit
+				}
+				$$$LOGINFO("Ignoring "_$S(tSBQ:"Quiescent",1:"Terminate")_" request while processing high priority (i.e. synchronous) request "_..%RequestHeader.%Id())
+			}
+			If ##class(Ens.Job).ShouldAbort() {
+				$$$LOGWARNING("Message "_..%RequestHeader.%Id()_" aborted as requested by signal for job "_$J_$S($$$ISOK(tSC):"",1:" - original error: "_$$$StatusDisplayString(tSC)))
+				Set tSC=$$$OK, tAborted=1
+				Quit
+			}
+			If ##class(Ens.Job).ShouldSuspend() {
+				$$$LOGWARNING("Message "_pRequestHeader.%Id()_" suspended as requested by signal for job "_$J_$S($$$ISOK(tSC):"", 1:" - original error: "_$$$StatusDisplayString(tSC)))
+				Set tSC=$$$OK, ..SuspendMessage=1
+				Quit
+			}
+			Set ..RetryCount=..RetryCount+1
+			$$$SetJobMonitor(tConfigName,$$$SystemName_":"_$Job,$$$eMonitorRetry,..RetryCount)
+			$$$sysTRACE("Retrying Request Header Id "_pRequestHeader.%Id()_" - try #"_..RetryCount)
+		} ; Retry loop
+
+		$$$SetJobMonitor(tConfigName,$$$SystemName_":"_$Job,$$$eMonitorRetry,"")
+
+		If $$$ISERR(tSC) {
+			Set:""=tDoAlert tDoAlert=..OnError(.tSC)
+			Quit:'..SuspendMessage&&'..DeferResponse
+		}
+		Quit:tTerminate
+
+		#; update global statistics
+		Set tConfigName=..%ConfigName
+		$$$IncHostCounterTime(tConfigName)
+
+		#; local stats
+#If ..#INVOCATION="Queue"
+		$$$IncJobCounterTime(tConfigName,$$$SystemName_":"_$Job)
+#EndIf
+		If tAborted {
+			Do pRequestHeader.SetStatus($$$eMessageStatusAborted)
+			Quit
+		}
+		If ..SuspendMessage {
+			Do pRequestHeader.SetStatus($$$eMessageStatusSuspended)
+			If $$$ISERR(tSC) {
+				If $$$ISERR(tSCSuspend) { $$$LOGSTATUS(tSC) }
+				Else { $$$LOGWARNING($$$StatusText(tSC)) }
+			}
+			Set tSC=$$$OK
+			Quit
+		}
+		If ..DeferResponse {
+			Do pRequestHeader.SetStatus($$$eMessageStatusDeferred)
+			If $$$ISERR(tSC) {
+				$$$LOGWARNING("Deferring Response to Request "_pRequestHeader.%Id()_"; Operation returned error "_$$$StatusDisplayString(tSC))
+				Set tSC=$$$OK
+			} Else {
+				$$$sysTRACE("Deferring Response to Request "_pRequestHeader.%Id())
+			}
+			Quit
+		}
+		Do pRequestHeader.SetStatus($$$eMessageStatusCompleted)
+
+		If $$$ISOK(tSC) && pRequestHeader.needsReply() {
+			// ++HID
+			Set tSC=pRequestHeader.NewResponseMessage(.pResponseHeader,..getReply(tResponse))
+			// --HID
+		}
+	} While 0
+Exit
+	If $$$ISERR(tSC) {
+		$$$LOGSTATUS(tSC)
+		Set tConfigName=..%ConfigName
+		$$$SetHostMonitor(tConfigName,$$$eMonitorStatus,"Error")
+#If ..#INVOCATION="Queue"
+		$$$SetJobMonitor(tConfigName,$$$SystemName_":"_$Job,$$$eMonitorStatus,"Error")
+#EndIf
+		Do:'tAborted pRequestHeader.SetStatus($$$eMessageStatusError)
+		Do:tDoAlert&&..AlertOnError ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(tSC))))
+	} ElseIf ..SuspendMessage&&$$$ISERR(tSCSuspend) {
+		Do:tDoAlert&&..AlertOnError ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(tSCSuspend))))
+	}
+	Set (..%SessionId,$$$JobSessionId) = ""
+	Set ..%RequestHeader = ""
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Set tDoAlert=..OnError(.tSC)
+	Goto Exit
+cleanNum(str)
+	Set f=0  For { Set f=$F(str,"#",f)  Quit:'f
+		For i=f:1 { Quit:$E(str,i)'?1N  Set $E(str,i)="",i=i-1 }
+	}
+	Quit str
+]]></Implementation>
+</Method>
+
+<Method name="OnGetReplyAction">
+<Description>
+Construct and return an Action string consisting of supported action code letters, based on qualities of the Request, Response, and Error Status.</Description>
+<FormalSpec><![CDATA[pRequest:%Library.Persistent,*pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ 	Set (tCode,tFullAction,tText)="", nActions=$S(""=$ZStrip(..ReplyCodeActions,"<>W"):0, 1:$L(..ReplyCodeActions,","))
+	For i=1:1:nActions { Set tType=$P(..ReplyCodeActions,",",i) Continue:""=tType
+		If ""'=tCode $$$LOGWARNING("Unrecognized reply code:'"_tCode_"'")
+		Set tAction="", tCode=$ZStrip($P(tType,"="),"<>W"), tCodeU=$ZCVT(tCode,"U")
+		Set tKnown=$Case($E(tCodeU)
+						,"E":$Case($E(tCode,2)
+								,"#":1
+								,"*":1
+								,"":1
+								,:0)
+						,"X":$Case($E(tCode,2),"":1,:0)
+						,:0
+						)
+		Continue:'tKnown
+		Set tMatch=$Case($E(tCodeU)
+						,"E":$$$ISERR(pSC)
+						,"X":'$$$IsdefObject(pResponse)
+						,:0)
+				 && $Case($E(tCode,2)
+						,"#":$$$StatusEquals(pSC,$E(tCode,3,*))
+						,"*":$$$StatusText(pSC)[$E(tCode,3,*)
+						,:1)
+		If tMatch {
+			If $E(tCodeU)="X" {
+				Set tMatchText="Empty Response object matched ReplyCodeAction "_i_" : ':"_tCode_"'"
+			} Else {
+				Set tMatchText="Status '"_$$$StatusDisplayString(pSC)_"' matched ReplyCodeAction "_i_" : '"_tCode_"'"
+			}
+			Set tAction=$ZCVT($ZStrip($P(tType,"=",2),"<>W"),"U")
+			Set:tAction'?1.(1"R",1"C",1"W",1"S",1"D",1"F") tAction=""
+			Continue:""=tAction
+			#; Make sure tFullAction has no more than 1 'W' in it; Quit if it is not just 'W'
+			Set:""'=tMatchText tText=tText_$S(""'=tText:" and ",1:"")_tMatchText
+			Set:tAction["W" tFullAction=""
+			Set tFullAction=tAction_$S(tAction["W":"",1:tFullAction)
+			Quit:tFullAction'?1."W"
+		}
+		Set tCode=""
+	}
+	Set:""'=tText ..%ActionHint("CodeReason")=
+		"Message body "_pRequest_" / "_pRequest.%Id()_" because "_
+		$S('$IsObject(pResponse):"",1:"response "_pResponse_$S(""=pResponse.%Id():"",1:" / "_pResponse.%Id())_" ")_
+		tText_" resulting in Action code "_tFullAction
+	Quit tFullAction
+]]></Implementation>
+</Method>
+
+<Method name="doReplyAction">
+<Description>
+Do the specified action for taking care of the message currently being processed</Description>
+<Internal>1</Internal>
+<FormalSpec><![CDATA[pAction:%String,pRequest:%Library.Persistent,pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tText=$G(..%ActionHint("CodeReason"))
+	Set:""=tText tText="Message body "_pRequest_" / "_pRequest.%Id()_" because response "_$S($IsObject(pResponse):pResponse_$S(""=pResponse.%Id():"",1:" / "_pResponse.%Id())_" ",1:"")_"with status '"_$$$StatusDisplayString(pSC)_"' resulted in Action code "_pAction
+
+	Set tActionDesc=$S(pAction["R":"Retrying", pAction["S":"Suspending", pAction["D":"Disabling on", pAction["F":"Quitting with error on", 1:"Accepting as Completed")
+	If "Accepting as Completed"=tActionDesc {
+		If pAction["W" {
+			$$$LOGWARNING("Warning on "_tText)
+		} Else {
+			$$$sysTRACE("Accepting as Completed "_tText)
+		}
+		Set ..Retry=0, ..SuspendMessage=0
+		Quit $$$OK ; suppress any error
+	}
+	Set tSC=$$$ERROR($$$EnsErrGeneral,tActionDesc_" "_tText)
+	If pAction["R" {
+		Set ..Retry=1
+	} Else {
+		Set tSC=..finalReplyAction(pAction,tSC,0)
+		Set pAction="" ; clear because we just did it
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="finalReplyAction">
+<Description>
+Do the action specified for when all configured retries have been exhausted</Description>
+<Internal>1</Internal>
+<FormalSpec>pAction:%String,pSC:%Status,pFixError:%Boolean</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If pAction["S" {
+		Set ..SuspendMessage=1, tActionDesc="Suspending on"
+	} ElseIf pAction["D" {
+#If ..#INVOCATION="InProc"
+		$$$LOGWARNING("InProc '"_..%ConfigName_"' cannot invoke action 'D' (Disable)")
+#Else
+		Set tActionDesc="Disabling on"
+		Do ##class(Ens.Job).Stop($Job)
+		Do ##Class(Ens.Director).EnableConfigItem(..%ConfigName,0,0)
+		Do ..SendRequestAsync("Ens.ScheduleHandler",$$$NULLOREF)
+		Set ..%QuitTask=1, ..Retry=1 ; we are quitting but the retry flag will force us to requeue the current message
+#EndIf
+	} ElseIf pAction["F" {
+		// No work required here ; just quit with error
+		Set tActionDesc="Discarding message on"
+		Set ..SuspendMessage=0
+	} Else { ; ??
+		$$$LOGWARNING($$$StatusDisplayString(pSC))
+		Set pSC=$$$OK, pFixError=0
+	}
+	Set:pFixError pSC=$$$ERROR($$$EnsErrGeneral,tActionDesc_" "_$$$StatusDisplayString(pSC))
+	Quit pSC
+]]></Implementation>
+</Method>
+
+<Method name="OnKeepalive">
+<Description>
+This method will be called within KeepaliveInterval of the last return from OnTask() or OnKeepalive().
+It is called via the Adapter's OnKeepalive() method, which is called from the Host.OnTask() method;
+if there is no Adapter there is no keepalive call.</Description>
+<FormalSpec>pAdapterStatus:%Status</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=pAdapterStatus
+	If $$$ISERR(tSC) {
+		Set tDoAlert=..OnError(.tSC)
+		If $$$ISERR(tSC) {
+			Set tTxt=$P($$$StatusDisplayString(tSC)," -- ") ; strip off "logged as" varying text
+			Set:'..%AlertStartTime&&..AlertOnError&&..AlertRetryGracePeriod&&(tTxt'=..%LastReportedError) ..%AlertStartTime=$ZH
+			If ..%AlertStartTime {
+				If $ZH>=(..%AlertStartTime+..AlertRetryGracePeriod) {
+					Set ..%AlertStartTime=0
+					If tTxt'=..%LastReportedError { $$$LOGERROR("Alerting at expiration of retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+					Else { $$$LOGINFO("Alerting at expiration of retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+				}
+				Else {
+					Set tDoAlert=0
+					If tTxt'=..%LastReportedError { $$$LOGERROR("Not Alerting during retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+					Else { $$$LOGINFO("Not Alerting during retry grace period ("_..AlertRetryGracePeriod_") for "_tTxt) }
+				}
+			} Else {
+				If tTxt'=..%LastReportedError { $$$LOGSTATUS(tSC) }
+				Else { Set tDoAlert=0 }
+			}
+			Do:tDoAlert&&..AlertOnError ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(tSC))))
+			Set:'..%QuitTask tSC=$$$OK
+		} Else { Set tTxt="" }
+	} Else { Set ..%AlertStartTime=0, tTxt="" }
+	Set ..%LastReportedError=tTxt
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="MessageHandler">
+<Description>
+This method dispatches requests to the methods according to the message map</Description>
+<Internal>1</Internal>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec>pRequest:%Library.Persistent,*pResponse:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Do %code.WriteLine(" Set $ZT=""Trap"",$EC="""",tSC=$$$OK")
+	Do %code.WriteLine(" do {")
+	Set tSC=$$$OK
+	Do {
+		Kill ^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name)
+		#; Find and save the first arg type of the OnMessage() method for the current subclass
+		Set tIndex = %compiledclass.Methods.FindObjectId(%class.Name_"||OnMessage")
+		If ""'=tIndex,%compiledclass.Methods.GetAt(tIndex).Origin'="Ens.BusinessOperation" {
+			Set tFormalSpec = %compiledclass.Methods.GetAt(tIndex).FormalSpec
+			Set tMessageType=$P($P(tFormalSpec,",",1),":",2)
+			Set tResponseType=$P($P(tFormalSpec,",",2),":",2)
+			Set ^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,0)=$lb(tMessageType,tResponseType)
+		}
+		Set tSC=$$resolveMessageMap(.tMappedMessages,%class,%compiledclass) Quit:$$$ISERR(tSC)
+		Set iItem=0
+		For tMessageCount=1:1:$g(tMappedMessages) {
+			Set tMessageType=$li(tMappedMessages(tMessageCount),1)
+			Set tActionMethod=$li(tMappedMessages(tMessageCount),2)
+			Set tIndex = %compiledclass.Methods.FindObjectId(%class.Name_"||"_tActionMethod)
+			If ""'=tIndex {
+				Set tFormalSpec = %compiledclass.Methods.GetAt(tIndex).FormalSpec
+				#; TODO: Check that the 1st arg type of the referenced method matches the MapItem MessageType and that it exists
+				Set tResponseType=$P($P(tFormalSpec,",",2),":",2)
+			} Else {
+				Set tSC=$$$ERROR($$$GeneralError,"Method "_tActionMethod_" referenced in MessageMap does not exist")
+				Quit
+			}
+			// Make sure to expand any omitted package using the current classes package
+			Set:tMessageType'["." tMessageType = $P(%class.Name,".",1,$L(%class.Name,".")-1) _ "." _ tMessageType
+			
+			Set ^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,$I(iItem))=$lb(tMessageType,tResponseType)
+			Do %code.WriteLine(" If pRequest.%IsA("""_tMessageType_""") {")
+			Do %code.WriteLine("  $$$NEWOUTIOLOGENTRY($$$OK,"""","""_tActionMethod_""",pRequest)")
+			Do %code.WriteLine("  $$$SetJobMonitor(..%ConfigName,$$$SystemName_"":""_$Job,$$$eMonitorMethod,"""_tActionMethod_""")")
+			Do %code.WriteLine("  Set tSC=.."_tActionMethod_"(.pRequest,.pResponse)")
+			Do %code.WriteLine("  $$$SetJobMonitor(..%ConfigName,$$$SystemName_"":""_$Job,$$$eMonitorMethod,"""")")
+			Do %code.WriteLine("  $$$sysTRACE("""_tActionMethod_"() returned with status ""_$$$StatusDisplayString(tSC)_"", Retry=""_..Retry_"", SuspendMessage=""_..SuspendMessage_"", DeferResponse=""_..DeferResponse_"", Response=""_$S('$$$IsdefObject(pResponse):"""", 1:pResponse_""/""_$S('pResponse.%Extends(""%Persistent""):"""", 1:pResponse.%Id())))")
+			Do %code.WriteLine("  $$$CLOSEIOLOGENTRY(tSC,"""",$G(pResponse))")
+			Do %code.WriteLine("  Quit")
+			Do %code.WriteLine(" }")
+		}
+		Quit:$$$ISERR(tSC)
+		;
+		Do %code.WriteLine(" $$$NEWOUTIOLOGENTRY($$$OK,"""",""OnMessage"",pRequest)")
+		Do %code.WriteLine(" $$$SetJobMonitor(..%ConfigName,$$$SystemName_"":""_$Job,$$$eMonitorMethod,""OnMessage"")")
+		Do %code.WriteLine(" Set tSC=..OnMessage(.pRequest,.pResponse)")
+		Do %code.WriteLine(" $$$SetJobMonitor(..%ConfigName,$$$SystemName_"":""_$Job,$$$eMonitorMethod,"""")")
+		Do %code.WriteLine(" $$$sysTRACE(""OnMessage() returned with status ""_$$$StatusDisplayString(tSC)_"", Retry=""_..Retry_"", SuspendMessage=""_..SuspendMessage_"", DeferResponse=""_..DeferResponse_"", Response=""_$S('$$$IsdefObject(pResponse):"""", 1:pResponse_""/""_$S('pResponse.%Extends(""%Persistent""):"""", 1:pResponse.%Id())))")
+		Do %code.WriteLine(" $$$CLOSEIOLOGENTRY(tSC,"""",pResponse)")
+	} While 0
+	;
+	Do %code.WriteLine(" } while (0)")
+	Do %code.WriteLine("Exit")
+	Do %code.WriteLine(" Quit tSC")
+	Do %code.WriteLine("Trap")
+	Do %code.WriteLine(" Set $ZT="""",tSC=$$$SystemError")
+	Do %code.WriteLine(" If $tlevel>0 Trollback")
+	Do %code.WriteLine(" Goto Exit")
+	;
+	Quit tSC
+
+resolveMessageMap(pMessages,pClassDefinition,pCompiledClass)
+	If '$IsObject(pClassDefinition) Quit $$$OK
+	If pClassDefinition.Name="Ens.BusinessOperation" Quit $$$OK
+	New %tMapItems,%tCount,%tItem,%tSuperCount,%tSC
+	Set %tSC=##class(Ens.Util.XML.Reader).ObjectsFromXData(.%tMapItems,pClassDefinition,"MessageMap","Ens.Config.MessageMap")
+	If $$$ISERR(%tSC),$$$StatusEquals(%tSC,$$$EnsErrXDataBlockNotDefined) Set %tSC=$$$OK
+	If $$$ISERR(%tSC) Quit %tSC
+	If $IsObject(%tMapItems) {
+		For %tCount=1:1:%tMapItems.Count() {
+			Set %tItem=%tMapItems.GetAt(%tCount)
+			If %tItem.MessageType="" Continue
+			Set pMessages($i(pMessages))=$lb(%tItem.MessageType,%tItem.ActionMethod)
+		}
+	}
+	If '$IsObject(pCompiledClass) Quit $$$OK
+	For %tSuperCount=$l(pCompiledClass.Super,","):-1:1 Set %tSC=$$resolveMessageMap(.pMessages,##class(%Dictionary.ClassDefinition).%OpenId($p(pCompiledClass.Super,",",%tSuperCount)),##class(%Dictionary.CompiledClass).%OpenId($p(pCompiledClass.Super,",",%tSuperCount))) Quit:$$$ISERR(%tSC)
+	Quit %tSC
+	;
+]]></Implementation>
+</Method>
+
+<Method name="OnMessage">
+<Description>
+This is the default message handler.  All request types not declared in the message map are delivered here</Description>
+<FormalSpec>pRequest:%Library.Persistent,*pResponse:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	Quit $$$EnsError($$$EnsErrRequestNotHandled,pRequest)
+]]></Implementation>
+</Method>
+
+<Method name="SendRequestSync">
+<Description>
+Use this method to dispatch an Ensemble business invocation synchronously</Description>
+<FormalSpec><![CDATA[pTargetDispatchName:%String,pRequest:%Library.Persistent,&pResponse:%Library.Persistent,pTimeout:%Numeric=-1,pDescription:%String=""]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$sysTRACE("call to "_pTargetDispatchName)
+	Set tZH=$ZH
+	Set tTargetConfigName = $get($$$DispatchNameToConfigName(pTargetDispatchName)) If tTargetConfigName="" Quit $$$EnsError($$$EnsErrBusinessDispatchNameNotRegistered,pTargetDispatchName)
+	Set tTargetBusinessClass = $$$ConfigClassName(tTargetConfigName)
+	Set tSC=$zobjclassmethod(tTargetBusinessClass,"acceptRequestSync",..%ConfigName,tTargetConfigName,.pRequest,.pResponse,..%SessionId,pTimeout,,pDescription)
+	$$$catTRACE("timing","duration of sync call: "_($ZH-tZH))
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="SendRequestAsync">
+<Description>
+Use this method to dispatch an Ensemble business invocation asynchronously</Description>
+<FormalSpec>pTargetDispatchName:%String,pRequest:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$sysTRACE("call to "_pTargetDispatchName)
+	Set tZH=$ZH
+	Set tTargetConfigName = $get($$$DispatchNameToConfigName(pTargetDispatchName)) If tTargetConfigName="" Quit $$$EnsError($$$EnsErrBusinessDispatchNameNotRegistered,pTargetDispatchName)
+	Set tTargetBusinessClass = $$$ConfigClassName(tTargetConfigName)
+	Set tSC=$zobjclassmethod(tTargetBusinessClass,"acceptRequestAsync",..%ConfigName,tTargetConfigName,.pRequest,0,"",..%SessionId,"")
+	$$$catTRACE("timing","duration of async call: "_($ZH-tZH))
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="OnFailureTimeout">
+<Description><![CDATA[
+Override this method to provide custom handling of retry / failure timeout.<p/>
+Set ..Retry=1 to override normal error return and re-evaluate flag properties.<p/>
+Return 0 to skip further (default) FailureTimeout processing, 1 to perform default processing.]]></Description>
+<CodeMode>expression</CodeMode>
+<FormalSpec><![CDATA[pRequest:%Library.Persistent,*pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[1
+]]></Implementation>
+</Method>
+
+<Method name="OnError">
+<Description>
+Override this method to provide custom error handling. Return 0 means skip standard AlertOnError behavior.</Description>
+<FormalSpec><![CDATA[&pStatus:%Status]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[	Quit 1
+]]></Implementation>
+</Method>
+
+<Method name="SendAlert">
+<Description>
+Use this method to send an alert message</Description>
+<FormalSpec>pAlertRequest:Ens.AlertRequest</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Do pAlertRequest.%Save()
+	$$$LOGALERT(pAlertRequest.AlertText_" (alert request ID="_pAlertRequest.%Id()_")")
+	Quit:""=$G($$$DispatchNameToConfigName("Ens.Alert")) $$$OK
+	Set tTargetName="Ens.Alert"
+	Quit ..SendRequestAsync(tTargetName,pAlertRequest)
+]]></Implementation>
+</Method>
+
+<Method name="DeferResponse">
+<FormalSpec><![CDATA[&pToken:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set ..DeferResponse=1
+	Set pToken=..GetDeferredResponseToken()
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetDeferredResponseToken">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	Quit ..%RequestHeader.%Id()_"|"_$$$EnsRuntime("Name")
+]]></Implementation>
+</Method>
+
+<Method name="GetMessageList">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	Quit ..GetRequestClassList()
+]]></Implementation>
+</Method>
+
+<Method name="GetRequestClassList">
+<Description>
+Return a collection in $List format of all Request classes found in OnMessage and in the Message Map method signatures</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>MessageHandler</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set i="" For {
+		Set i=$Order(^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,i)) Quit:i=""
+		Set tRequestClass=$li(^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,i),1)
+		Set tMessageClassList(tRequestClass)=""
+	}
+	If $$$comMemberKeyGet(%class,$$$cCLASSmethod,"OnMessage",$$$cMETHrunnable) {
+		// Check the OnMessage signature for additional request types
+		Set tSignature=$$$comMemberKeyGet(%class.Name,$$$cCLASSmethod,"OnMessage",$$$cMETHformalspecparsed)
+		Set tRequestClass=$lg($lg(tSignature,1),2)
+		Set tMessageClassList(tRequestClass)=""
+	}
+	;
+	If %class.Name="Ens.BusinessOperation" {
+		Do %code.WriteLine(" Quit """"")
+	} Else {
+		Do %code.WriteLine(" Set tList=""""")
+		Set tRequestClass="" For { Set tRequestClass=$o(tMessageClassList(tRequestClass))  Quit:tRequestClass=""
+			Do %code.WriteLine(" Set tList=tList_$lb("""_tRequestClass_""")")
+		}
+		Do %code.WriteLine(" Quit tList")
+	}
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetResponseClassList">
+<Description>
+Return a collection in $List format of all Response classes found in OnMessage and in the Message Map method signatures</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec>pRequest:%String=""</FormalSpec>
+<GenerateAfter>MessageHandler</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If %class.Name="Ens.BusinessOperation" {
+		Do %code.WriteLine(" Quit """"")
+	} Else {
+		Set i="" For { Set i=$Order(^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,i))  Quit:i=""
+			Set tRequestClass=$li(^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,i),1)
+			Set tResponseClass=$li(^CacheTempCls($Job,"Ensemble","MessageMap",%class.Name,i),2)
+			Set tMessageClassList(tRequestClass,tResponseClass)=""
+		}
+		
+		If $$$comMemberKeyGet(%class,$$$cCLASSmethod,"OnMessage",$$$cMETHrunnable) {
+			// Check the OnMessage signature for additional request/response types
+			Set tSignature=$$$comMemberKeyGet(%class.Name,$$$cCLASSmethod,"OnMessage",$$$cMETHformalspecparsed)
+			Set tRequestClass=$lg($lg(tSignature,1),2)
+			Set tResponseClass=$lg($lg(tSignature,2),2)
+			Set tMessageClassList(tRequestClass,tResponseClass)=""
+		}
+
+		Set (tRequestClass,tFullResponseClassList)="" For { Set tRequestClass=$o(tMessageClassList(tRequestClass))  Quit:tRequestClass=""
+			Set (tResponseClass,tResponseClassList)="" For { Set tResponseClass=$o(tMessageClassList(tRequestClass,tResponseClass))  Quit:tResponseClass=""
+				Set tResponseClassList=tResponseClassList_","""_tResponseClass_""""
+			}
+			Set tFullResponseClassList=tFullResponseClassList_tResponseClassList
+			If ""'=tResponseClassList {
+				Set tResponseClassList="$lb("_$e(tResponseClassList,2,*)_")"
+				Do %code.WriteLine(" If pRequest="""_tRequestClass_""" Quit "_tResponseClassList)
+			}
+		}
+		If ""'=tFullResponseClassList {
+			Set tFullResponseClassList="$lb("_$e(tFullResponseClassList,2,*)_")"
+			Do %code.WriteLine(" If pRequest="""" Quit "_tFullResponseClassList)
+		}
+		Do %code.WriteLine(" Quit """"")
+	}
+	Quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Ens.BusinessProcess">
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Persistent,Ens.Host,Ens.Settings,Enh.PubSub</Super>
+<System>3</System>
+<TimeChanged>61908,54540.262546</TimeChanged>
+<TimeCreated>59268,43369.482</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="ReplyCodeActions">
+<Description><![CDATA[
+A comma-separated list of codes specifying what action this Process will take on various reply status conditions. <br/>
+The format of the list is: &lt;code&gt;=&lt;actions&gt;,(&lt;code&gt;,&lt;code&gt;)=&lt;actions&gt;,...<br/>
+Types of reply status condition are identified by a specification code defined as follows: <p/>
+E - Error status returned from message handler <br/>
+E#&lt;statuscode&gt; - Error status returned from message handler has status code equal to &lt;statuscode&gt; <br/>
+E*&lt;text&gt; - Error status returned from message handler contains text string &lt;text&gt; <br/>
+X - there is no reply message object at all <br/>
+<p/>
+The following values for &lt;action&gt; may be used alone or in combinations: <p/>
+C - Treat the message as Completed OK. <br/>
+W - Log a warning but treat the message as Completed OK. <br/>
+R - Retry the message according to the configured RetryInterval and FailureTimeout; finally Fail unless a different action is also specified <br/>
+S - Suspend the message, log an error, and move on to try the next message <br/>
+D - Disable the Process, log an error and restore the outbound message to the front of the Process's queue <br/>
+F - Fail with an error and move on to try the next message <p/>
+For example:'E#6301=R,E#<Ens>ErrGeneral=R,E=F'
+The default behavior is 'E=F'<p/>
+All codes where the &lt;actions&gt; consists of only 'W' (for 'log a Warning') will be evaluated and warnings generated if they trigger.
+Other codes will be evaluated in left-to-right order, executing the first one that triggers that has a non-warning &lt;actions&gt; value.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="100"/>
+</Property>
+
+<Property name="RetryInterval">
+<Description>
+How frequently to retry access to the output system</Description>
+<Type>%Numeric</Type>
+<InitialExpression>5</InitialExpression>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="AlertRetryGracePeriod">
+<Description><![CDATA[
+When AlertOnError is True, and the Process is retrying,<br>
+refrain from alerting if the Process succeeds within this number of seconds after an error]]></Description>
+<Type>%Numeric</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="MINVAL" value="0"/>
+</Property>
+
+<Property name="FailureTimeout">
+<Description>
+How long to keep retrying before giving up and returning an error code</Description>
+<Type>%Numeric</Type>
+<InitialExpression>15</InitialExpression>
+<Parameter name="MINVAL" value="-1"/>
+</Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+// ++HID
+
+]]></Content>
+</UDLText>
+
+<Parameter name="SETTINGS">
+<Default>ReplyCodeActions,RetryInterval,AlertRetryGracePeriod,FailureTimeout,TopicsToSubscribe,MessageTransformationRule,DropMsgOnTransformationError</Default>
+</Parameter>
+
+<UDLText name="T">
+<Content><![CDATA[
+// --HID
+
+]]></Content>
+</UDLText>
+
+<Property name="%request">
+<Description>
+non-protected properties to be used by subclass methods</Description>
+<Type>%Library.Persistent</Type>
+<Calculated>1</Calculated>
+</Property>
+
+<Property name="%response">
+<Description>
+non-protected properties to be used by subclass methods</Description>
+<Type>%Library.Persistent</Type>
+<Calculated>1</Calculated>
+</Property>
+
+<Property name="%responseId">
+<Type>%String</Type>
+<Parameter name="COLLATION" value="EXACT"/>
+<Parameter name="MAXLEN"/>
+</Property>
+
+<Property name="%responseClassName">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+</Property>
+
+<Property name="%PrimaryRequestHeader">
+<Description>
+protected properties</Description>
+<Type>Ens.MessageHeader</Type>
+</Property>
+
+<Property name="%CurrentResponseHeader">
+<Type>Ens.MessageHeader</Type>
+<Transient>1</Transient>
+</Property>
+
+<Property name="%MasterPendingResponses">
+<Type>%String</Type>
+<Collection>list</Collection>
+<Parameter name="MAXLEN"/>
+</Property>
+
+<Property name="%IsCompleted">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="%PrimaryResponseHeader">
+<Type>Ens.MessageHeader</Type>
+</Property>
+
+<Property name="%RepliedStatus">
+<Type>%Integer</Type>
+<InitialExpression>$$$eRepliedStatusNotCalled</InitialExpression>
+</Property>
+
+<Property name="%TimeCreated">
+<Type>Ens.DataType.UTC</Type>
+</Property>
+
+<Property name="%TimeCompleted">
+<Type>Ens.DataType.UTC</Type>
+</Property>
+
+<Property name="%IsTimerInterrupted">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="%IsTerminated">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="%StatusCode">
+<Type>%Status</Type>
+<InitialExpression>$$$OK</InitialExpression>
+</Property>
+
+<Property name="%MessagesSent">
+<Type>%String</Type>
+<Collection>list</Collection>
+</Property>
+
+<Property name="%MessagesReceived">
+<Type>%String</Type>
+<Collection>list</Collection>
+</Property>
+
+<Property name="%ActionHint">
+<Description>
+Subclasses can store hint values here for use in determining what ReplyCodeAction to apply</Description>
+<Internal>1</Internal>
+<MultiDimensional>1</MultiDimensional>
+<Transient>1</Transient>
+</Property>
+
+<Index name="TimeCreated">
+<Properties>%TimeCreated</Properties>
+</Index>
+
+<Index name="SessionId">
+<Properties>%SessionId</Properties>
+</Index>
+
+<Property name="Retry">
+<Description>
+Set this property to 1 if you want to retry the current message again</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="SuspendMessage">
+<Description>
+Set this property to 1 if you want to mark the current message as "Suspended"</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Method name="SendRequestSync">
+<Description>
+Use this method to dispatch an Ensemble business invocation synchronously</Description>
+<FormalSpec><![CDATA[pTargetDispatchName:%String,pRequest:%Library.Persistent,&pResponse:%Library.Persistent,pTimeout:%Numeric=-1,pDescription:%String=""]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$sysTRACE("call to "_pTargetDispatchName)
+	Set tZH=$zh
+	Set tTargetConfigName = $get($$$DispatchNameToConfigName(pTargetDispatchName))  Quit:""=tTargetConfigName $$$EnsError($$$EnsErrBusinessDispatchNameNotRegistered,pTargetDispatchName)
+	Set tTargetBusinessClass = $$$ConfigClassName(tTargetConfigName)
+	Set tSC = $zobjclassmethod(tTargetBusinessClass,"acceptRequestSync",..%ConfigName,tTargetConfigName,.pRequest,.pResponse,..%SessionId,pTimeout,.tRequestHeader,pDescription)
+	Do:$$$ISOK(tSC) ..%MessagesSent.Insert(tRequestHeader.%Id())
+	$$$catTRACE("timing","duration of sync call: "_($zh-tZH))
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="SendRequestAsync">
+<Description>
+Use this method to dispatch an Ensemble business invocation asynchronously</Description>
+<FormalSpec>pTargetDispatchName:%String,pRequest:Request,pResponseRequired:%Boolean=1,pCompletionKey:%String="",pDescription:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$sysTRACE("call to "_pTargetDispatchName)
+	Set tZH=$zh
+	Set tSC = ..SendRequestAsyncInternal(pTargetDispatchName, pRequest, pResponseRequired, pCompletionKey,0,pDescription)
+	$$$catTRACE("timing","duration of async call: "_($zh-tZH))
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="SendAlert">
+<Description>
+Use this method to send an alert message</Description>
+<FormalSpec>pAlertRequest:Ens.AlertRequest</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Do pAlertRequest.%Save()
+	$$$LOGALERT(pAlertRequest.AlertText_" (alert request ID="_pAlertRequest.%Id()_")")
+	Quit:""=$get($$$DispatchNameToConfigName("Ens.Alert")) $$$OK
+	
+	Set tTargetName = "Ens.Alert"
+	Quit ..SendRequestAsync(tTargetName,pAlertRequest,0)
+]]></Implementation>
+</Method>
+
+<Method name="SetTimer">
+<Description>
+This method set up a timer for how long to wait for pending asynchronous responses</Description>
+<FormalSpec>pTimeout:%String,pCompletionKey:%String="",pControlledCompletionKeys:%String="*",*pAlarmHandle:%String,pDescription:%String="",pIsTimer=1</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tAlarmRequest = ##class(Ens.AlarmRequest).%New()
+	$$$ASSERT($IsObject(tAlarmRequest))
+	Set tAlarmRequest.Timeout = pTimeout
+	Set tSC=tAlarmRequest.%Save() Quit:$$$ISERR(tSC) tSC
+	Set pAlarmHandle = tAlarmRequest.%Id()
+	Quit ..SendRequestAsyncInternal("Ens.Alarm",tAlarmRequest,1,pCompletionKey,pIsTimer,pControlledCompletionKeys,pDescription)
+]]></Implementation>
+</Method>
+
+<Method name="SendRequestAsyncInternal">
+<Internal>1</Internal>
+<FormalSpec>pTargetDispatchName:%String,pRequest:Request,pResponseRequired:%Boolean=1,pCompletionKey:%String="",pIsTimer:%Boolean,pControlledCompletionKeys:%String="",pDescription:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tTargetConfigName = $get($$$DispatchNameToConfigName(pTargetDispatchName)) Quit:""=tTargetConfigName $$$EnsError($$$EnsErrBusinessDispatchNameNotRegistered,pTargetDispatchName)
+	Set tTargetBusinessClass=$$$ConfigClassName(tTargetConfigName)
+	Set tHighPriority = (pResponseRequired&&(..%PrimaryRequestHeader.Priority=$$$eMessagePriorityHigh)&&(..%RepliedStatus'=$$$eRepliedStatusSent))||(..#INVOCATION="InProc")
+	If pResponseRequired {
+		Set tSC=$zobjclassmethod(tTargetBusinessClass,"acceptRequestAsync",..%ConfigName,tTargetConfigName,pRequest,tHighPriority,..QueueName(),..%SessionId,..%Id(),.tRequestHeader,pDescription)
+		Do ..%MasterPendingResponses.Insert($lb(tRequestHeader.%Id(),pCompletionKey,pIsTimer,pControlledCompletionKeys))
+	} Else {
+		Set tSC=$zobjclassmethod(tTargetBusinessClass,"acceptRequestAsync",..%ConfigName,tTargetConfigName,pRequest,tHighPriority,"",..%SessionId,..%Id(),.tRequestHeader,pDescription)
+	}
+	Do:$$$ISOK(tSC) ..%MessagesSent.Insert(tRequestHeader.%Id())
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="OnTask">
+<Description><![CDATA[
+Event loop when PoolSize > 0. For PoolSize 0, Ens.Actor controls the event loop.]]></Description>
+<Internal>1</Internal>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$ASSERT(0_"BP's OnTask should never be called, Actor's should")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="MessageHeaderHandler">
+<Description>
+This method is for internal use</Description>
+<Internal>1</Internal>
+<FormalSpec>pRequestHeader:Ens.MessageHeader,*pResponseHeader:Ens.MessageHeader,*pResponseIsError</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set $ZT="Trap", $EC="", tSC=$$$OK, pResponseIsError=""
+	Do ..%MessagesReceived.Insert(pRequestHeader.%Id())
+	If pRequestHeader.Type = $$$eMessageTypeRequest {
+		$$$ASSERT(..%PrimaryRequestHeader=$$$NULLOREF)
+		Set ..%PrimaryRequestHeader=pRequestHeader
+		Set ..%Concurrency=4
+		Set tSC=..%Save() If $$$ISERR(tSC) Quit
+		Set (..%SessionId,$$$JobSessionId)=pRequestHeader.SessionId
+
+		Set ..%TimeCreated = $$$timeUTC
+		Do pRequestHeader.SetStatus($$$eMessageStatusDelivered)
+		Set tResponse=$$$NULLOREF
+
+		Set $ZT="UserTrap1",$EC=""
+		If $d($$$EnsCrashedMessage(pRequestHeader.%Id())) {
+			Kill $$$EnsCrashedMessage(pRequestHeader.%Id())
+			Set tSC=$$$EnsError($$$EnsErrPreviouslyCrashedMessage,pRequestHeader.%Id())
+		} Else {
+			Set tSC=..OnRequest(..%request,.tResponse)
+		}
+		Goto UserExit1
+UserTrap1 Set $ZT="Trap",tSC=$$$EnsSystemError
+		If $tlevel>0 Trollback
+UserExit1 Set $ZT="Trap"
+
+		Quit:$$$ISERR(tSC) tSC
+		Set tSC=..%responseSet(tResponse)  Quit:$$$ISERR(tSC) tSC
+	} ElseIf pRequestHeader.Type = $$$eMessageTypeTerminate {
+		Do pRequestHeader.SetStatus($$$eMessageStatusDelivered)
+		do ..%MasterPendingResponses.Clear()
+		Set ..%IsTerminated=1
+		Set tSC=$zobjclassmethod(pRequestHeader.MessageBodyClassName,"%OpenId",pRequestHeader.MessageBodyId).StringValue
+	} Else {
+		Set ..%CurrentResponseHeader=pRequestHeader
+		Set $$$JobSessionId=..%SessionId
+		#; deal with a response, pRequestHeader should have .Type=$$$eMessageTypeResponse
+		#; ignore the response once the RunStatus is completed
+		If ..%IsCompleted {
+			$$$sysTRACE("Discarding response '"_pRequestHeader.%Id()_"' to already-completed process "_..%Id())
+			Do pRequestHeader.SetStatus($$$eMessageStatusDiscarded)
+			Quit tSC
+		}
+		#; search the pending sync list for this message body
+		Set tCallRequestHeader = ##class(Ens.MessageHeader).%OpenId(pRequestHeader.CorrespondingMessageId)
+		If tCallRequestHeader.MessageBodyClassName'="" {
+			Set tCallRequest = $zobjclassmethod(tCallRequestHeader.MessageBodyClassName,"%OpenId",tCallRequestHeader.MessageBodyId)
+			If '$IsObject(tCallRequest) Set tSC=$$$ERROR($$$EnsErrNoMsgBody,tCallRequestHeader.%Id()) Quit tSC
+		} Else {
+			Set tCallRequest = $$$NULLOREF
+		}
+		Set tCallRequestId = tCallRequest.%Id()
+		Set tIndex=0 For i=1:1:..%MasterPendingResponses.Count() {
+			Set tEntry=..%MasterPendingResponses.GetAt(i)
+			If $li(tEntry,1)=pRequestHeader.CorrespondingMessageId Set tIndex=i,tCompletionKey=$li(tEntry,2),tIsTimer=$li(tEntry,3),pControlledCompletionKeys=$li(tEntry,4) Quit
+		}
+		#; if response is not in the pending sync list, ignore it
+		If tIndex=0 {
+			$$$sysTRACE("Discarding response '"_pRequestHeader.%Id()_"' belonging to message '"_pRequestHeader.CorrespondingMessageId_"' while in process "_..%Id())
+			Do pRequestHeader.SetStatus($$$eMessageStatusDiscarded)
+			Quit tSC
+		}
+		#; set status to be 'delivered'
+		Do pRequestHeader.SetStatus($$$eMessageStatusDelivered)
+
+		#; an asynchronous call responded with an error - call OnError
+		Set pResponseIsError = pRequestHeader.IsError
+		If pResponseIsError {
+			Set tResponse=..%response
+
+			Set $ZT="UserTrap2",$EC=""
+			Set tErroredResponseStatus=pRequestHeader.ErrorStatus
+			Set tSC=..OnError(..%request,.tResponse,tCallRequest,tErroredResponseStatus,tCompletionKey)
+			#; Returning $$$OK from this method causes the BusinessProcess to recover from this error
+			
+			#; If we are prepared to handle the errored response (BPL Business Processes do this)
+			If ..WillHandleErroredResponse() {
+				#; The BP is willing to handle an errored response, prevent exit at this point; pResponseIsError will be tested and acted upon below
+				Set tSC=$$$OK
+			} Else {
+				#; The OnError method 'handled' the error
+				Set:$$$ISOK(tSC) pResponseIsError=0
+			}
+			Goto UserExit2
+UserTrap2	Set $ZT="Trap", tSC=$$$EnsSystemError, pResponseIsError="" ; new tSC for which OnError() has not been called
+			If $tlevel>0 Trollback
+UserExit2	Set $ZT="Trap"
+			Quit:$$$ISERR(tSC) tSC
+			Set tSC=..%responseSet(tResponse)  If $$$ISERR(tSC) Set pResponseIsError=""  Quit tSC
+		}
+		#; Remove this entry
+		Do ..%MasterPendingResponses.RemoveAt(tIndex)
+		
+		#; Handle Timer timeout
+		If tIsTimer {
+			Set $ZT="UserTrap2a",$EC=""
+			Set tResponse=..%response
+			$$$catTRACE("bproc","calling OnTimeout")
+			Set tSC=..OnTimeout(..%request,.tResponse,tCallRequest,tCompletionKey)
+			Goto UserExit2a
+UserTrap2a	Set $ZT="Trap",tSC=$$$EnsSystemError
+			If $tlevel>0 Trollback
+UserExit2a	Set $ZT="Trap"
+			Quit:$$$ISERR(tSC) tSC
+			$$$catTRACE("bproc","returning from OnTimeout")
+			Set tSC=..%responseSet(tResponse)  Quit:$$$ISERR(tSC) tSC
+			
+			For i=..%MasterPendingResponses.Count():-1:1 {
+				Set tEntry=..%MasterPendingResponses.GetAt(i)
+				If (pControlledCompletionKeys="*")||$listfind(pControlledCompletionKeys,$li(tEntry,2)) {
+					Do ..%MasterPendingResponses.RemoveAt(i)
+					Set tRequestHeader=##class(Ens.MessageHeader).%OpenId($li(tEntry,1))
+					Set tMessageBody=$zobjclassmethod(tRequestHeader.MessageBodyClassName,"%OpenId",tRequestHeader.MessageBodyId)
+					Set $ZT="UserTrapOnTimeout",$EC=""
+					Do tMessageBody.%OnTimeout()
+					Goto UserExitOnTimeout
+UserTrapOnTimeout	Set $ZT="Trap"
+					If $tlevel>0 Trollback
+UserExitOnTimeout	Set $ZT="Trap"
+				}
+			}
+		}
+		#; clear the pending request list if timer is the only thing left
+		If ..%MasterPendingResponses.Count()>0 {
+			Set tHasNonTimer=0
+			For i=1:1:..%MasterPendingResponses.Count() {
+				Set tEntry=..%MasterPendingResponses.GetAt(i)
+				If $li(tEntry,3)=0 Set tHasNonTimer=1 Quit
+			}
+			If tHasNonTimer=0 Do ..%MasterPendingResponses.Clear()
+		}
+		#; call OnResponse if the response is not an error
+		#; we can get here when user chooses to ignore an error response
+		If 'pResponseIsError {
+			Set tResponse=..%response, pResponseIsError="" ; new tSC coming up for which OnError() has not been called
+			$$$catTRACE("bproc","calling OnResponse")
+			If pRequestHeader.MessageBodyClassName'="" {
+				Set tMessageBody = $zobjclassmethod(pRequestHeader.MessageBodyClassName,"%OpenId",pRequestHeader.MessageBodyId)
+				If '$IsObject(tMessageBody) Set tSC=$$$ERROR($$$EnsErrNoMsgBody,pRequestHeader.%Id()) Quit tSC
+				Set:tIsTimer ..%IsTimerInterrupted=tMessageBody.IsInterrupted
+			} Else {
+				Set tMessageBody = $$$NULLOREF
+			}
+			Set $ZT="UserTrap3",$EC=""
+			If $d($$$EnsCrashedMessage(pRequestHeader.%Id())) {
+				Kill $$$EnsCrashedMessage(pRequestHeader.%Id())
+				Set tSC=$$$EnsError($$$EnsErrPreviouslyCrashedMessage,pRequestHeader.%Id())
+			} Else {
+				Set tSC=..OnResponse(..%request,.tResponse,tCallRequest,tMessageBody,tCompletionKey)
+			}
+			Goto UserExit3
+UserTrap3	Set $ZT="Trap", tSC=$$$EnsSystemError
+			If $tlevel>0 Trollback
+UserExit3	Set $ZT="Trap"
+			Quit:$$$ISERR(tSC) tSC
+			$$$catTRACE("bproc","returning from OnResponse")
+			Set tSC=..%responseSet(tResponse)  Quit:$$$ISERR(tSC) tSC
+		} Else {
+			#; This is executed when the BP is willing to handle an error returned from a call.
+			#; Currently implemented by all BPL Business processes. The callresponse will not be available.
+			Set tResponse=..%response
+			$$$catTRACE("bproc","calling OnErroredResponse")
+			Set $ZT="UserTrap4",$EC=""
+			Set tSC=..OnErroredResponse(tErroredResponseStatus,..%request,.tResponse,tCompletionKey)
+			Goto UserExit4
+UserTrap4	Set $ZT="Trap", tSC=$$$EnsSystemError, pResponseIsError="" ; new tSC for which OnError() has not been called
+			If $tlevel>0 Trollback
+UserExit4	Set $ZT="Trap"
+			Quit:$$$ISERR(tSC) tSC
+			$$$catTRACE("bproc","returning from OnErroredResponse")
+			Set tSC=..%responseSet(tResponse)  Quit:$$$ISERR(tSC) tSC
+		}
+		Quit:$$$ISERR(tSC) tSC
+	} ; Else
+	Do pRequestHeader.SetStatus($$$eMessageStatusCompleted)
+	
+	If ..%MasterPendingResponses.Count()=0 {
+		Set tResponse=..%response
+
+		Set $ZT="UserTrap5",$EC=""
+		$$$catTRACE("bproc","calling OnComplete")
+		Set tSC=..OnComplete(..%request,.tResponse)
+		Goto UserExit5
+UserTrap5 Set $ZT="Trap",tSC=$$$EnsSystemError
+		  If $tlevel>0 Trollback
+UserExit5 Set $ZT="Trap"
+		Quit:$$$ISERR(tSC) tSC
+		$$$catTRACE("bproc","returning from OnComplete")
+		Set tSC=..%responseSet(tResponse)  Quit:$$$ISERR(tSC) tSC
+
+	    #; if OnComplete() adds more async calls, the process is not complete
+	    If ..%MasterPendingResponses.Count()=0 {
+		    Set ..%IsCompleted = 1, ..%TimeCompleted = $$$timeUTC
+		    If ..%RepliedStatus=$$$eRepliedStatusNotCalled Set tSC=..Reply(..%response)
+	    }
+	}
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="inprocRequest">
+<Description>
+This method is for internal use.</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pSourceConfigName:%String,pTargetConfigName:%String,pRequest:%Library.Persistent,&pResponse:%Library.Persistent,pReturnQueueName:%String,&pSessionId:%String,pBusinessProcessId:%String,&pRequestHeader:Ens.MessageHeader,pDescription:%String=""]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+#define BPRuntime(%s)	$$$EnsRuntimeAppData("BProcRetry",tSessKey,%s)
+#define KillBPRuntime	Kill $$$EnsRuntimeAppData("BProcRetry",tSessKey)
+
+	Set pResponse=$$$NULLOREF
+	Set tSC = ##class(Ens.MessageHeader).NewRequestMessage(.pRequestHeader,pRequest,.pSessionId) Quit:$$$ISERR(tSC)
+	Set pRequestHeader.SourceConfigName = pSourceConfigName
+	Set pRequestHeader.TargetConfigName = pTargetConfigName
+	Set pRequestHeader.SourceBusinessType = $$$ConfigBusinessType($$$DispatchNameToConfigName(pSourceConfigName))
+	Set pRequestHeader.TargetBusinessType = $$$ConfigBusinessType($$$DispatchNameToConfigName(pTargetConfigName))
+	Set pRequestHeader.TargetQueueName = ""
+	Set pRequestHeader.ReturnQueueName = pReturnQueueName
+	Set pRequestHeader.BusinessProcessId = pBusinessProcessId
+	Set pRequestHeader.Priority = $$$eMessagePriorityHigh
+	Set pRequestHeader.Invocation = $$$eMessageInvocationInProc
+	Set pRequestHeader.Description = pDescription
+
+	Set tSC=pRequestHeader.%Save() If $$$ISERR(tSC) $$$LOGSTATUS(tSC) Quit tSC
+	
+	Set ($$$EnsJobStatus($$$SystemName,$Job,$$$eJobGuestConfigName),$$$EnsJobLocal("GuestConfigName"))=pTargetConfigName
+	Do ##class(Ens.Util.Trace).SetTraceOptimizer()
+
+	Set tSessKey=pRequestHeader.%Id()
+	Set $ZT="Trap",$EC="",(tSC,tSCSuspend)=$$$OK, tRetryCount=1, (tEndTime,tDoAlert)="", (tAborted,tTerminate)=0, tResponseHeader=$$$NULLOREF
+	While 1 { ; Retry loop
+		Set tSC=..findCachedObject(pTargetConfigName,.tBP)  Quit:$$$ISERR(tSC)
+		$$$ASSERT($IsObject(tBP))
+		$$$catTRACE("bproc","Begin processing "_$S(1=tRetryCount:"",1:"try "_tRetryCount_" of ")_"message "_pRequestHeader.%Id()_"; %MasterPendingResponses contains "_tBP.%MasterPendingResponses.Count()_" element(s)")
+		For i=1:1:tBP.%MasterPendingResponses.Count() $$$catTRACE("bproc","%MasterPendingResponses contains completion key: "_$LI(tBP.%MasterPendingResponses.GetAt(i),2))
+		Set tTimeCalled=$ZH
+		Set:""=tEndTime tEndTime = tTimeCalled + tBP.FailureTimeout
+		While 1 { ; InProc loop
+			Set tSC=tBP.MessageHeaderHandler(pRequestHeader,.tResponseHeader,.tHandledError)
+			If $$$ISERR(tSC) {
+				Set tSC=tBP.OnError($$$NULLOREF,$$$NULLOREF,$$$NULLOREF,tSC,"")
+				Set tDoAlert=$$$ISERR(tSC)
+			}
+			Quit:tBP.%IsCompleted||$$$ISERR(tSC)
+			For { ; While new InProc response message found and this BP is not completed
+				Set tSC=##class(Ens.Queue).DeQueue(tBP.QueueName(),.pRequestHeader,,,0)  Quit:$$$ISERR(tSC)
+				Continue:'$IsObject(pRequestHeader)
+				Quit:tBP.%Id()=pRequestHeader.BusinessProcessId
+		
+				$$$sysTRACE("Out-of-band message '"_pRequestHeader.%Id()_"' discarded")
+				Do pRequestHeader.SetStatus($$$eMessageStatusDiscarded)
+			} Quit:$$$ISERR(tSC)
+		}
+		If tBP.%IsCompleted || $$$ISERR(tSC) {
+			Set tRequest=tBP.%request, tResponse=tBP.%response
+		    Set tAction=tBP.OnGetReplyAction(tRequest,.tResponse,.tSC)
+		    Set:""'=tAction tSC=tBP.doReplyAction(tAction,tRequest,.tResponse,tSC)
+			If tBP.SuspendMessage {
+				Set tSCSuspend=tSC
+				Set tSC=$$$ERROR($$$EnsErrSuspending,pRequestHeader.%Id(),$$$StatusDisplayString(tSC))
+				Quit
+			}
+			Quit:'tBP.Retry
+			Set tRetryCount=tRetryCount+1
+
+			If $$$ISERR(tSC) {
+				Set tTxt=$$cleanNum($P($$$StatusDisplayString(tSC)," -- ")) ; strip off "logged as" varying text and remove digits following a number sign
+				Set:'tAlertStartTime&&tBP.AlertOnError&&tBP.AlertRetryGracePeriod&&(tTxt'=tBP.%LastReportedError) tAlertStartTime=$ZH
+				If tAlertStartTime {
+					If $ZH>=(tAlertStartTime+tBP.AlertRetryGracePeriod) {
+						Set tAlertStartTime=0
+						If tTxt'=tBP.%LastReportedError { $$$LOGERROR("Alerting at expiration of retry grace period ("_tBP.AlertRetryGracePeriod_") for "_tTxt) }
+						Else { $$$LOGINFO("Alerting at expiration of retry grace period ("_tBP.AlertRetryGracePeriod_") for "_tTxt) }
+					} Else {
+						Set tDoAlert=0
+						If tTxt'=tBP.%LastReportedError { $$$LOGERROR("Not Alerting during retry grace period ("_tBP.AlertRetryGracePeriod_") for "_tTxt) }
+						Else { $$$LOGINFO("Not Alerting during retry grace period ("_tBP.AlertRetryGracePeriod_") for "_tTxt) }
+					}
+				} Else {
+					If tTxt'=tBP.%LastReportedError { $$$LOGSTATUS(tSC) }
+					Else { Set tDoAlert=0 }
+				}
+				Do:tDoAlert&&tBP.AlertOnError tBP.SendAlert(##class(Ens.AlertRequest).%New($LB(tBP.%ConfigName,$$$StatusText(tSC))))
+			} Else { Set tAlertStartTime=0, tTxt="" }
+			Set tBP.%LastReportedError=tTxt
+			
+			If tBP.FailureTimeout'=-1 {
+				Set tNow=$ZH
+				If tNow>tEndTime {
+					Set tFailureTimedOut=1, tSC=$$$ERROR($$$EnsErrFailureTimeout, tBP.FailureTimeout, $$$StatusDisplayString(tSC), $$$CurrentClass)
+					Set tDoDefault=tBP.OnFailureTimeout(tRequest,.tResponse,.tSC)
+					Set:tDoDefault tSC=$S(""=tAction:tSC,1:tBP.finalReplyAction(tAction,tSC,1))
+					Set:tBP.SuspendMessage tSCSuspend=tSC
+					Quit
+				}
+			}
+			$$$SetHostMonitor(tConfigName,$$$eMonitorStatus,"Retry")
+			Set tWaitTime = tTimeCalled + tBP.RetryInterval - $ZH
+			Set tSC1=##class(Ens.Queue).DeQueue("SystemSignal:"_$Job,,$S(tWaitTime<0:0, 1:tWaitTime),,0)  If $$$ISERR(tSC1) Set tSC=$$$ADDSC(tSC,tSC1)  Quit
+			Set tTerminate=##class(Ens.Job).ShouldTerminate()
+			Set tSBQ=##class(Ens.Job).ShouldBeQuiescent()
+			If tSBQ || tTerminate {
+				If pRequestHeader.Priority>$$$eMessagePriorityHigh||tTerminate {
+					Set tTerminate=1
+					$$$LOGINFO("Retry loop exited due to shutdown request for message "_tBP.%PrimaryRequestHeader.%Id()_" ; re-queueing"_$S($$$ISOK(tSC):"",1:" - original error: "_$$$StatusDisplayString(tSC)))
+					Set tSC1=##class(Ens.Queue).PutBackToQueue(pRequestHeader)
+					If $$$ISERR(tSC1) { Set tSC=$$$ADDSC(tSC1,tSC) }
+					Else { If 'tFailureTimedOut Set tSC=$$$OK } ; blow away the original error
+					Quit
+				}
+				$$$LOGINFO("Ignoring "_$S(tSBQ:"Quiescent",1:"Terminate")_" request while processing high priority (i.e. synchronous) request "_tBP.%PrimaryRequestHeader.%Id())
+			}
+			If ##class(Ens.Job).ShouldAbort() {
+				$$$LOGWARNING("Message "_tBP.%PrimaryRequestHeader.%Id()_" aborted as requested by signal for job "_$J_$S($$$ISOK(tSC):"",1:" - original error: "_$$$StatusDisplayString(tSC)))
+				Set tSC=$$$OK, tAborted=1
+				Quit
+			}
+			If ##class(Ens.Job).ShouldSuspend() {
+				$$$LOGWARNING("Message "_pRequestHeader.%Id()_" suspended as requested by signal for job "_$J_$S($$$ISOK(tSC):"", 1:" - original error: "_$$$StatusDisplayString(tSC)))
+				Set tSC=$$$OK, tBP.SuspendMessage=1
+				Quit
+			}
+			$$$SetJobMonitor(tConfigName,$$$SystemName_":"_$Job,$$$eMonitorRetry,tRetryCount)
+			$$$sysTRACE("Retrying Request Header Id "_pRequestHeader.%Id()_" - try #"_tRetryCount)
+			Set pRequestHeader=tBP.%PrimaryRequestHeader ; try again from the top
+		}
+	} ; Retry loop
+	If $$$IsdefObject(tBP) {
+		Set:$D(tResponse) tBP.%response=tResponse
+		
+		If tBP.%RepliedStatus=$$$eRepliedStatusConstructed {
+			Set tResponseHeader=tBP.%PrimaryResponseHeader, tBP.%PrimaryResponseHeader=$$$NULLOREF
+			Set tBP.%RepliedStatus=$$$eRepliedStatusSent
+		}
+SaveExit
+		Set tBP.%StatusCode=tSC
+		Set:""=tHandledError&&$$$ISERR(tSC) tSC=tBP.OnError($$$NULLOREF,$$$NULLOREF,$$$NULLOREF,tSC,"")
+		If $$$ISERR(tSC) {
+			If tBP.%RepliedStatus=$$$eRepliedStatusNotCalled {
+				Set tSC2=tBP.%PrimaryRequestHeader.NewErrorResponse(.tResponseHeader,tSC)  Set:$$$ISERR(tSC2) tSC=$$$ADDSC(tSC,tSC2)
+				Set tBP.%response=$$$NULLOREF
+				Set tBP.%PrimaryResponseHeader=$$$NULLOREF
+				Set tBP.%RepliedStatus=$$$eRepliedStatusSent
+			} Elseif tBP.%RepliedStatus=$$$eRepliedStatusConstructed {
+				Set tResponseHeader=tBP.%PrimaryResponseHeader, tBP.%PrimaryResponseHeader=$$$NULLOREF
+				Set tBP.%RepliedStatus=$$$eRepliedStatusSent
+			} Else {
+				#; nothing to do if tBP.%RepliedStatus=$$$eRepliedStatusSent
+			}
+			Set tBP.%IsCompleted=1, tBP.%TimeCompleted = $$$timeUTC
+			$$$LOGSTATUS($$$ERROR($$$EnsErrBPTerminated,tBP.%ConfigName,tBP.%Id(),$$$StatusDisplayString(tSC)))
+		}
+		If '$G(tSaveFailed) {
+			Set tSC3=tBP.%Save() If $$$ISERR(tSC3) {
+				Set tSaveFailed=1, tSC=$$$ADDSC(tSC3,tSC)
+				$$$LOGSTATUS(tSC)
+				GoTo SaveExit
+			}
+		} Else {
+			#; Try to save BP with only status and state changes
+			Set ttId=tBP.%Id()
+			Set tRepliedStatus = tBP.%RepliedStatus
+			 , tPrimaryResponseHeader = tBP.%PrimaryResponseHeader
+			 , tRepliedStatus = tBP.%RepliedStatus
+			 , tIsCompleted = tBP.%IsCompleted
+			 , tTimeCompleted = tBP.%TimeCompleted
+	
+			&sql(UPDATE Ens.BusinessProcess
+				 SET %RepliedStatus = :tRepliedStatus
+				 , %PrimaryResponseHeader = :tPrimaryResponseHeader
+				 , %IsCompleted = :tIsCompleted
+				 , %TimeCompleted = :tTimeCompleted
+				 WHERE %ID = :ttId)
+		}
+		$$$catTRACE("bproc","Exit BP "_pRequestHeader.%Id()_"; %MasterPendingResponses contains "_tBP.%MasterPendingResponses.Count()_" element(s)")
+		For i=1:1:tBP.%MasterPendingResponses.Count() $$$catTRACE("bproc","%MasterPendingResponses contains completion key: "_$li(tBP.%MasterPendingResponses.GetAt(i),2))
+	}
+	Set $$$JobSessionId = ""
+	Kill $$$EnsJobStatus($$$SystemName,$Job,$$$eJobGuestConfigName), $$$EnsJobLocal("GuestConfigName"), $$$EnsJobLocal("CurrentXPATHDoc")
+	Do ##class(Ens.Util.Trace).SetTraceOptimizer()
+
+	If $IsObject(tResponseHeader) {
+		If tResponseHeader.TargetQueueName'="" {
+			Set tSC4 = ##class(Ens.Queue).EnQueue(tResponseHeader)  Quit:$$$ISERR(tSC4) $$$ADDSC(tSC,tSC4)
+		} Else {
+			Set tSC4=tResponseHeader.%Save()  If $$$ISERR(tSC4) Set tSC=$$$ADDSC(tSC,tSC4)  $$$LOGSTATUS(tSC)  Quit tSC
+			If tResponseHeader.MessageBodyClassName'="" {
+				Set pResponse = $zobjclassmethod(tResponseHeader.MessageBodyClassName,"%OpenId",tResponseHeader.MessageBodyId)
+				If pResponse=$$$NULLOREF Set tSC=$$$EnsError($$$EnsErrGeneral,"MessageBody does not exist for MessageHeader #"_tResponseHeader.%Id()) Quit
+			}
+			Do tResponseHeader.SetStatus($$$eMessageStatusCompleted)
+		}
+	} Else {
+		Set pResponse=$$$NULLOREF
+	}
+Exit
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Goto Exit
+cleanNum(str)
+	Set f=0  For { Set f=$F(str,"#",f)  Quit:'f
+		For i=f:1 { Quit:$E(str,i)'?1N  Set $E(str,i)="",i=i-1 }
+	}
+	Quit str
+]]></Implementation>
+</Method>
+
+<Method name="%requestGet">
+<Internal>1</Internal>
+<Implementation><![CDATA[
+	/* ++HID
+	If ..%PrimaryRequestHeader.MessageBodyClassName'="" {
+		Quit $zobjclassmethod(..%PrimaryRequestHeader.MessageBodyClassName,"%OpenId",..%PrimaryRequestHeader.MessageBodyId)
+	} Else {
+		Quit $$$NULLOREF
+	}
+	--HID */
+	Quit ..getRequest(..%PrimaryRequestHeader)
+]]></Implementation>
+</Method>
+
+<Method name="%responseGet">
+<Internal>1</Internal>
+<Implementation><![CDATA[
+	If ..%responseClassName="" {
+		Quit $$$NULLOREF
+	} Else {
+		Quit $zobjclassmethod(..%responseClassName,"%OpenId",..%responseId)
+	}
+]]></Implementation>
+</Method>
+
+<Method name="%responseSet">
+<Internal>1</Internal>
+<FormalSpec>pResponse:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=$$$OK
+	If '$IsObject(pResponse) {
+		Set ..%responseClassName=""
+		Set ..%responseId=pResponse
+	} Else {
+		Set ..%responseClassName=pResponse.%ClassName(1)
+		If pResponse.%IsA("%Library.Persistent") Set tSC=pResponse.%Save()
+		If $$$ISOK(tSC) Set tSC=pResponse.%GetSwizzleObject(0,.tOID)
+		If $$$ISERR(tSC) Set ..%responseId="" Quit tSC
+		Set ..%responseId=$$$oidPrimary(tOID)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="findCachedObject">
+<Description>
+Override to ensure that each time the BusinessProcess is invoked inproc, a new business process object is created.</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pTargetDispatchName:%String,pInstance:Ens.Host</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set pInstance=..%New($$$DispatchNameToConfigName(pTargetDispatchName))
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnRequest">
+<Description>
+Handle a 'Request'</Description>
+<FormalSpec>request:%Library.Persistent,*response:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	// Subclass responsibility
+	Quit $$$EnsError($$$NotImplemented)
+]]></Implementation>
+</Method>
+
+<Method name="OnResponse">
+<Description>
+Handle a 'Response'</Description>
+<FormalSpec><![CDATA[request:%Library.Persistent,&response:%Library.Persistent,callrequest:%Library.Persistent,callresponse:%Library.Persistent,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	// Subclass responsibility
+	Quit $$$EnsError($$$NotImplemented)
+]]></Implementation>
+</Method>
+
+<Method name="OnErroredResponse">
+<Description>
+Handle an errored 'Response'. This is an internal API and should not be overriden by user defined classes</Description>
+<Internal>1</Internal>
+<FormalSpec><![CDATA[pErroredResponseStatus:%Status,request:%Library.Persistent,&response:%Library.Persistent,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnComplete">
+<Description>
+Called when all the Async responses are received, or timeout has occurred</Description>
+<FormalSpec><![CDATA[request:%Library.Persistent,&response:%Library.Persistent]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	// Subclass responsibility
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnError">
+<Description>
+This method is called when an error response is received
+Returning the same error will cause the BusinessProcess to set its status to error and close down
+Returning $$$OK from this method causes the BusinessProcess to recover from this error</Description>
+<FormalSpec><![CDATA[request:%Library.Persistent,&response:%Library.Persistent,callrequest:%Library.Persistent,pErrorStatus:%Status,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	Quit pErrorStatus
+]]></Implementation>
+</Method>
+
+<Method name="OnTimeout">
+<FormalSpec><![CDATA[request:%Library.Persistent,&response:%Library.Persistent,callrequest:%Library.Persistent,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	// Subclass responsibility
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnGetReplyAction">
+<Description>
+Return an action code based on criteria in the ReplyCodeActions setting value and the current response and error status</Description>
+<FormalSpec><![CDATA[pRequest:%Library.Persistent,&pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ 	Set (tCode,tAction)="", nActions=$S(""=$ZStrip(..ReplyCodeActions,"<>W"):0, 1:$L(..ReplyCodeActions,","))
+	For i=1:1:nActions { Set tType=$ZCVT($P(..ReplyCodeActions,",",i),"U") Continue:""=tType
+		If ""'=tCode $$$LOGWARNING("Unrecognized reply code:'"_tCode_"'")
+		Set tCode=$ZStrip($P(tType,"="),"<>W")
+		If $Case($E(tCode,1)
+						,"":0
+						,"E":$$$ISERR(pSC)
+						,"X":'$$$IsdefObject(pResponse)
+						,:""
+						) {
+			If $Case($E(tCode,2)
+							,"#":$$$StatusEquals(pSC,$E(tCode,3,*))
+							,"*":$$$StatusText(pSC)[$E(tCode,3,*)
+							,:1) {
+				Set tAction=$ZStrip($P(tType,"=",2),"<>W")
+				Set:tAction'?1.(1"R",1"C",1"W",1"S",1"D",1"F") tAction=""
+#If ..#INVOCATION="InProc"
+	If (pAction["D") Set pAction=$TR(pAction,"D") $$$LOGWARNING("InProc "_..%ConfigName_" can not invoke action 'D' (Disable)")
+#EndIf
+			}
+			Set tCode=""
+		}
+	}
+	Quit tAction
+]]></Implementation>
+</Method>
+
+<Method name="doReplyAction">
+<Description>
+Do the specified action for taking care of the message currently being processed</Description>
+<Internal>1</Internal>
+<FormalSpec><![CDATA[pAction:%String,pRequest:%Library.Persistent,pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tText=$G(..%ActionHint("CodeReason"))
+	Set:""=tText tText="Message body "_pRequest_" / "_pRequest.%Id()_" because response '"_pResponse_$S($$$IsdefObject(pResponse)&&(""'=pResponse.%Id()):"' / "_pResponse.%Id(),1:"'")_" and error "_$$$StatusDisplayString(pSC)_" resulted in Action code '"_pAction_"'"
+
+	Set tActionDesc=$S(pAction["R":"Retrying", pAction["S":"Suspending", pAction["D":"Disabling on", pAction["F":"Quitting with error on", 1:"Accepting as Completed")
+	If "Accepting as Completed"=tActionDesc {
+		If pAction["W" {
+			$$$LOGWARNING("Warning on "_tText)
+		} Else {
+			$$$sysTRACE("Accepting as Completed "_tText)
+		}
+		Set ..Retry=0, ..SuspendMessage=0
+		Quit $$$OK ; suppress any error
+	}
+	Set tSC=$$$ERROR($$$EnsErrGeneral,tActionDesc_" "_tText)
+	If pAction["R" {
+		Set ..Retry=1
+	} Else {
+		Set tSC=..finalReplyAction(pAction,tSC,0)
+		Set pAction="" ; clear because we just did it
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="finalReplyAction">
+<Description>
+Do the action specified for when all configured retries have been exhausted</Description>
+<Internal>1</Internal>
+<FormalSpec>pAction:%String,pSC:%Status,pFixError:%Boolean</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If pAction["S" {
+		Set ..SuspendMessage=1, tActionDesc="Suspending on"
+	} ElseIf pAction["D" {
+		Set ..SuspendMessage=0, tActionDesc="Disabling on"
+		Do ##class(Ens.Job).Stop($Job)
+		Do ##Class(Ens.Director).EnableConfigItem(..%ConfigName,0,0)
+		Do ..SendRequestAsync("Ens.ScheduleHandler",$$$NULLOREF)
+	} ElseIf pAction["F" {
+		// No work required here ; just quit with error
+		Set tActionDesc="Discarding message on"
+		Set ..SuspendMessage=0
+	} Else { ; ??
+		$$$LOGWARNING($$$StatusDisplayString(pSC))
+		Set pSC=$$$OK, pFixError=0
+	}
+	Set:pFixError pSC=$$$ERROR($$$EnsErrGeneral,tActionDesc_" "_$$$StatusDisplayString(pSC))
+	Quit pSC
+]]></Implementation>
+</Method>
+
+<Method name="OnFailureTimeout">
+<Description><![CDATA[
+Override this method to provide custom handling of retry / failure timeout.<p/>
+Set ..Retry=1 to override normal error return and re-evaluate flag properties.<p/>
+Return 0 to skip further (default) FailureTimeout processing, 1 to perform default processing.]]></Description>
+<CodeMode>expression</CodeMode>
+<FormalSpec><![CDATA[pRequest:%Library.Persistent,*pResponse:%Library.Persistent,&pSC:%Status]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[0
+]]></Implementation>
+</Method>
+
+<Method name="Reply">
+<Description>
+Call this method to send the response to the primary request before the process is finished</Description>
+<FormalSpec>response:%Library.Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set $ZT="Trap",$EC="",tSC=$$$OK
+	do {
+		If ..%RepliedStatus'=$$$eRepliedStatusNotCalled Quit
+		Set ..%response=response
+		// ++HID
+		Set tSC=..%PrimaryRequestHeader.NewResponseMessage(.tResponseHeader,..getReply(..%response)) Quit:$$$ISERR(tSC)
+		// --HID
+		If ..%PrimaryRequestHeader.Invocation=$$$eMessageInvocationInProc {
+			Set ..%response=$$$NULLOREF
+			Set ..%PrimaryResponseHeader=tResponseHeader
+			Set ..%RepliedStatus=$$$eRepliedStatusConstructed
+		} Else {
+			If tResponseHeader.TargetQueueName'="" Set tSC = ##class(Ens.Queue).EnQueue(tResponseHeader) Quit:$$$ISERR(tSC)
+			Set ..%response=$$$NULLOREF
+			Set ..%PrimaryResponseHeader=$$$NULLOREF
+			Set ..%RepliedStatus=$$$eRepliedStatusSent
+		}
+		Do ..%MessagesSent.Insert(tResponseHeader.%Id())
+		Do ..%PrimaryRequestHeader.SetStatus($$$eMessageStatusCompleted)
+	} while (0)
+Exit
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Goto Exit
+]]></Implementation>
+</Method>
+
+<Method name="ReplyError">
+<Description>
+Call this method to send an error status to the primary request before the process is finished</Description>
+<FormalSpec>pStatus:%Status</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set $ZT="Trap",$EC="",tSC=$$$OK
+	do {
+		If ..%RepliedStatus'=$$$eRepliedStatusNotCalled Quit
+		Set tSC=..%PrimaryRequestHeader.NewErrorResponse(.tResponseHeader,pStatus)  Quit:$$$ISERR(tSC)
+		If ..%PrimaryRequestHeader.Invocation=$$$eMessageInvocationInProc {
+			Set ..%response=$$$NULLOREF
+			Set ..%PrimaryResponseHeader=tResponseHeader
+			Set ..%RepliedStatus=$$$eRepliedStatusConstructed
+		} Else {
+			If tResponseHeader.TargetQueueName'="" Set tSC = ##class(Ens.Queue).EnQueue(tResponseHeader) Quit:$$$ISERR(tSC)
+			Set ..%response=$$$NULLOREF
+			Set ..%PrimaryResponseHeader=$$$NULLOREF
+			Set ..%RepliedStatus=$$$eRepliedStatusSent
+		}
+		Do ..%PrimaryRequestHeader.SetStatus($$$eMessageStatusCompleted)
+	} while (0)
+Exit
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Goto Exit
+]]></Implementation>
+</Method>
+
+<Method name="IsResponsePending">
+<Description>
+Determine if a CompletionKey exists in the %MasterPendingResponses</Description>
+<FormalSpec>pCompletionKey:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	Set tIsResponsePending=0
+	For tI=1:1:..%MasterPendingResponses.Count() {
+		Set tEntry=..%MasterPendingResponses.GetAt(tI)
+		If $li(tEntry,2)=pCompletionKey {
+			Set tIsResponsePending=1 Quit
+		}
+	}
+	Quit tIsResponsePending
+]]></Implementation>
+</Method>
+
+<Method name="RemovePendingResponse">
+<Description>
+remove from %MasterPendingResponses with a CompletionKey</Description>
+<FormalSpec>pCompletionKey:%String</FormalSpec>
+<Implementation><![CDATA[
+	For tI=..%MasterPendingResponses.Count():-1:1 {
+		Set tEntry=..%MasterPendingResponses.GetAt(tI)
+		If $li(tEntry,2)=pCompletionKey {
+			Do ..%MasterPendingResponses.RemoveAt(tI)
+			Set tRequestHeader=##class(Ens.MessageHeader).%OpenId($li(tEntry,1))
+			Set tMessageBody=$zobjclassmethod(tRequestHeader.MessageBodyClassName,"%OpenId",tRequestHeader.MessageBodyId)
+			Set $ZT="UserTrapOnTimeout",$EC=""
+			Do tMessageBody.%OnTimeout()
+UserTrapOnTimeout
+			Set $ZT=""
+		}
+	}
+	Quit
+]]></Implementation>
+</Method>
+
+<Method name="ClearAllPendingResponses">
+<Description>
+clear %MasterPendingResponses</Description>
+<Implementation><![CDATA[
+	For tI=..%MasterPendingResponses.Count():-1:1 {
+		Set tEntry=..%MasterPendingResponses.GetAt(tI)
+		Do ..%MasterPendingResponses.RemoveAt(tI)
+		Set tRequestHeader=##class(Ens.MessageHeader).%OpenId($li(tEntry,1))
+		Set tMessageBody=$zobjclassmethod(tRequestHeader.MessageBodyClassName,"%OpenId",tRequestHeader.MessageBodyId)
+		Set $ZT="UserTrapOnTimeout",$EC=""
+		Do tMessageBody.%OnTimeout()
+UserTrapOnTimeout
+		Set $ZT=""
+	}
+	Quit
+]]></Implementation>
+</Method>
+
+<Method name="WillHandleErroredResponse">
+<Internal>1</Internal>
+<CodeMode>expression</CodeMode>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[0
+]]></Implementation>
+</Method>
+
+<Method name="GetMessageList">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[..GetRequestClassList()
+]]></Implementation>
+</Method>
+
+<Method name="GetRequestClassList">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>OnRequest</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSignature=$$$comMemberKeyGet(%class.Name,$$$cCLASSmethod,"OnRequest",$$$cMETHformalspecparsed)
+	Set tClass=$lg($lg(tSignature,1),2)
+	Do %code.WriteLine(" Quit $lb("""_tClass_""")")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="GetResponseClassList">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec>pRequest:%String=""</FormalSpec>
+<GenerateAfter>OnRequest</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSignature=$$$comMemberKeyGet(%class.Name,$$$cCLASSmethod,"OnRequest",$$$cMETHformalspecparsed)
+	Set tRequestClass=$lg($lg(tSignature,1),2)
+	Set tClass=$lg($lg(tSignature,2),2)
+	Do %code.WriteLine(" If pRequest=""""||(pRequest="""_tRequestClass_""") Quit $lb("""_tClass_""")")
+	Do %code.WriteLine(" Quit """"")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="%OnAddToSaveSet">
+<Description><![CDATA[
+This callback method is invoked by the <METHOD>%AddToSaveSet</METHOD> method to 
+provide notification that the current object is being included in a SaveSet, either
+because %Save() was invoked on this object or an object that references this object.
+
+<P>If this method returns an error status then %Save() will fail and the transaction
+will be rolled back.]]></Description>
+<Internal>1</Internal>
+<FormalSpec>depth:%Integer=3,insert:%Integer=0,callcount:%Integer=0</FormalSpec>
+<Private>1</Private>
+<ProcedureBlock>1</ProcedureBlock>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#; Discard local copy of primary request & response headers because other jobs may have saved changes to them and we don't want to overwrite them
+	Do ..%PrimaryRequestHeaderSetModified(0)
+	Do ..%PrimaryResponseHeaderSetModified(0)
+	
+	#; Ensure a save of the %response body because our storage model doesn't make it happen automatically. We might be doing %Save() to sleep while waiting for a response to a call to get more information to populate the %response object.
+	Set tResponse=..%response
+	Quit:'$IsObject(tResponse) $$$OK
+	Quit tResponse.%AddToSaveSet(depth)
+]]></Implementation>
+</Method>
+
+<Method name="Purge">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>*pDeletedCount:%Integer,pDaysToKeep:%Integer=7,pKeepIntegrity:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	New %tDoNotDeleteDate,%tClass,%tID Set %tID="", %tDoNotDeleteDate = $$$timeUTCHtoUTC($s($ztimezone'<0:($H-pDaysToKeep+1)_","_($ztimezone*60),1:($H-pDaysToKeep)_","_($ztimezone*60+86400)))
+	Set tSC=$$$OK, SQLCODE=0, pDeletedCount=0
+	If pKeepIntegrity {
+		&sql(DECLARE C1 CURSOR FOR
+			Select ID, $Piece(x__ClassName,'~',$Length(x__ClassName,'~')-1) As Class Into :%tID,:%tClass
+				From Ens.BusinessProcess Where (%TimeCreated < :%tDoNotDeleteDate) And (%IsCompleted=1))
+		&sql(OPEN C1) For { &sql(FETCH C1)  Quit:SQLCODE
+			Set tExists=$G(aClass(%tClass))
+			If 0'=tExists {
+				Set $zt="deleteError1"
+				Set tSC1=$zobjclassmethod(%tClass,"%DeleteId",%tID)
+				Set:""=tExists aClass(%tClass)=1, tExists=1
+				GoTo deleteError1a
+deleteError1	Set:""=tExists aClass(%tClass)=0  Set:'$G(aClass(%tClass,"doneErr")) tSC1=$$$SystemError
+deleteError1a	Set $zt=""
+				If $$$ISERR(tSC1)&&'$G(aClass(%tClass,"doneErr")) {
+					Set tOK=$$$StatusEquals(tSC1,$$$DeleteObjectNotFound,$$$FileCanNotDelete,$$$NotAnInstanceError)
+					If 'tOK { Set aClass(%tClass,"doneErr")=1, tSC=$$$ADDSC(tSC,tSC1)  $$$LOGWARNING("Failed to purge ID "_%tID_", Class='"_%tClass_"':"_$$$StatusDisplayString(tSC1)) }
+				}
+				Set pDeletedCount=pDeletedCount+$$$ISOK(tSC1)
+			}
+		} Set tCode=SQLCODE &sql(CLOSE C1) Set:'SQLCODE SQLCODE=tCode
+	} Else {
+		&sql(DECLARE C2 CURSOR FOR
+			Select ID, $Piece(x__ClassName,'~',$Length(x__ClassName,'~')-1) As Class Into :%tID,:%tClass
+				From Ens.BusinessProcess Where %TimeCreated < :%tDoNotDeleteDate)
+		&sql(OPEN C2) For { &sql(FETCH C2)  Quit:SQLCODE
+			Set tExists=$G(aClass(%tClass))
+			If 0'=tExists {
+				Set $zt="deleteError2"
+				Set tSC1=$zobjclassmethod(%tClass,"%DeleteId",%tID)
+				Set:""=tExists aClass(%tClass)=1, tExists=1
+				GoTo deleteError2a
+deleteError2	Set:""=tExists aClass(%tClass)=0  Set:'$G(aClass(%tClass,"doneErr")) tSC1=$$$SystemError
+deleteError2a	Set $zt=""
+				If $$$ISERR(tSC1)&&'$G(aClass(%tClass,"doneErr")) {
+					Set tOK=$$$StatusEquals(tSC1,$$$DeleteObjectNotFound,$$$FileCanNotDelete,$$$NotAnInstanceError)
+					If 'tOK { Set aClass(%tClass,"doneErr")=1, tSC=$$$ADDSC(tSC,tSC1)  $$$LOGWARNING("Failed to purge ID "_%tID_", Class='"_%tClass_"':"_$$$StatusDisplayString(tSC1)) }
+				}
+				Set pDeletedCount=pDeletedCount+$$$ISOK(tSC1)
+			}
+		} Set tCode=SQLCODE &sql(CLOSE C2) Set:'SQLCODE SQLCODE=tCode
+	}
+	Set:SQLCODE&&(SQLCODE'=100) tSC=$$$ADDSC(tSC,$$$ERROR($$$EnsErrGeneral,"Purge error at ID "_%tID_"; SQLCODE = "_SQLCODE))
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="getId">
+<Description>
+The same as %Id(), but allocates the Id even if the object hasn't been saved already</Description>
+<Internal>1</Internal>
+<CodeMode>generator</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	$$$GENERATE(" If ..%Id()="""" Do ..%IdSet($increment("_$$$EXTidlocation($$$pEXT,%class)_"))")
+	$$$GENERATE(" Quit ..%Id()")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ens.BusinessProcessD</DataLocation>
+<DefaultData>BusinessProcessDefaultData</DefaultData>
+<IdLocation>^Ens.BusinessProcessD</IdLocation>
+<IndexLocation>^Ens.BusinessProcessI</IndexLocation>
+<StreamLocation>^Ens.BusinessProcessS</StreamLocation>
+<Data name="BusinessProcessDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>%ConfigQueueName</Value>
+</Value>
+<Value name="3">
+<Value>%IsCompleted</Value>
+</Value>
+<Value name="4">
+<Value>%MasterPendingResponses</Value>
+</Value>
+<Value name="6">
+<Value>%PrimaryRequestHeader</Value>
+</Value>
+<Value name="7">
+<Value>%PrimaryResponseHeader</Value>
+</Value>
+<Value name="8">
+<Value>%RepliedStatus</Value>
+</Value>
+<Value name="9">
+<Value>%responseId</Value>
+</Value>
+<Value name="10">
+<Value>Adapter</Value>
+</Value>
+<Value name="11">
+<Value>%SessionId</Value>
+</Value>
+<Value name="12">
+<Value>%TimeCompleted</Value>
+</Value>
+<Value name="13">
+<Value>%TimeCreated</Value>
+</Value>
+<Value name="14">
+<Value>%ConfigName</Value>
+</Value>
+<Value name="15">
+<Value>%QuitTask</Value>
+</Value>
+<Value name="16">
+<Value>AlertOnError</Value>
+</Value>
+<Value name="17">
+<Value>%responseClassName</Value>
+</Value>
+<Value name="18">
+<Value>%IsTimerInterrupted</Value>
+</Value>
+<Value name="19">
+<Value>%IsTerminated</Value>
+</Value>
+<Value name="20">
+<Value>%StatusCode</Value>
+</Value>
+<Value name="21">
+<Value>%MessagesReceived</Value>
+</Value>
+<Value name="22">
+<Value>%MessagesSent</Value>
+</Value>
+<Value name="23">
+<Value>ReplyCodeActions</Value>
+</Value>
+<Value name="24">
+<Value>RetryInterval</Value>
+</Value>
+<Value name="25">
+<Value>AlertRetryGracePeriod</Value>
+</Value>
+<Value name="26">
+<Value>FailureTimeout</Value>
+</Value>
+<Value name="27">
+<Value>Retry</Value>
+</Value>
+<Value name="28">
+<Value>SuspendMessage</Value>
+</Value>
+<Value name="29">
+<Value>%Retry</Value>
+</Value>
+<Value name="30">
+<Value>%SuspendMessage</Value>
+</Value>
+<Value name="31">
+<Value>%AlertStartTime</Value>
+</Value>
+<Value name="32">
+<Value>TopicsToSubcribe</Value>
+</Value>
+<Value name="33">
+<Value>MessageTransformationRule</Value>
+</Value>
+<Value name="34">
+<Value>DropMsgOnTransformationError</Value>
+</Value>
+<Value name="35">
+<Value>TopicsToSubscribe</Value>
+</Value>
+<Value name="36">
+<Value>%transformedRequest</Value>
+</Value>
+<Value name="37">
+<Value>replyTransformationClass</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ens.Config.Item">
+<ClassType>persistent</ClassType>
+<IncludeCode>Ensemble</IncludeCode>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Persistent,%XML.Adaptor,Enh.Config.Item</Super>
+<System>3</System>
+<TimeChanged>61900,42927.45721</TimeChanged>
+<TimeCreated>59268,43371.029</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Parameter name="XMLIGNORENULL">
+<Default>1</Default>
+</Parameter>
+
+<Property name="Production">
+<Description>
+Point to the production object</Description>
+<Type>Ens.Config.Production</Type>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="Name">
+<Description>
+The name of this config item.  default to classname</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="Category">
+<Description>
+(Optional) Category this item belongs to. This is only used for
+display purposes and does not affect the behavior of this item.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="512"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="ClassName">
+<Description>
+Classname of this config item</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="PoolSize">
+<Description>
+Number of jobs to start for this config item
+Default value: 0 for BP's (i.e. use shared Actor pool), 1 for BO's, 0 for adapterless BS's, 1 for others.</Description>
+<Type>%Integer</Type>
+<Parameter name="MAXVAL" value="100"/>
+<Parameter name="MINVAL" value="0"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="Enabled">
+<Description>
+Whether this config item is enabled or not</Description>
+<Type>%Boolean</Type>
+<InitialExpression>1</InitialExpression>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="Foreground">
+<Description>
+Whether to run the job of this config item in the foreground or background</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="DisableErrorTraps">
+<Description>
+Deprecated - always 0 : Whether to disable error traps for the job or not</Description>
+<Type>%Boolean</Type>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="InactivityTimeout">
+<Description>
+Time, in seconds, that this item will be reported as being inactive (Idle) by the Ens.MonitorService class.</Description>
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="MINVAL" value="0"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="Settings">
+<Description>
+Adapter and Host settings specified for the adapter object and the host object</Description>
+<Type>Ens.Config.Setting</Type>
+<Collection>list</Collection>
+<Parameter name="XMLNAME" value="Setting"/>
+<Parameter name="XMLPROJECTION" value="ELEMENT"/>
+</Property>
+
+<Property name="ModifiedSettings">
+<Description>
+Same format as Settings, You must call PopulateModifiedSettings() to populate this collection
+The collection contains the list of settings that are either defined in the production, or have default setting overrides.</Description>
+<Type>Ens.Config.Setting</Type>
+<Collection>list</Collection>
+<Transient>1</Transient>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="VirtualSettings">
+<Description>
+Contains the list of settings, value, value_type, default, default_type and other meta information
+Must call PopulateVirtualSettings() to populate this collection
+The format of value of each element is the following
+$lb(Target,Name,Value,ValueType,Default,DefaultType,Description,Type,MAXLEN,MINVAL,MAXVAL,VALUELIST,DISPLAYLIST,IsRequired)</Description>
+<Type>%String</Type>
+<Collection>list</Collection>
+<Transient>1</Transient>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="Comment">
+<Description>
+Optional comment string for this component</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="512"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="LogTraceEvents">
+<Description>
+Optional comment string for this component</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Property name="Schedule">
+<Description>
+Schedule to determines when this item should be started/stopped</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN"/>
+<Parameter name="XMLPROJECTION" value="ATTRIBUTE"/>
+</Property>
+
+<Parameter name="NameIllegalChars">
+<Description>
+Characters illegal in config item names
+'|' is the separator for production and comment names when concatenated into a single string
+';' is the separator for multi-Action Rules
+',' is the separator for multi-target Rule Actions
+':' is the separator for Rule Action components</Description>
+<Default>;':|</Default>
+</Parameter>
+
+<Method name="%OnNew">
+<FormalSpec>initvalue</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set ..ClassName=$g(initvalue)
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ClassNameSet">
+<FormalSpec>initvalue</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set i%ClassName=initvalue
+	Do:""'=..ClassName ..initPoolSize()
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="initPoolSize">
+<Implementation><![CDATA[
+	Set $ZT="Trap"
+	Set:""=..PoolSize ..PoolSize=$Case(..BusinessType()
+								,$$$eHostTypeProcess:$S("Ens.Actor"=..ClassName:1, 1:0)
+								,$$$eHostTypeService:$S(""=$zobjclassmethod(..ClassName,"%GetParameter","ADAPTER"):0, 1:1)
+								,:1)
+	Quit
+Trap Set $ZT="", ..PoolSize=1
+	Quit
+]]></Implementation>
+</Method>
+
+<Method name="BusinessType">
+<Description>
+The Business Type of this config item</Description>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[..GetBusinessType(..ClassName)
+]]></Implementation>
+</Method>
+
+<Method name="GetBusinessType">
+<FormalSpec>pClassname:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set $ZT="Trap"
+	Do {
+		If pClassname="Ens.Actor" Set tValue=$$$eHostTypeProcess Quit
+		If pClassname="Ens.Alarm" Set tValue=$$$eHostTypeOperation Quit
+		If $zobjclassmethod(pClassname,"%Extends","Ens.BusinessDuplex")    Set tValue=$zobjclassmethod(pClassname,"OnBusinessType",$this) Quit
+		If $zobjclassmethod(pClassname,"%Extends","Ens.BusinessService")   Set tValue=$$$eHostTypeService   Quit
+		If $zobjclassmethod(pClassname,"%IsA","Ens.BusinessProcess")       Set tValue=$$$eHostTypeProcess   Quit
+		If $zobjclassmethod(pClassname,"%Extends","Ens.BusinessOperation") Set tValue=$$$eHostTypeOperation Quit
+	} While 0
+Exit
+	Quit $G(tValue,$$$eHostTypeUnknown)
+Trap
+ 	Set $ZT=""
+	Goto Exit
+]]></Implementation>
+</Method>
+
+<Method name="AdapterClassName">
+<Description>
+The name of the adapter class, calcualted from the ADAPTER parameter</Description>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If ..ClassName="" Quit ""
+	Quit $$$comMemberKeyGet(..ClassName,$$$cCLASSparameter,"ADAPTER",$$$cPARAMdefault)
+]]></Implementation>
+</Method>
+
+<Method name="Checksum">
+<Description>
+Check sum used in updating production</Description>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set tValue=..Name_..ClassName_..Enabled_..Foreground_..DisableErrorTraps_..InactivityTimeout
+	Set tIndex="" For {
+		Set tIndex = ..Settings.Next(tIndex) Quit:tIndex=""
+		Set tSetting = ..Settings.GetAt(tIndex)
+		Set tValue=tValue_tSetting.Target_tSetting.Name_tSetting.Value
+	}
+	Quit $zcrc(tValue,7)
+]]></Implementation>
+</Method>
+
+<Method name="NameGet">
+<Description>
+return the classname if i%Name is not set</Description>
+<Internal>1</Internal>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If i%Name'="" Quit i%Name
+	Quit ..ClassName
+]]></Implementation>
+</Method>
+
+<Method name="QueueName">
+<Description>
+Queue name used by this config item</Description>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	If ..Name'="" Quit ..Name
+	Quit ..ClassName
+]]></Implementation>
+</Method>
+
+<Method name="GetSetting">
+<FormalSpec><![CDATA[pName:%String,&pValue:%String]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	Kill pValue
+	Set tKey="" For { Set tSetting=..Settings.GetNext(.tKey)  Quit:""=tKey
+		If tSetting.Name = pName {
+			Set pValue = tSetting.Value
+			Quit
+		}
+	}
+	Quit ''$D(pValue)
+]]></Implementation>
+</Method>
+
+<Method name="GetModifiedSetting">
+<FormalSpec><![CDATA[pName:%String,&pValue:%String]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	Kill pValue
+	Set tKey = "" For {
+		Set tSetting = ..Settings.GetNext(.tKey) Quit:tKey=""
+		If tSetting.Name = pName Set pValue = tSetting.Value Quit
+	}
+	Quit:$D(pValue) 1
+	;
+	If ##class(Ens.Config.DefaultSettings).%GetSetting(..Production.Name, ..Name, ..ClassName, "", pName, .tValue) {
+		Set pValue = tValue
+	}
+	Quit ''$D(pValue)
+]]></Implementation>
+</Method>
+
+<Method name="getModifiedSettingValue">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pProductionName:%String,pItemName:%String,pType:%String="Host",pHostClass:%String="",pSettingName:%String,pSettingsList:%String="",&pStatus:%Status]]></FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set pStatus=$$$OK, tFound=0
+	If (""=pHostClass)||(""=pSettingsList) {
+	    &sql(Select ClassName,Settings Into :tClass,:tSettings From Ens_Config.Item Where Production=:pProductionName and Name=:pItemName)
+		If SQLCODE Set pStatus=$$$ERROR($$$EnsErrGeneral,"No Production '"_pProductionName_"' with config item '"_pItemName_" found: SQLCODE="_SQLCODE)  Quit ""
+		Set:""=pSettingsList pSettingsList=tSettings
+		Set:""=pHostClass pHostClass=tClass
+	}
+	For i=$LL(pSettingsList):-1:1 { Set tSetting=$LG($LI(pSettingsList,i))
+		If $LI(tSetting,1)=pSettingName && ($LI(tSetting,2)=pType) && $LD(tSetting,3) {
+			Set tFound=1, tValue=$LI(tSetting,3)
+			Quit
+		}
+	}
+	If 'tFound {
+		#; Look through to default setting
+		If "Host"=pType { Set tClass=pHostClass }
+		Else { $$$comMemberKeyGetLvar(tClass,pHostClass,$$$cCLASSparameter,"ADAPTER",$$$cPARAMdefault) }
+		If ##class(Ens.Config.DefaultSettings).%GetSetting(pProductionName,pItemName,tClass,pType,pSettingName,.tValue) {
+			Set tFound=1
+		}
+		If 'tFound {
+			#; Get InitialExpression for the setting
+			Set tValue=$zobjclassmethod(tClass,"EvalInitialExpression",pSettingName)
+			If ""'=tValue { Set tFound=1 }
+			Else {
+				#; Need to find if the Setting exists at all
+				Set rs = ##class(%ResultSet).%New(tClass_":EnumerateSettings")
+				Set tSC = rs.Execute()
+				While rs.Next() { If pSettingName=$G(rs.Data("Name")) Set tFound=1  Quit }
+				If 'tFound Set pStatus=$$$ERROR($$$EnsErrGeneral,"No Setting '"_pSettingName_"' found for config item '"_pItemName_" in Production '"_pProductionName_"'")
+			}
+		}
+	}
+	Quit tValue
+]]></Implementation>
+</Method>
+
+<Method name="FindSettingByName">
+<Description>
+Locate the first setting with a given name</Description>
+<FormalSpec>pName:%String,pTarget:%String=""</FormalSpec>
+<ReturnType>Setting</ReturnType>
+<Implementation><![CDATA[
+	#dim i,tFound As Ens.Config.Setting
+	Set tFound = $$$NULLOREF
+	For i=1:1:..Settings.Count() {
+		#dim tSetting As Setting
+		Set tSetting = ..Settings.GetAt(i)
+		
+		// Match the name, and target (if specified)
+		If $S(tSetting.Name'=pName:0,pTarget="":1,1:tSetting.Target=pTarget) {
+			Set tFound = tSetting
+			Quit
+		}
+	}
+	
+	Quit tFound
+]]></Implementation>
+</Method>
+
+<Method name="%OnValidateObject">
+<Private>1</Private>
+<ProcedureBlock>1</ProcedureBlock>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	Quit:..Name[..#NameIllegalChars $$$ERROR($$$EnsErrGeneral,"Illegal characters present in config item name "_..Name)
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="PopulateModifiedSettings">
+<Description>
+Call this method to initialize the ModifiedSettings collection.
+The collection includes Settings defined in production as well as those ones with default setting overrides.</Description>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	do ..ModifiedSettings.Clear()
+	set tIndex="" for  {
+		set tIndex = ..Settings.Next(tIndex)  quit:tIndex=""
+		set tOneSetting = ..Settings.GetAt(tIndex)
+		set tAlreadyDefined(tOneSetting.Target,tOneSetting.Name)=""
+		do ..ModifiedSettings.Insert(tOneSetting)
+	}
+	;
+	set tTargetClassname("Host") = ..ClassName
+	set tTargetClassname("Adapter") = ..AdapterClassName()
+	set tTarget="" for  {
+		set tTarget=$o(tTargetClassname(tTarget),1,tClassname) quit:tTarget=""
+		set rs = ##class(%ResultSet).%New()
+		set rs.ClassName = tClassname
+		set rs.QueryName = "EnumerateSettings"
+		if ('rs.QueryIsValid()) continue
+		set tSC = rs.Execute()
+		while (rs.Next()) {
+			set tName = $G(rs.Data("Name"))
+			if $d(tAlreadyDefined(tTarget,tName)) continue
+			if '##class(Ens.Config.DefaultSettings).%GetSetting(..Production.Name, ..Name, ..ClassName, tTarget, tName, .tValue) set tValue=$G(rs.Data("Default"))
+			set tOneSetting=##class(Ens.Config.Setting).%New()
+			set tOneSetting.Target = tTarget
+			set tOneSetting.Name = tName
+			set tOneSetting.Value = tValue
+			do ..ModifiedSettings.Insert(tOneSetting)
+		}
+	}
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="PopulateVirtualSettings">
+<Description>
+Populate the VirtualSettings collection</Description>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	do ..VirtualSettings.Clear()
+	set tIndex="" for  {
+		set tIndex = ..Settings.Next(tIndex)  quit:tIndex=""
+		set tOneSetting = ..Settings.GetAt(tIndex)
+		set tAlreadyDefined(tOneSetting.Target,tOneSetting.Name)=tOneSetting.Value
+	}
+	;
+	set tTargetClassname("Host") = ..ClassName
+	set tTargetClassname("Adapter") = ..AdapterClassName()
+	set tTarget="" for  {
+		set tTarget=$o(tTargetClassname(tTarget),1,tClassname) quit:tTarget=""
+		set rs = ##class(%ResultSet).%New()
+		set rs.ClassName = tClassname
+		set rs.QueryName = "EnumerateSettings"
+		if ('rs.QueryIsValid()) continue
+		set tSC = rs.Execute()
+		while (rs.Next()) {
+			set tName = $G(rs.Data("Name"))
+			set tDefault = $G(rs.Data("Default"))
+			set tDefaultType=$$$eConfigSettingValueTypeProperty
+			set tValue=tDefault
+			set tValueType=$$$eConfigSettingValueTypeProperty
+			if ##class(Ens.Config.DefaultSettings).%GetSetting(..Production.Name, ..Name, ..ClassName, tTarget, tName, .tThisValue) {
+				set tDefault = tThisValue
+				set tDefaultType = $$$eConfigSettingValueTypeSystem
+				set tValue = tThisValue
+				set tValueType = $$$eConfigSettingValueTypeSystem
+			}
+			if $d(tAlreadyDefined(tTarget,tName),tThisValue) {
+				set tValue=tThisValue
+				set tValueType=$$$eConfigSettingValueTypeProduction
+			}
+			#; "Target,Name,Value,ValueType,Default,DefaultType,Description,Type,MAXLEN,MINVAL,MAXVAL,VALUELIST,DISPLAYLIST,IsRequired"
+			set tData = $lb(tTarget,tName,tValue,tValueType,tDefault,tDefaultType)
+			set tData = tData _ $lb($g(rs.Data("Description")))
+			set tData = tData _ $lb($g(rs.Data("Type")))
+			set tData = tData _ $lb($g(rs.Data("MAXLEN")))
+			set tData = tData _ $lb($g(rs.Data("MINVAL")))
+			set tData = tData _ $lb($g(rs.Data("MAXVAL")))
+			set tData = tData _ $lb($g(rs.Data("VALUELIST")))
+			set tData = tData _ $lb($g(rs.Data("DISPLAYLIST")))
+			set tData = tData _ $lb($g(rs.Data("IsRequired")))
+			do ..VirtualSettings.Insert(tData)
+		}
+	}
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="UpdateSettings">
+<Description><![CDATA[
+This method updates the Settings collection with the data from <var>pArray</var>
+Settings collection is cleared first, then the entries in <var>pArray</var> is used to update it.
+The format of <var>pArray</var> is of the following:
+pArray = total number of entries
+pArray(i) = $lb(Target, Name, Value)]]></Description>
+<FormalSpec>pArray</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	do ..Settings.Clear()
+	for i=1:1:pArray {
+		set tOneSetting = ##class(Ens.Config.Setting).%New()
+		set tOneSetting.Target = $li(pArray(i),1)
+		set tOneSetting.Name = $li(pArray(i),2)
+		set tOneSetting.Value = $li(pArray(i),3)
+		do ..Settings.Insert(tOneSetting)
+	}
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="%OnAddToSaveSet">
+<FormalSpec>depth:%Integer=3,insert:%Integer=0,callcount:%Integer=0</FormalSpec>
+<Private>1</Private>
+<ProcedureBlock>1</ProcedureBlock>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	Set:""=i%Name i%Name=i%ClassName
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ens.Config.ItemD</DataLocation>
+<DefaultData>ItemDefaultData</DefaultData>
+<IdLocation>^Ens.Config.ItemD</IdLocation>
+<IndexLocation>^Ens.Config.ItemI</IndexLocation>
+<StreamLocation>^Ens.Config.ItemS</StreamLocation>
+<Data name="ItemDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>ClassName</Value>
+</Value>
+<Value name="3">
+<Value>DisableErrorTraps</Value>
+</Value>
+<Value name="4">
+<Value>Enabled</Value>
+</Value>
+<Value name="5">
+<Value>Foreground</Value>
+</Value>
+<Value name="6">
+<Value>InactivityTimeout</Value>
+</Value>
+<Value name="7">
+<Value>Name</Value>
+</Value>
+<Value name="8">
+<Value>PoolSize</Value>
+</Value>
+<Value name="9">
+<Value>Settings</Value>
+</Value>
+<Value name="10">
+<Value>Comment</Value>
+</Value>
+<Value name="11">
+<Value>Category</Value>
+</Value>
+<Value name="12">
+<Value>LogTraceEvents</Value>
+</Value>
+<Value name="13">
+<Value>Schedule</Value>
+</Value>
+<Value name="14">
+<Value>Production</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="EnsLib.MsgRouter.RoutingEngine">
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.BusinessProcess</Super>
+<System>3</System>
+<TimeChanged>61901,40151.70538</TimeChanged>
+<TimeCreated>59277,34681.193</TimeCreated>
+
+<Property name="BusinessRuleName">
+<Description>
+Business Rule Name.  If this setting is empty, then the ConfigItem name is used as the rule name</Description>
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+	Validation: a string specifying types of validation to perform; If you override OnValidate() and need to provide
+	options, you can add more supported values to it and document them by also overriding the definition of this Validation property.
+*/
+]]></Content>
+</UDLText>
+
+<Property name="Validation">
+<Description>
+Causes  validation to be performed. Default implementation of OnValidate() does nothing; If you override it and want it to be
+configurable, override this description comment and add Parameter SETTINGS = "Validation"; to your subclass as well.</Description>
+<Type>%String</Type>
+<Transient>1</Transient>
+</Property>
+
+<Property name="AlertOnBadMessage">
+<Description>
+Send an Alert if validation blocks a message</Description>
+<Type>%Boolean</Type>
+<Transient>1</Transient>
+</Property>
+
+<Property name="BadMessageHandler">
+<Description>
+Name of the host that should handle messages that validation blocks</Description>
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ResponseFrom">
+<Description><![CDATA[
+Names the target(s) from which a response should be forwarded back to the caller, if the caller requested <br>
+a response. If this value is empty, no reply will be requested from any target. Otherwise, this value is a <br>
+comma-separated list of target config names. The response returned will be the first one that arrives back <br>
+from any target in the list. A value of '*' will match any target, so the first response received will be <br>
+the one returned.<p>
+If none of the listed targets gets called and the caller requested a response, an empty 'OK' response header <br>
+will be returned.<p>
+If the list of targets begins with a '+' character, the responses from all the targets called
+will be returned as a list of message header IDs in the response header, or an empty 'OK' response header if no responses appear before the timeout expires.<p>
+If the list of targets begins with a '-' character, all error responses only from any of the targets called <br>
+will be returned as a list of message header IDs in the response header, or an empty 'OK' response header if no error responses appear before the timeout expires.]]></Description>
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ResponseTargetConfigNames">
+<Description><![CDATA[
+Names a destination or destinations in addition to the caller to which responses will be forwarded.<p>
+If this value is empty, responses are only returned to the caller. If one or more target config names are listed
+(separated by commas), each response from this router will be forwarded to each target config item listed.<p>
+This setting has effect only if ResponseFrom is not empty.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="ResponseTimeout">
+<Description><![CDATA[
+Maximum length of time to wait for asynchronous responses before returning a timed-out error response header.
+A value of -1 means to wait forever; note that a value of 0 is not useful because every response would time out.<p>
+This setting has effect only if ResponseFrom is not empty.]]></Description>
+<Type>%Numeric</Type>
+<InitialExpression>-1</InitialExpression>
+<Transient>1</Transient>
+<Parameter name="MINVAL" value="-1"/>
+</Property>
+
+<Property name="ForceSyncSend">
+<Description><![CDATA[
+Make synchronous calls for 'send' actions. WARNING: this can cause deadlock if another BP is called by something called synchronously from here.<p>
+This setting intended to ensure FIFO ordering when this router and the target Operations have PoolSize=1, and ancillary Operations might get 
+called asynchronously from within a Transform or Operation called from this router.<p>
+Note that if there are multiple 'send' targets, this setting means they will be called one after another in serial fashion, with the next being called after the previous call completes.<p>
+Also note that synchronous calls are not subject to the ResponseTimeout setting.]]></Description>
+<Type>%Boolean</Type>
+<Transient>1</Transient>
+</Property>
+
+<Parameter name="SETTINGS">
+<Default>BusinessRuleName,AlertOnBadMessage,BadMessageHandler,ResponseFrom,ResponseTargetConfigNames,ResponseTimeout,ForceSyncSend,TopicsToSubscribe,MessageTransformationRule,DropMsgOnTransformationError</Default>
+</Parameter>
+
+<Property name="Document">
+<Type>%RegisteredObject</Type>
+<Transient>1</Transient>
+</Property>
+
+<Property name="Source">
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="128"/>
+</Property>
+
+<Property name="MsgClass">
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="128"/>
+</Property>
+
+<Property name="DocType">
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN" value="128"/>
+</Property>
+
+<Property name="DocName">
+<Type>%String</Type>
+<Transient>1</Transient>
+<Parameter name="MAXLEN"/>
+</Property>
+
+<Property name="aRespFrom">
+<Type>%String</Type>
+<Collection>array</Collection>
+</Property>
+
+<Property name="%WaitAll">
+<Description>
+Should we wait for all responses?</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1"/>
+</Property>
+
+<Property name="%ResponseList">
+<Description>
+List of responses we have gotten that we are going to send back</Description>
+<Type>%String</Type>
+<Collection>list</Collection>
+<Parameter name="MAXLEN"/>
+</Property>
+
+<Property name="%TimedOut">
+<Description>
+Did we time out while waiting for any response(s)?</Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="%ErrorStatus">
+<Description>
+Remember the error we return in OnError() so we can use it in OnComplete() if needed</Description>
+<Type>%Status</Type>
+<InitialExpression>$$$OK</InitialExpression>
+<Transient>1</Transient>
+</Property>
+
+<Method name="OnValidate">
+<Description>
+Override this method to implement your own method for validating a Document
+Return non-zero to prevent default validation of the message (if any);
+return an error code in pStatus to indicate a validation failure.</Description>
+<FormalSpec>pDoc:%Persistent,pValSpec:%String,*pStatus:%Status=$$$OK</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[	Quit 0
+]]></Implementation>
+</Method>
+
+<Method name="OnRequest">
+<FormalSpec>request:%Persistent,*response:%Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Do:(..Validation'="")&&(..Validation'=0) $this.OnValidate(request,..Validation,.tSCVal) // no default validation
+	Set:'$D(tSCVal) tSCVal=$$$OK
+	If $$$ISERR(tSCVal) {
+		#; Send to bad message handler
+		If ..BadMessageHandler'="" {
+			Set tSC=..SendRequestAsync(..BadMessageHandler,request,0)  Quit:$$$ISERR(tSC) tSC
+		}
+		#; Quit without forwarding if the message is bad
+		Set tSC=$$$ERROR($$$EnsErrGeneral,"Not forwarding message "_..%PrimaryRequestHeader.%Id()_" with message body Id="_request.%Id()_", Doc Identifier="_request.Identifier_", SessionId="_..%PrimaryRequestHeader.SessionId_" because of validation failure: "_$$$StatusDisplayString(tSCVal))
+		Do $this.OnError(request,.response,$$$NULLOREF,tSC,"0_!_Validation")
+		Quit $$$OK
+	}
+	#; Build forward and reverse maps of target names from which we expect a response
+	Set ..%WaitAll=$Case($E($ZStrip(..ResponseFrom,"<W")),"+":"+","-":"-",:"")
+	Set:""'=..%WaitAll $E(..ResponseFrom,1,$F(..ResponseFrom,..%WaitAll)-1)="" ; remove prefix if any
+	Set tLen=$L(..ResponseFrom,",") For i=1:1:tLen { Set tRF=$ZStrip($P(..ResponseFrom,",",i),"<>W")  Continue:""=tRF
+		Do ..aRespFrom.SetAt(tRF,i)
+		Do:""=..aRespFrom.GetAt(tRF) ..aRespFrom.SetAt(i,"+"_tRF)
+	}
+	Set ..Document=request
+	Set ..Source = ..%PrimaryRequestHeader.SourceConfigName
+	Set ..MsgClass = request.%ClassName(1)
+	Set tRuleName=..BusinessRuleName  Set:""=tRuleName tRuleName=..%ConfigName
+	Quit ..doOneAction(request,"rule:"_tRuleName,,,.response)
+]]></Implementation>
+</Method>
+
+<Method name="OnResponse">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent,callrequest:%Persistent,callresponse:%Persistent,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Quit:..%TimedOut||$$$IsdefObject(response) $$$OK
+	Set tKey=$P(pCompletionKey,"_",2)
+	Set tFrom=$S(+tKey'=tKey:$P(pCompletionKey,"_",3), 1:..aRespFrom.GetAt(tKey))
+	If ""'=tFrom {
+		Set tIsObj=$$$IsdefObject(callresponse)
+		If ""=..%WaitAll {
+			If tIsObj {
+				$$$sysTRACE("Returning response "_callresponse.%Id()_" from "_tFrom_" as response from routing BP "_..%Id())
+				Set response=callresponse
+			}  ; else just exit w/ OK & no response body
+			Do ..ClearAllPendingResponses()
+		} Else {
+			Set tErrType=$S(tIsObj&&..IsErrorResponse(request,callresponse):"NACK ", $$$ISERR(..%ErrorStatus):"error ", 1:"")
+			If "+"=..%WaitAll || (""'=tErrType) {
+				$$$sysTRACE("Adding "_tErrType_"header "_..%CurrentResponseHeader.%Id()_" to response holding list in routing BP "_..%Id())
+				Do ..%ResponseList.Insert(..%CurrentResponseHeader.%Id())
+				Set ..%ErrorStatus=$$$OK
+			}
+		}
+	}
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnError">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent,callrequest:%Persistent,pErrorStatus:%Status,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Quit:$$$IsdefObject(response) $$$OK ; If the response is already set, don't mess with it
+	Set tKey=$P(pCompletionKey,"_",2)
+	If "!"=tKey { ; validation failure
+		$$$ASSERT($P(pCompletionKey,"_",3)="Validation"&&'$IsObject(callrequest))
+		If ..AlertOnBadMessage { Do ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(pErrorStatus)))) }
+		Else { $$$LOGSTATUS(pErrorStatus) }
+		Set ..%ErrorStatus=pErrorStatus
+		Quit $$$OK
+	} Else {
+		Set tFrom=$S(+tKey'=tKey:$P(pCompletionKey,"_",3), 1:..aRespFrom.GetAt(tKey))
+		#; we should never get an error from somewhere we didn't request a reply from; if we do just error out
+		Quit:""=tFrom pErrorStatus
+	}
+	If ""=..%WaitAll {
+		Do ..ClearAllPendingResponses() ; ensure call to OnComplete
+		Set ..%ErrorStatus=pErrorStatus
+		Quit ..%ErrorStatus
+	} Else {
+		#; return OK so it will be caught in OnResponse()
+		Set ..%ErrorStatus=pErrorStatus
+		Quit $$$OK
+	}
+]]></Implementation>
+</Method>
+
+<Method name="OnTimeout">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent,callrequest:%Persistent,pCompletionKey:%String]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Quit:$$$IsdefObject(response) $$$OK ; If the response is already set, don't mess with it
+	Set ..%TimedOut=1
+	For tI=..%MasterPendingResponses.Count():-1:1 {
+		Set tEntry=..%MasterPendingResponses.GetAt(tI)
+		Do ..%MasterPendingResponses.RemoveAt(tI)
+		Set tRequestHeader=##class(Ens.MessageHeader).%OpenId($li(tEntry,1))
+		
+		Set tHeader = ##class(Ens.MessageHeader).%New()  Quit:'$IsObject(tHeader)
+		Set tHeader.SourceConfigName = tRequestHeader.TargetConfigName
+	    Set tHeader.IsError=1, tHeader.ErrorStatus=$$$ERROR($$$EnsErrGeneral,"Routing BP "_..%Id()_" timed out waiting for response from "_tRequestHeader.TargetConfigName_" for request "_tRequestHeader.%Id())
+	    Do tHeader.%Save()
+		Do ..%ResponseList.Insert(tHeader.%Id())
+		
+		Set tMessageBody=$zobjclassmethod(tRequestHeader.MessageBodyClassName,"%OpenId",tRequestHeader.MessageBodyId)
+		Set $ZT="UserTrapOnTimeout"
+		Do tMessageBody.%OnTimeout()
+UserTrapOnTimeout
+		Set $ZT=""
+	}
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnComplete">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#; Only prepares a reply if there's not one already done and if ..ResponseFrom indicated we need one or the caller requires one
+	Set tHasTarget=(""'=$ZStrip(..ResponseTargetConfigNames,"*W",","))
+	Set tNeedReply=tHasTarget||..%PrimaryRequestHeader.needsReply()
+	Do:tNeedReply ..OnPrepareReply(request,.response)
+	If ""'=..%WaitAll&&(""=$G(response))&&tNeedReply {
+		If ..%ResponseList.Count()||..%TimedOut {
+		    Set tList="" For i=..%ResponseList.Count():-1:1 {
+			    Set tList=$LB(..%ResponseList.GetAt(i))_tList
+		    }
+		    Set response=tList
+	    }
+	} Do ..%ResponseList.Clear(), ..aRespFrom.Clear() ; clear to reduce storage
+	
+	If ""'=$G(response) {
+		For i=1:1:$L(..ResponseTargetConfigNames,",") { Set tRT=$ZStrip($P(..ResponseTargetConfigNames,",",i),"<>W")  Continue:""=tRT
+			$$$sysTRACE("Forwarding response "_$S($IsObject(response):response.%Id(),1:response)_" to "_tRT_" as response from routing BP "_..%Id())
+			Do ..SendRequestAsync(tRT,response,0)
+		}
+	} Set ..ResponseTargetConfigNames=""  ; clear to reduce storage
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="OnPrepareReply">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent]]></FormalSpec>
+<Implementation><![CDATA[]]></Implementation>
+</Method>
+
+<Method name="IsErrorResponse">
+<FormalSpec><![CDATA[request:%Persistent,&response:%Persistent]]></FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[	Quit 0
+]]></Implementation>
+</Method>
+
+<Method name="doOneAction">
+<FormalSpec>pRequest:%Persistent,pOneAction:%String,*pQuitProcessing:%Boolean,pLevel:%Integer=1,*pSyncResponse:%Persistent</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Quit:pLevel>1000 $$$EnsError($$$EnsErrGeneral,"Rule "_tActionTarget_" recursion level too deep: "_pLevel)
+	Set $ZT="Trap", tSC=$$$OK, pQuitProcessing=0
+
+	Set tActionType=$P(pOneAction,":",1)
+	Set tActionTarget=$P(pOneAction,":",2)
+	Set tActionTransform=$TR($P(pOneAction,":",3)," ")
+
+	If tActionType="rule" || (tActionType="delegate") {
+		For iTg=1:1:$L(tActionTarget,",") { Set tOneTarg=$ZStrip($P(tActionTarget,",",iTg),"<>W")  Continue:""=tOneTarg
+			Set tSC=##class(Ens.Rule.RuleDefinition).EvaluateRulesEx(tOneTarg, ..%SessionId, $this, $this.%ClassName(1), .tActionList) Quit:$$$ISERR(tSC)
+			Set tActionTotal=$S(tActionList="":0,1:$L(tActionList,";"))
+			For i=1:1:tActionTotal {
+				Set tSC=..doOneAction(pRequest,$P(tActionList,";",i),.pQuitProcessing,pLevel+1,.pSyncResponse)
+				Quit:$$$ISERR(tSC)||pQuitProcessing
+			}
+		}
+	}
+	/// ++HID
+	ElseIf (tActionType="publish") {
+		Set tTargetList=""
+		Set tSC = ##class(Ens.Director).GetProductionStatus(.tProduction, .tStatus)
+		For iTg=1:1:$L(tActionTarget,",") { Set tOneTarg=$ZStrip($P(tActionTarget,",",iTg),"<>W")  Continue:""=tOneTarg
+			Set tSC=##class(Ens.Rule.RuleDefinition).EvaluateRulesEx(tOneTarg, ..%SessionId, $this, $this.%ClassName(1), .tTopicList) Quit:$$$ISERR(tSC)
+			Set tTopicTotal=$S(tTopicList="":0,1:$L(tTopicList,";"))
+			For i=1:1:tTopicTotal {
+				Set tTopic=$P(tTopicList,";",i)
+				Set tSC = ##class(EnsLib.PubSub.Subscription).FindSubscribers(tProduction, tTopic, .tTargets)
+				Set tTargetIndex="" For { Set tTargetIndex=$Order(tTargets(tTargetIndex)) Quit:tTargetIndex=""
+					Set tSubscriber=##class(EnsLib.PubSub.Subscriber).%OpenId(tTargetIndex)
+					Set:$IsObject(tSubscriber) tTargetList=tTargetList_$Select(tTargetList'="":",",1:"")_tSubscriber.Name
+				}
+			}
+		}
+		Set tSC=..doOneAction(pRequest,"send:"_tTargetList,.pQuitProcessing,pLevel+1,.pSyncResponse)
+	}
+	/// --HID
+	ElseIf tActionType="delete" {
+		Set pQuitProcessing=1
+		Set tSC=pRequest.%DeleteId(pRequest.%Id())
+	}
+	ElseIf tActionType="send" {
+		Set newrequest=pRequest
+		For iTxform=1:1:$L(tActionTransform,",") { Set tXform=$ZStrip($P(tActionTransform,",",iTxform),"<>W")  Continue:""=tXform
+			Set tSC=$zobjclassmethod(tXform,"Transform",newrequest,.newrequest)  Quit:$$$ISERR(tSC)
+		}
+		If $$$ISERR(tSC) {
+			Set tSC=$$$ERROR($$$EnsErrGeneral,"Not routing to target(s) '"_tActionTarget_"' because of error in Transform '"_tXform_"' : "_$$$StatusDisplayString(tSC))
+			$$$LOGSTATUS(tSC)
+			Do:..AlertOnError ..SendAlert(##class(Ens.AlertRequest).%New($LB(..%ConfigName,$$$StatusText(tSC))))
+			Quit $$$OK ; don't terminate other rules
+		} Else {
+			For iTg=1:1:$L(tActionTarget,",") { Set tOneTarg=$ZStrip($P(tActionTarget,",",iTg),"<>W")  Continue:""=tOneTarg
+				Set iTarg=..aRespFrom.GetAt("+"_tOneTarg)
+				Set:""=iTarg&&..aRespFrom.GetAt("+*") iTarg="*_"_tOneTarg
+				Set tResponseRequired=(""'=iTarg)  set:tResponseRequired iTarg=..%MasterPendingResponses.Count()_"_"_iTarg
+				If '..ForceSyncSend {
+					If ..ResponseTimeout>0&&..aRespFrom.Count()&&'..ForceSyncSend { Do ..SetTimer(..ResponseTimeout)  Set ..ResponseTimeout=0 }
+					Set tSC=..SendRequestAsync(tOneTarg,newrequest,tResponseRequired,iTarg)
+				} Else {
+					Set tSC=..SendRequestSync(tOneTarg,newrequest,.tResponse)
+					Set:$$$ISOK(tSC) tSC=$zobjmethod($this,"OnResponse",pRequest,.pSyncResponse,newrequest,tResponse,iTarg)
+				}
+			}
+		}
+	} ElseIf $Case(tActionType, "stop":0, "contin":0, :1) {
+		Set tSC=$$$EnsError($$$EnsErrGeneral,"Invalid action type: "_tActionType)
+	}
+Exit
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Goto Exit
+]]></Implementation>
+</Method>
+
+<Method name="OnGetConnections">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>*pArray:%String,pItem:Ens.Config.Item</FormalSpec>
+<Implementation><![CDATA[
+	Do ##super(.pArray,pItem)
+	Set (tRuleName,tRespTargs,tBadMessageHandler,tAlertOnBadMessage)=""
+	Do pItem.PopulateModifiedSettings()
+	Set tIndex = ""
+	For {
+		Set tOneSetting = pItem.ModifiedSettings.GetNext(.tIndex) Quit:tIndex=""
+		Set tName=tOneSetting.Name
+		If tName="BusinessRuleName" { Set tRuleName = tOneSetting.Value }
+		ElseIf tName="BadMessageHandler" { Set tBadMessageHandler = tOneSetting.Value }
+		ElseIf tName="AlertOnBadMessage" { Set tAlertOnBadMessage = tOneSetting.Value }
+		ElseIf tName="ResponseTargetConfigNames" { Set tRespTargs = tOneSetting.Value }
+	}
+	Set:tRuleName="" tRuleName=pItem.Name
+	Set tRuleHost = $P(tRuleName,".",1,$L(tRuleName,".")-1)
+	Set tRuleName = $P(tRuleName,".",$L(tRuleName,"."))
+	Set tTargetList = ##class(Ens.Rule.Router.RoutingRule).GetTargetList(tRuleHost,tRuleName)	
+	For i=1:1:$L(tTargetList,",") Set one=$ZStrip($P(tTargetList,",",i),"<>W")  Continue:""=one  Set pArray(one)=""
+	Set:tBadMessageHandler'="" pArray(tBadMessageHandler)=""
+	Set:+tAlertOnBadMessage pArray("Ens.Alert")=""
+	For i=1:1:$L(tRespTargs,",") Set one=$ZStrip($P(tRespTargs,",",i),"<>W")  Continue:""=one  Set pArray(one)=""
+]]></Implementation>
+</Method>
+
+<Method name="normalizeValSpec">
+<Description>
+Convert to lower case, with inverse spec chars converted to upper case</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pValSpec:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set pValSpec=$ZCVT(pValSpec,"L")
+	Set new="",neg=0 For i=1:1:$L(pValSpec) { Set c=$E(pValSpec,i)
+		If "-"=c Set neg='neg  Continue
+		Set new=new_$S(neg:$ZCVT(c,"U"),1:c), neg=0
+	}
+	Quit new
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>RoutingEngineDefaultData</DefaultData>
+<Data name="RoutingEngineDefaultData">
+<Subscript>"RoutingEngine"</Subscript>
+<Value name="1">
+<Value>%WaitAll</Value>
+</Value>
+<Value name="2">
+<Value>%ResponseList</Value>
+</Value>
+<Value name="3">
+<Value>%TimedOut</Value>
+</Value>
+<Value name="4">
+<Value>ResponseTargetConfigNames</Value>
+</Value>
+</Data>
+<Data name="aRespFrom">
+<Attribute>aRespFrom</Attribute>
+<Structure>subnode</Structure>
+<Subscript>"aRespFrom"</Subscript>
+</Data>
+</Storage>
+</Class>
+
+
+<Project name="EnsUpdatedComponents" LastModified="2010-06-28 19:35:31">
+  <Items>
+    <ProjectItem name="Ens.BusinessOperation" type="CLS"/>
+    <ProjectItem name="Ens.BusinessProcess" type="CLS"/>
+    <ProjectItem name="Ens.Config.Item" type="CLS"/>
+    <ProjectItem name="EnsLib.MsgRouter.RoutingEngine" type="CLS"/>
+  </Items>
+</Project>
+</Export>

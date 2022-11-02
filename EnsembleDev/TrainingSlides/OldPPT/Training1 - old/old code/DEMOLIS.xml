@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2017-12-31 15:15:30">
+<Project name="DEMOLIS" LastModified="2017-12-29 20:06:24.019547">
+  <Items>
+    <ProjectItem name="LIS" type="PKG"></ProjectItem>
+    <ProjectItem name="LIS.REST.PatientService" type="CLS"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="LIS.BusinessService.PatientService">
+<Super>Ens.BusinessService</Super>
+<TimeChanged>64646,65341.62088</TimeChanged>
+<TimeCreated>64646,63351.678734</TimeCreated>
+
+<Method name="OnProcessInput">
+<FormalSpec>pInput:LIS.REST.MSG.PatientReq,*pOutput:%RegisteredObject</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+
+	set patInst = ##class(LIS.Patient).%New()
+	set patInst.PatientNumber = pInput.PatientNumber
+	set patInst.FullName = pInput.FullName
+	set patInst.Gender = pInput.Gender
+	set tSc = patInst.%Save()
+	if ($$$ISERR(tSc)){quit}
+	set pOutput = ##class(LIS.REST.MSG.PatientResp).%New()
+	set pOutput.Id = patInst.%Id()
+	set pOutput.PatientNumber = patInst.PatientNumber
+	set pOutput.FullName = patInst.FullName
+	set pOutput.Gender = patInst.Gender
+    Quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="LIS.LISProduction">
+<Super>Ens.Production</Super>
+<TimeChanged>64646,65380.502205</TimeChanged>
+<TimeCreated>64646,61314.394389</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="LIS.LISProduction" LogGeneralTraceEvents="false">
+  <Description></Description>
+  <ActorPoolSize>2</ActorPoolSize>
+  <Item Name="LIS.BusinessService.PatientService" Category="" ClassName="LIS.BusinessService.PatientService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+
+
+<Package name="LIS" sqlname="LIS"/>
+
+
+<Class name="LIS.Patient">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>64645,50773.738692</TimeChanged>
+<TimeCreated>64645,50616.477069</TimeCreated>
+
+<Property name="PatientNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="FullName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",M,F"/>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^LIS.PatientD</DataLocation>
+<DefaultData>PatientDefaultData</DefaultData>
+<IdLocation>^LIS.PatientD</IdLocation>
+<IndexLocation>^LIS.PatientI</IndexLocation>
+<StreamLocation>^LIS.PatientS</StreamLocation>
+<Data name="PatientDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>PatientNumber</Value>
+</Value>
+<Value name="3">
+<Value>FullName</Value>
+</Value>
+<Value name="4">
+<Value>Gender</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="LIS.REST.MSG.PatientReq">
+<Super>%RegisteredObject</Super>
+<TimeChanged>64646,63478.317166</TimeChanged>
+<TimeCreated>64645,50616.477069</TimeCreated>
+
+<Property name="PatientNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="FullName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",M,F"/>
+</Property>
+</Class>
+
+
+<Class name="LIS.REST.MSG.PatientResp">
+<Super>%RegisteredObject</Super>
+<TimeChanged>64646,63619.478666</TimeChanged>
+<TimeCreated>64645,50616.477069</TimeCreated>
+
+<Property name="Id">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatientNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="FullName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",M,F"/>
+</Property>
+</Class>
+
+
+<Class name="LIS.REST.PatientRestService">
+<Super>%CSP.REST</Super>
+<TimeChanged>64646,68621.239981</TimeChanged>
+<TimeCreated>64645,51146.350976</TimeCreated>
+
+<Parameter name="ADAPTER">
+</Parameter>
+
+<Method name="GetPatientById">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pID:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+        #dim tSC As %Status = $$$OK
+        #dim e As %Exception.AbstractException
+        #dim tStream As %Stream.Character
+        Try{
+                Set tObj=##class(LIS.Patient).%OpenId(pID),tStream = ""
+                d ##class(%ZEN.Auxiliary.jsonProvider).%WriteJSONStreamFromObject(.tStream,tObj)
+                w tStream.Read() 
+        } Catch (e) {
+                Set tSC=e.AsStatus()
+        }
+        Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="CreatePatient">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	
+	#dim tSc As %Status = $$$OK
+	#dim e As %Exception.AbstractException
+	Try    {    	
+	//Retrieve data from request content and tranfer it into an entity instance
+	set tSc = ##class(%ZEN.Auxiliary.jsonProvider).%ConvertJSONToObject(%request.Content,"LIS.REST.MSG.PatientReq", .instance)
+	//Call BS
+	set status = ##class(Ens.Director).CreateBusinessService("LIS.BusinessService.PatientService", .service)
+    if $$$ISOK(status) {
+	    #dim tResponse as LIS.REST.MSG.PatientResp
+	    set status = service.OnProcessInput(.instance, .tResponse)
+    }
+	//As recommended by REST Practice, return the saved instance
+	//Build json response
+	Set %response.ContentType="application/json"
+	//write the object as a client json string to client browser
+	#dim dynObj As %DynamicObject = {}
+	set dynObj.Id = tResponse.Id
+	set dynObj.PatientNumber = tResponse.PatientNumber
+	set dynObj.FullName = tResponse.FullName
+	set dynObj.Gender = tResponse.Gender
+	w dynObj.%ToJSON()
+	do ##class(%ZEN.Auxiliary.jsonProvider).%ObjectToJSON(tResponse)
+	//.%WriteJSONStreamFromObject(.tStream,tResponse)
+	//Set %response.Context("Data")="tStream" 
+	} Catch (e) {
+		Set tSc=e.AsStatus()
+	}
+	Quit tSc
+]]></Implementation>
+</Method>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/Patient/:Id" Method="GET" Call="GetPatientById"/>
+<Route Url="/Patient" Method="POST" Call="CreatePatient" />
+</Routes>
+]]></Data>
+</XData>
+</Class>
+</Export>

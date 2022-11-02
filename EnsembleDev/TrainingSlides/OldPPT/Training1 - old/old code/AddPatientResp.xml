@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2018-01-04 17:35:39">
+<Class name="CDR.BP.MSG.AddPatientResp">
+<Super>Ens.Response</Super>
+<TimeChanged>64648,52641.702383</TimeChanged>
+<TimeCreated>64647,66277.41585</TimeCreated>
+
+<Property name="RtnCode">
+<Type>%Integer</Type>
+</Property>
+
+<Property name="RtnMsg">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="256"/>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>AddPatientRespDefaultData</DefaultData>
+<Data name="AddPatientRespDefaultData">
+<Subscript>"AddPatientResp"</Subscript>
+<Value name="1">
+<Value>RtnCode</Value>
+</Value>
+<Value name="2">
+<Value>RtnMsg</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

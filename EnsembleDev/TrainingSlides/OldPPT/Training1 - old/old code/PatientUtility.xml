@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2017-12-31 15:14:25">
+<Class name="CDR.Utils.PatientUtility">
+<Super>%RegisteredObject</Super>
+<TimeChanged>64647,75315.97884</TimeChanged>
+<TimeCreated>64647,68825.048304</TimeCreated>
+
+<Method name="IsPatientNumberExist">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>patNumber:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	if "" '= patNumber {
+		set count = 0
+		&sql(select count(*) into :count from CDR.Patient p
+		where p.PatientNumber = :patNumber)
+		if (0 < count){
+			quit 1
+		}
+	}
+	quit 0
+]]></Implementation>
+</Method>
+
+<Method name="SavePatientFromMsg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>req:CDR.BP.MSG.AddPatientRequest</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim patInst As CDR.Patient = ##class(CDR.Patient).%New()
+	set patInst.PatientNumber = req.PatientNumber
+	set patInst.FirstName = req.FirstName
+	set patInst.LastName = req.LastName
+	set patInst.IDNumber = req.IDNumber
+	set patInst.Gender = req.Gender
+	set patInst.DOB = req.DOB
+	set patInst.PhoneNumber = req.PhoneNumber
+	set tSC = patInst.%Save()
+	quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="getPatientExistMsg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>patNumber:%String</FormalSpec>
+<ReturnType>CDR.BP.MSG.AddPatientResp</ReturnType>
+<Implementation><![CDATA[
+	#dim msg As CDR.BP.MSG.AddPatientResp = ##class(CDR.BP.MSG.AddPatientResp).%New()
+	set msg.RtnCode = 100
+	set msg.RtnMsg = "Patient with number: "_patNumber_" exists, creation ignored"
+	quit msg
+]]></Implementation>
+</Method>
+
+<Method name="getSaveErrorMsg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tsc:%Status</FormalSpec>
+<ReturnType>CDR.BP.MSG.AddPatientResp</ReturnType>
+<Implementation><![CDATA[
+	#dim msg As CDR.BP.MSG.AddPatientResp = ##class(CDR.BP.MSG.AddPatientResp).%New()
+	set msg.RtnCode = 200
+	set msg.RtnMsg = "Failed in saving patient, reason: "_$System.Status.GetErrorText(tsc)
+	quit msg
+]]></Implementation>
+</Method>
+
+<Method name="getDTErrorMsg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>msgName:%String</FormalSpec>
+<ReturnType>CDR.BP.MSG.AddPatientResp</ReturnType>
+<Implementation><![CDATA[
+	set pResponse = ##class(CDR.BP.MSG.AddPatientResp).%New()
+	set pResponse.RtnCode = 300
+	set pResponse.RtnMsg = "Failed in transfroming request to "_msgName
+	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="getBOErrorMsg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>targetName:%String</FormalSpec>
+<ReturnType>CDR.BP.MSG.AddPatientResp</ReturnType>
+<Implementation><![CDATA[
+	set pResponse = ##class(CDR.BP.MSG.AddPatientResp).%New()
+	set pResponse.RtnCode = 400
+	set pResponse.RtnMsg = "Failed in sending request to "_targetName
+	quit pResponse
+]]></Implementation>
+</Method>
+
+<Method name="getSuccessMsg">
+<ClassMethod>1</ClassMethod>
+<ReturnType>CDR.BP.MSG.AddPatientResp</ReturnType>
+<Implementation><![CDATA[
+	set pResponse = ##class(CDR.BP.MSG.AddPatientResp).%New()
+	set pResponse.RtnCode = 0
+	set pResponse.RtnMsg = "Patient Sync completed"
+	quit pResponse
+]]></Implementation>
+</Method>
+</Class>
+</Export>

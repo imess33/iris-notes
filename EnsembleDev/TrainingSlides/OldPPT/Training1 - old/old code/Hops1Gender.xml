@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2018-01-21 14:12:14">
+<Document name="Hops1Gender.LUT">
+<lookupTable>
+<entry table="Hops1Gender" key="F">Female</entry>
+<entry table="Hops1Gender" key="M">Male</entry>
+</lookupTable>
+</Document></Export>

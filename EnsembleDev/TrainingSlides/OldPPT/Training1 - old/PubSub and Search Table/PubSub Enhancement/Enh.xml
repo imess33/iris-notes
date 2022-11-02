@@ -1,0 +1,1756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="24" zv="Cache for Windows (x86-32) 2010.1.1 (Build 503U)" ts="2010-07-01 20:35:06">
+<Class name="Enh.Config.Item">
+<Description><![CDATA[
+Code to inject into Ens.Config.Item. It must be listed as a superclass of Ens.Config.Item.
+<br>
+The code here adds logic to maintain the PubSub structures. It is done
+in the %OnAfterSave call back method and in the DELETE trigger.]]></Description>
+<Abstract>1</Abstract>
+<IncludeCode>%occInclude</IncludeCode>
+<TimeChanged>61907,56181.590828</TimeChanged>
+<TimeCreated>61900,42207.790373</TimeCreated>
+
+<Method name="%OnAfterSave">
+<Description><![CDATA[
+This callback method is invoked by the <METHOD>%Save</METHOD> method to 
+provide notification that the object is being saved. It is called after 
+the object's data has been successfully written to disk.
+
+<P><VAR>insert</VAR> will be set to 1 if this object is being saved for the first time.
+
+<P>If this method returns an error then the call to <METHOD>%Save</METHOD> will fail.]]></Description>
+<FormalSpec>insert:%Boolean</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	Try {
+		If ($ZObjClassMethod(..ClassName, "%Extends", "Enh.PubSub")) {
+			Set tTopics = ..FindSettingByName("TopicsToSubscribe", "Host")
+			If (tTopics '= $$$NULLOREF) {
+				// Strip out <CR>s. If it is entered on the EMP the line separator
+				// is <CR><LF> while if it is saved from Studio, the separator is just
+				// <LF>.
+				Set tTopicList = $Translate(tTopics.Value, $Char(13))
+				If ('insert) {
+					Do ##class(Enh.PubSub.Utils).deleteSubscriber(..Production.%Id(), ..Name)
+				}
+				For i=1:1:$Length(tTopicList, $Char(10)) {
+					Set tTopic = $Piece(tTopicList, $Char(10), i)
+					Do ##class(Enh.PubSub.Utils).addSubscription(..Production.%Id(), ..Name, tTopic)
+				}
+			}
+		}
+	}
+	Catch {
+	}
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Trigger name="delete">
+<Code>	Do:$ZObjClassMethod({ClassName}, "%Extends", "Enh.PubSub") ##class(Enh.PubSub.Utils).deleteSubscriber({Production},{Name})</Code>
+<Event>DELETE</Event>
+</Trigger>
+</Class>
+
+
+<Class name="Enh.NoSuchMessageBody">
+<Super>%Exception.AbstractException</Super>
+<TimeChanged>61902,46961.414892</TimeChanged>
+<TimeCreated>61902,46961.414892</TimeCreated>
+
+<Method name="new">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String,objectId:%String</FormalSpec>
+<ReturnType>%Exception.AbstractException</ReturnType>
+<Implementation><![CDATA[..%New(className,,,objectId)
+]]></Implementation>
+</Method>
+
+<Method name="DisplayString">
+<Description>
+This returns a string that represents the exception. Users should feel free
+to modify the format in subclasses</Description>
+<FormalSpec>pLevel:%Integer=0</FormalSpec>
+<Implementation><![CDATA[	Quit "MessageBody does not exist for MessageHeader #"_..Data_" with body class "_..Name
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Enh.NoTransformationDefined">
+<Super>%Exception.AbstractException</Super>
+<TimeChanged>61902,47348.621086</TimeChanged>
+<TimeCreated>61902,47348.621086</TimeCreated>
+
+<Method name="new">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String</FormalSpec>
+<ReturnType>%Exception.AbstractException</ReturnType>
+<Implementation><![CDATA[..%New(className)
+]]></Implementation>
+</Method>
+
+<Method name="DisplayString">
+<Description>
+This returns a string that represents the exception. Users should feel free
+to modify the format in subclasses</Description>
+<FormalSpec>pLevel:%Integer=0</FormalSpec>
+<Implementation><![CDATA[	Quit "No transformation is found for message class "_..Name
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Project name="Enh" LastModified="2010-07-01 10:18:23">
+  <Items>
+    <ProjectItem name="Enh.Config.Item" type="CLS"/>
+    <ProjectItem name="Enh.NoSuchMessageBody" type="CLS"/>
+    <ProjectItem name="Enh.NoTransformationDefined" type="CLS"/>
+    <ProjectItem name="Enh.PubSub" type="CLS"/>
+    <ProjectItem name="Enh.PubSub.Utils" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Publish.Condition" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Publish.Rule" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Publish.TopicRule" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Router.Action" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Router.RoutingRule" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Router.Rule" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Subscribe.Rule" type="CLS"/>
+    <ProjectItem name="Enh.Rule.Subscribe.TransformationRule" type="CLS"/>
+    <ProjectItem name="Enh.TransformationReturnedNull" type="CLS"/>
+  </Items>
+</Project>
+
+
+<Class name="Enh.PubSub">
+<Description><![CDATA[
+Additional code to Ens.BuinessProcess  and Ens.BusinessOperation to make them subsriber. The code should be injected by
+listing Enh.PubSub in the superclasses of Ens.BuinessProcess  and Ens.BusinessOperation.
+<br>
+After compiling this class you need to recompile the whole tree of Processes and Operations in all Ensemble namespaces.
+]]></Description>
+<Abstract>1</Abstract>
+<IncludeCode>Ensemble</IncludeCode>
+<IncludeGenerator>Ensemble</IncludeGenerator>
+<TimeChanged>61908,40099.574717</TimeChanged>
+<TimeCreated>61899,53425.593277</TimeCreated>
+
+<Parameter name="ADAPTER">
+<Description>
+The type of adapter used to communicate with external systems</Description>
+</Parameter>
+
+<Property name="TopicsToSubscribe">
+<Description>
+List of topics a particular configuration item subscribes for.
+It is a multi line configuration setting. One topic can be defined
+at a line. See the syntax of a topic in the documentation.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+</Property>
+
+<Property name="MessageTransformationRule">
+<Description>
+Name of a message transformation rule. This defines the
+required transformations based on the received request message
+type.</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="DropMsgOnTransformationError">
+<Description><![CDATA[
+The flag controls whether a received message which supposed to be
+transformed can be dropped if the transformation fails.
+<p>The transformation fails if the rule does not exists, or the rule
+returns empty string, or the invoked transformation returns NULLOREF, or
+the transformation encounteres any COS error trap.]]></Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="replyTransformationClass">
+<Type>%String</Type>
+<Private>1</Private>
+<Parameter name="MAXLEN" value="255"/>
+</Property>
+
+<Method name="getRequest">
+<Internal>1</Internal>
+<FormalSpec>pHeader:Ens.MessageHeader</FormalSpec>
+<ReturnType>%Persistent</ReturnType>
+<Implementation><![CDATA[
+	Set ret = $$$NULLOREF
+	Try {
+		Set ..replyTransformationClass = ""
+		If pHeader.MessageBodyClassName'="" {
+			Set original = $zobjclassmethod(pHeader.MessageBodyClassName,"%OpenId",pHeader.MessageBodyId)
+			Throw:'$IsObject(original) ##class(Enh.NoSuchMessageBody).new(pHeader.MessageBodyClassName, pHeader.%Id())
+			If (..MessageTransformationRule '= "") {
+				Set tSC = ##class(Ens.Rule.RuleDefinition).EvaluateRulesEx(..MessageTransformationRule, ..%SessionId, original, original.%ClassName(1), .tTransforms)
+				If ($$$ISERR(tSC)) Throw ##class(%Exception.StatusException).CreateFromStatus(tSC)
+				Set tTransform=$Piece(tTransforms,":",1)
+				$$$sysTRACE("Transformation required: "_tTransform)
+				Throw:(..DropMsgOnTransformationError&&(tTransform="")) ##class(Enh.NoTransformationDefined).new(original.%ClassName(1))
+				If (tTransform '= "") {
+					Set tSC = $ZOBJClassMethod(tTransform, "Transform", original, .transformed)
+					Throw:($$$ISERR(tSC)) ##class(%Exception.StatusException).CreateFromStatus(tSC)
+					Throw:('$IsObject(transformed))&&(..DropMsgOnTransformationError) ##class(Enh.TransformationReturnedNull).new(original.%ClassName(1), tTransform)
+					Set ..replyTransformationClass = $Piece(tTransforms,":",2)
+				}
+			}
+			Set ret = $Get(transformed, original)
+		}
+	}
+	Catch ex {
+		$$$LOGERROR("Error retrieving request. "_ex.DisplayString())
+		Set:'..DropMsgOnTransformationError ret = $Get(original, $$$NULLOREF)
+	}
+	Quit ret
+]]></Implementation>
+</Method>
+
+<Method name="getReply">
+<Internal>1</Internal>
+<FormalSpec>pReply:%RegisteredObject</FormalSpec>
+<ReturnType>%RegisteredObject</ReturnType>
+<Implementation><![CDATA[
+	Quit:pReply=$$$NULLOREF pReply
+	Quit:..replyTransformationClass="" pReply
+	Set ret = $$$NULLOREF
+	Try {
+		Set tSC = $ZOBJClassMethod(..replyTransformationClass, "Transform", pReply, .ret)
+		Throw:($$$ISERR(tSC)) ##class(%Exception.StatusException).CreateFromStatus(tSC)
+	}
+	Catch ex {
+		$$$LOGERROR("Error retrieving request. "_ex.DisplayString())
+		Set:'..DropMsgOnTransformationError ret = pReply
+	}
+	Quit ret
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Enh.PubSub.Utils">
+<Description>
+Various utility API methods used by the Publish and Subscribe messaging engine.</Description>
+<ClassType/>
+<IncludeCode>%occInclude</IncludeCode>
+<ProcedureBlock>1</ProcedureBlock>
+<System>4</System>
+<TimeChanged>61907,56518.791296</TimeChanged>
+<TimeCreated>60408,42444</TimeCreated>
+
+<Method name="getDomain">
+<Description>
+Get a PubSub domain instance by name. If if does not exists, create a new one.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pName:%String,pDescription:%String="",*pStatus:%Status</FormalSpec>
+<ReturnType>EnsLib.PubSub.DomainName</ReturnType>
+<Implementation><![CDATA[
+	Set pStatus = $$$OK
+	Quit:pName="" $$$NULLOREF
+	Try {
+		Set tDomain = ##class(EnsLib.PubSub.DomainName).NameIDXOpen(pName)
+		// Force to throw an exception if domain does not exists.
+		If tDomain.Name
+	}
+	Catch {
+		Set tDomain = ##class(EnsLib.PubSub.DomainName).%New()
+		Set tDomain.Name = pName
+		Set tDomain.Description = pDescription
+		Set pStatus = tDomain.%Save()
+	}
+	Quit tDomain
+]]></Implementation>
+</Method>
+
+<Method name="getSubscriber">
+<Description>
+Get a subscriber by name. Add new if subscriber does not exist.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDomain:%String="",pName:%String,pTarget:%String="",pAddress:%String="",*pStatus:%Status</FormalSpec>
+<ReturnType>EnsLib.PubSub.Subscriber</ReturnType>
+<Implementation><![CDATA[
+	Set pStatus = $$$OK
+	Set tDomain = ..getDomain(pDomain,,.pStatus)
+	Try {
+		Set tSubscriber = ##class(EnsLib.PubSub.Subscriber).NameIdxOpen($Select(tDomain'=$$$NULLOREF:tDomain.%Id(),1:""), pName)
+		If tSubscriber.Name
+	}
+	Catch {
+		Set tSubscriber = ##class(EnsLib.PubSub.Subscriber).%New()
+		Set tSubscriber.Name = pName
+		Set tSubscriber.Target = pTarget
+		Set tSubscriber.Address = pAddress
+		Set tSubscriber.DomainName = tDomain
+		Set pStatus = tSubscriber.%Save()
+	}
+	Quit tSubscriber
+]]></Implementation>
+</Method>
+
+<Method name="addSubscription">
+<Description>
+Add a new subscription to the list of subscriptions.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDomain:%String="",pSubscriberName:%String,pTopic:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+		Set tSubscriber = ..getSubscriber(pDomain, pSubscriberName,,,.tSC)
+
+		Set tSubscription = ##class(EnsLib.PubSub.Subscription).%New()
+		Set tSubscription.Subscriber = tSubscriber
+		Set tSubscription.DomainName = tSubscriber.DomainName
+		Set tSubscription.Topic = pTopic
+			
+		Set tSC = tSubscription.%Save()
+	}
+	Catch {
+		Set tSC = $$$ERROR(5001, $ZE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="deleteSubscriber">
+<Description><![CDATA[
+Delete one or more subscribers within this namespace.
+This will also remove any subscriptions associated with the subscribers.<br>
+If <var>pSubscriberID</var> is not provided, all subscribers are deleted.
+If <var>pDomain</var> is provided, only subscribers in that domain are deleted.
+<br>If the domain does not contain any more subscriber then the domain is also
+deleted.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDomain:%String="",pSubscriber:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Do {
+		If (pDomain = "") {
+			// Kill all subscribers
+			&SQL(DELETE FROM EnsLib_PubSub.Subscription WHERE Subscriber->Name = :pSubscriber AND Subscriber->DomainName IS NULL)
+			&SQL(DELETE FROM EnsLib_PubSub.Subscriber WHERE Name = :pSubscriber AND DomainName IS NULL)
+		}
+		Else {
+			// Kill all subscribers in given domain
+			&SQL(DELETE FROM EnsLib_PubSub.Subscription WHERE Subscriber->Name = :pSubscriber AND Subscriber->DomainName = :pDomain)
+			&SQL(DELETE FROM EnsLib_PubSub.Subscriber WHERE Name = :pSubscriber AND DomainName = :pDomain)
+			&SQL(DELETE FROM EnsLib_PubSub.DomainName WHERE Name = :pDomain 
+					AND NOT EXISTS(SELECT * FROM EnsLib_PubSub.Subscriber WHERE DomainName = :pDomain))
+		}
+	} While(0)
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Enh.Rule.Publish.Condition">
+<Description>
+Specialized version of Rule condition used within topicRules</Description>
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Persistent,%XML.Adaptor</Super>
+<System>3</System>
+<TimeChanged>61907,56688.698431</TimeChanged>
+<TimeCreated>59591,32403.351131</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Parameter name="NAMESPACE">
+<Description>
+NAMESPACE specifies the XML namespace to be used when projecting the
+class to XML.  if NAMESPACE - "", the default namespace is used for the XML schema
+is used as the namespace for his class.</Description>
+<Type>STRING</Type>
+<Default>http://www.intersystems.com/ens/enh/publish</Default>
+</Parameter>
+
+<Parameter name="XMLIGNORENULL">
+<Description>
+Ensure that we don't get $C(0) for values that are empty strings</Description>
+<Default>1</Default>
+</Parameter>
+
+<Index name="ID">
+<Description>
+Make sure conditions are ordered correctly</Description>
+<IdKey>1</IdKey>
+<Properties>CondNo</Properties>
+</Index>
+
+<Property name="CondNo">
+<Type>%Integer</Type>
+<InitialExpression>$I(^Ens.Rule.ConditionC("CondNo"))</InitialExpression>
+<Parameter name="XMLPROJECTION" value="none"/>
+</Property>
+
+<Property name="JoinOperator">
+<Description>
+How this condition is joined with the previous one.</Description>
+<Type>%String</Type>
+<InitialExpression>"AND"</InitialExpression>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="3"/>
+<Parameter name="VALUELIST" value=",AND,OR"/>
+<Parameter name="XMLNAME" value="join"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Operator">
+<Description>
+Operator used for this condition.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="20"/>
+<Parameter name="VALUELIST" value=",=,!=,&gt;,&gt;=,&lt;,&lt;=,Contains,DoesNotContain,In,NotIn,StartsWith,DoesNotStartWith,Like,NotLike,Matches,DoesNotMatch,InFile,NotInFile"/>
+<Parameter name="XMLNAME" value="operator"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Operand1">
+<Description><![CDATA[
+First operand for condition.<br>
+An operand is one of the following:<br>
+A string literal (within quotes)<br>
+A numeric literal<br>
+A property name (of a property within the associated Business Process context)<br>
+The name of another RuleDefinition associated with the same Busiess Process (rule name starts with #)<br>]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="255"/>
+<Parameter name="XMLNAME" value="op1"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Operand2">
+<Description><![CDATA[
+Second operand for condition.
+An operand is one of the following:<br>
+A string literal (within quotes)<br>
+A numeric literal<br>
+A property name (of a property within the associated Business Process context)<br>
+The name of another RuleDefinition associated with the same Busiess Process (rule name starts with #)<br>]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="255"/>
+<Parameter name="XMLNAME" value="op2"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Rule">
+<Description>
+Parent Rule.</Description>
+<Type>Enh.Rule.Publish.Rule</Type>
+<Cardinality>parent</Cardinality>
+<Inverse>Conditions</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="GetExpression">
+<Description>
+Return the logical expression for this condition.</Description>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set op1 = $S(..Operand1="":"""""",1:..Operand1)
+	Set op2 = $S(..Operand2="":"""""",1:..Operand2)
+
+	If (..Operator = "") {
+		// no operator
+		Set pExpr = op1
+	}
+	Else {
+		Set op = ..Operator
+
+		// See if this is a "function" operator
+		Set isFunc = $Case(op,"Contains":1,"DoesNotContain":1,"In":1,"NotIn":1,"StartsWith":1,"DoesNotStartWith":1,"Like":1,"NotLike":1,"Matches":1,"DoesNotMatch":1,"InFile":1,"NotInFile":1,:0)
+		
+		If (isFunc) {
+			// expression is a function call
+			Set pExpr = op _ "(" _ "("_op1_"),("_op2_"))"
+		}
+		Else {
+			Set pExpr = "("_op1_")" _ op _ "("_op2_")"
+		}
+	}
+	
+	Quit pExpr
+]]></Implementation>
+</Method>
+
+<Method name="GetJoinList">
+<Description>
+Called by U.I. to get list of join operators.</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tIndex = %compiledclass.Properties.FindObjectId(%class.Name_"||JoinOperator")
+	If (tIndex = "") {
+		Do %code.WriteLine(" Quit """"")
+		Quit $$$OK
+	}
+
+	Set tParms = %compiledclass.Properties.GetAt(tIndex).Parameters
+	Set tList = tParms.GetAt("VALUELIST")
+	Do %code.WriteLine(" Quit """ _ tList _ """")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>{%%PARENT}("Conditions")</DataLocation>
+<DefaultData>ConditionDefaultData</DefaultData>
+<IdLocation>^Enh.Rule.Publish.RuleC("Conditions")</IdLocation>
+<IndexLocation>^Enh.Rule.Publish.ConditionI</IndexLocation>
+<StreamLocation>^Enh.Rule.Publish.ConditionS</StreamLocation>
+<Data name="ConditionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>JoinOperator</Value>
+</Value>
+<Value name="3">
+<Value>Operator</Value>
+</Value>
+<Value name="4">
+<Value>Operand1</Value>
+</Value>
+<Value name="5">
+<Value>Operand2</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Publish.Rule">
+<Description><![CDATA[
+Defines a message routing action with topicRule set.
+<br>The rule has no action but a topic to return. The topic is evaluated
+as a rule expression. It is the same expression syntax as for
+conditions.]]></Description>
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Persistent,%XML.Adaptor</Super>
+<System>3</System>
+<TimeChanged>61907,56977.606175</TimeChanged>
+<TimeCreated>59591,32403.453055</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Parameter name="XMLIGNORENULL">
+<Description>
+Ensure that we don't get $C(0) for values that are empty strings</Description>
+<Default>1</Default>
+</Parameter>
+
+<Index name="ID">
+<Description>
+Make sure rules are ordered correctly</Description>
+<IdKey>1</IdKey>
+<Properties>RuleNo</Properties>
+</Index>
+
+<Property name="RuleNo">
+<Type>%Integer</Type>
+<InitialExpression>$I(^Ens.Rule.RuleC("RuleNo"))</InitialExpression>
+<Parameter name="XMLPROJECTION" value="none"/>
+</Property>
+
+<Property name="RuleSet">
+<Description>
+Parent RuleSet.</Description>
+<Type>Enh.Rule.Publish.TopicRule</Type>
+<Cardinality>parent</Cardinality>
+<Inverse>Rules</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="Disabled">
+<Description>
+If false, then this rule is enabled; otherwise this rule is not evaluated.</Description>
+<Type>%Boolean</Type>
+<Parameter name="XMLNAME" value="disabled"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Source">
+<Description>
+If defined, message must be from this source to match this rule.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="source"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="MsgClass">
+<Description>
+If defined, message must be of this class type to match this rule.
+If not defined, then the default value defined by the RoutingRule set is used.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="msgClass"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocName">
+<Description><![CDATA[
+If defined, the message must have this logical name in order to match
+this rule.<br>
+This is a comma-delimited list of document names 
+(applies to virtual document messages only).<br>
+Each item in the list is tested against the document type name declared in the document.
+If not defined, then the default value defined by the RoutingRule set is used.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docName"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocCategory">
+<Description><![CDATA[
+If defined, the message must have this document category in order
+to match this rule.<br>
+This is the document structure category name of a document structure name (DocType)
+(applies to virtual document messages only).<br>
+For example in HL7 this is a schema version, e.g. "2.3.1".
+If not defined, then the default value defined by the RoutingRule set is used.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="docCategory"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocType">
+<Description><![CDATA[
+If defined, the message must be of this document type to match 
+this rule.<br>
+This is the document type of a message (applies to virtual documents
+messages only). It indicates the <em>structure</em> of a message.<br>
+If not defined, then the default value defined by the RoutingRule set is used.
+This is a comma-delimited list of document structure types. Each item in the list
+<em>can</em> include a category name, which would override the 
+values provided by <property>DocCategory</property> and the
+RoutingRule set's <property>DocCategory</property> value.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docType"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Conditions">
+<Description>
+Set of conditions that must evaluate true for this rule to fire.</Description>
+<Type>Enh.Rule.Publish.Condition</Type>
+<Cardinality>children</Cardinality>
+<Inverse>Rule</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="XMLNAME" value="condition"/>
+<Parameter name="XMLPROJECTION" value="ELEMENT"/>
+</Property>
+
+<Property name="Topic">
+<Description>
+The topic returned by the rule. It must be a valid rule expression. For example the following is a valid
+topic: HL7.{MSH:3}_"."_HL7.{MSH:4}</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="255"/>
+<Parameter name="XMLNAME" value="topic"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Method name="GenerateCode">
+<Description><![CDATA[
+Generate code for this rule.<br>
+<var>pRuleNo</var> gives the ordinal position of this rule within the rule set.]]></Description>
+<FormalSpec>pCompiler:Ens.Rule.Compiler,pRuleNo:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=$$$OK, tExpr="", tNeedClose=0, tErrorMsg=""
+	Do {
+		If (..Conditions.Count() '= 0) {
+			// loop over conditions, create code
+			For c = 1:1:..Conditions.Count() { Set tCond = ..Conditions.GetAt(c)
+				Set tX = tCond.GetExpression()
+		
+				If (c = 1) { ; no join for first condition
+					Set tExpr = tX
+				} Else {
+					If (tCond.JoinOperator = "OR") {
+						Set tExpr = tExpr _ ")||(" _ tX
+					} Else {
+						Set tExpr = tExpr _ "&&" _ tX
+					}
+				}
+			}
+			Set tExpr="("_tExpr_")"
+			
+			// Now get code for expression
+			Set tCode = ""
+			Set tSC = ##class(Ens.Rule.ExpressionParser).GenerateCode(tExpr, .tCode, .tErrorMsg)
+			Do:(tErrorMsg'="") pCompiler.Code.WriteLine("  // Invalid condition: " _ tExpr)
+			Quit:$$$ISERR(tSC)
+			
+			If $Case(tCode,"":0,"()":0,"""""":0,"("""")":0,:1) {
+				Do pCompiler.Code.WriteLine(" If " _ tCode _ " {")
+				Set tNeedClose = 1
+			}
+		}
+		// process return value
+		// don't worry about *reason*; caller will handle that
+		Set tSC = ##class(Ens.Rule.ExpressionParser).GenerateCode(..Topic, .tCode, .tErrorMsg)
+		If (tErrorMsg '= "") { ; error in condition: report at run-time
+			Do pCompiler.Code.WriteLine("  Set err=""" _ tErrorMsg _ """")
+		} Else {
+			Do pCompiler.Code.WriteLine("  Set ret=" _ tCode)
+		}
+	} While 0
+
+	Do:tNeedClose pCompiler.Code.Write(" }")
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>{%%PARENT}("Enh.Rule.Publish.TopicRule.Rules")</DataLocation>
+<DefaultData>RuleDefaultData</DefaultData>
+<IdLocation>^Enh.Rule.Publish.TopicRuleC("Rules")</IdLocation>
+<IndexLocation>^Enh.Rule.Publish.RuleI</IndexLocation>
+<StreamLocation>^Enh.Rule.Publish.RuleS</StreamLocation>
+<Data name="RuleDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Disabled</Value>
+</Value>
+<Value name="3">
+<Value>Source</Value>
+</Value>
+<Value name="4">
+<Value>MsgClass</Value>
+</Value>
+<Value name="5">
+<Value>DocName</Value>
+</Value>
+<Value name="6">
+<Value>DocCategory</Value>
+</Value>
+<Value name="7">
+<Value>DocType</Value>
+</Value>
+<Value name="8">
+<Value>Return</Value>
+</Value>
+<Value name="9">
+<Value>Topic</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Publish.TopicRule">
+<Description><![CDATA[
+Defines an Ensemble Business Rule set.
+This is a specific type of Rule Definition used for defining 
+rule-based topic calculation.<br>
+If a rule is fired, it sets <property>%ReturnValue</property> to 
+a topic represented as a string value.]]></Description>
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.RuleDefinition</Super>
+<System>3</System>
+<TimeChanged>61907,57124.694648</TimeChanged>
+<TimeCreated>59591,32403.51098</TimeCreated>
+
+<Parameter name="COMPILABLE">
+<Description>
+Indicates if this Rule Engine supports compilation.</Description>
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="XMLNAME">
+<Default>topicRule</Default>
+</Parameter>
+
+<Property name="Rules">
+<Description>
+Set of rules that make up the routing rule.</Description>
+<Type>Enh.Rule.Publish.Rule</Type>
+<Cardinality>children</Cardinality>
+<Inverse>RuleSet</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="XMLNAME" value="messageType"/>
+<Parameter name="XMLPROJECTION" value="element"/>
+</Property>
+
+<Property name="DoAll">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLNAME" value="doAll"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Source">
+<Description><![CDATA[
+Provides the default value for <property>Source</property> for
+all rules within this RoutingRule set.<br>
+This is the host name of the Business Service
+that sent this message to the Message Router.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="source"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="MsgClass">
+<Description><![CDATA[
+Provides the default value for <property>MsgClass</property> for
+all rules within this RoutingRule set.<br>
+This is the name of the class used to contain the message.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="msgClass"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocName">
+<Description><![CDATA[
+Provides the default value for <property>DocName</property> for
+all rules within this RoutingRule set.<br>
+This is a comma-delimited list of document names 
+(applies to virtual document messages only).<br>
+Each item in the list is tested against the document type name declared in the document.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docName"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocCategory">
+<Description><![CDATA[
+Provides the default value for <property>DocCategory</property> for
+all rules within this RoutingRule set. 
+(applies to virtual document messages only).<br>
+This is the document structure category name of a document structure name (DocType)
+For example in HL7 this is a schema version, e.g. "2.3.1".]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="docCategory"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocType">
+<Description><![CDATA[
+Provides the default value for <property>DocType</property> for
+all rules within this RoutingRule set.<br>
+This is a comma-delimited list of message types 
+(applies to virtual document messages only).<br>
+It pertains to the <em>structure</em> definition assigned
+in the DocType property of the message.<br>
+Each item in the list is tested against the DocType structure property assigned in the document.
+Each item in the list <em>can</em> may include a category name, which would override the 
+value provided by <property>DocCategory</property>.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docType"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Method name="Evaluate">
+<Description>
+Evaluate this routing rule.
+The resulting return value is returned via the %ReturnValue property.</Description>
+<FormalSpec>pContext:%RegisteredObject</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Set $ZT = "Trap"
+	Set tEval = 0
+	Set tErrorMsg = ""
+	
+	// return default value of ""
+	Set ..%Reason = "Default"
+	Set ..%ReturnValue = ""
+	Set tEval = 1
+
+Done	
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Set ..%ReturnValue = ""
+	Set ..%ErrorMsg = $ZE
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="GenerateCode">
+<Description>
+Generate executable code for this Rule
+This also creates a routing global as a side effect.</Description>
+<FormalSpec>pCompiler:Ens.Rule.Compiler</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=$$$OK, $ZT="Trap"
+	Do {
+		// When this is called, we are instantiated and have
+		// the complete set of rules and other properties available
+
+		// remove old map globals
+		Kill ^Ens.Rule.RoutingMap(..HostClass,..FullName)
+		Kill ^Ens.Rule.RoutingMapTargets(..HostClass,..FullName)
+
+		// put rule version number into map global
+		// this gets checked at run time
+		Set ^Ens.Rule.RoutingMap(..HostClass,..FullName) = ..Version
+
+		// map global name: used for code generation
+		// (note: no closing ")"
+		Set tGLVN = "^Ens.Rule.RoutingMap("""_..HostClass_""","""_..FullName_""""
+
+		// generate preamble to compiled routine
+		Do pCompiler.Code.WriteLine(" #; check if Routing global exists and matches our rule version")
+		Do pCompiler.Code.WriteLine(" If $G("_tGLVN_")) '= "_..Version_" {")
+		Do pCompiler.Code.WriteLine("  Quit $$$ERROR($$$GeneralError,""RoutingRule map global version ""_$G("_tGLVN_"))_"" does not exist or is not correct version ("_..Version_")"")")
+		Do pCompiler.Code.WriteLine(" }")
+
+		Do pCompiler.Code.WriteLine(" #; find match within map global; dispatch to rule condition")
+
+		// assume pContext has the following properties
+		// Source,msgClass,docName,docType
+
+		// here we directly look into the map global to see if we have
+		// a match. The tricky part is that if the map has missing items we have to
+		// match on those as well. This means testing all permutations
+		// of possible subscripts. We also have to test the most specific
+		// case first.
+
+		// parse DocType into category and type
+		Do pCompiler.Code.WriteLine(" Set tDocType = pContext.DocType, tDocCategory = """"")
+		Do pCompiler.Code.WriteLine(" Set:tDocType["":"" tDocCategory = $P(tDocType,"":"",1), tDocType = $P(tDocType,"":"",2)")
+
+		// set of test values
+		Do pCompiler.Code.WriteLine(" Set input(1) = $S(pContext.Source="""":"" "", 1:pContext.Source)")
+		Do pCompiler.Code.WriteLine(" Set input(2) = $S(pContext.MsgClass="""":"" "", 1:pContext.MsgClass)")
+		Do pCompiler.Code.WriteLine(" Set input(3) = $S(pContext.DocName="""":"" "", 1:pContext.DocName)")
+		Do pCompiler.Code.WriteLine(" Set input(4) = $S(tDocCategory="""":"" "", 1:tDocCategory)")
+		Do pCompiler.Code.WriteLine(" Set input(5) = $S(tDocType="""":"" "", 1:tDocType)")
+		Do pCompiler.Code.WriteLine("")
+		Do pCompiler.Code.WriteLine(" #; weed out input subscripts that don't exist in the map")
+		Do pCompiler.Code.WriteLine(" Set v(1)="" "", input(1)=$S(""""=input(1)||'$D("_tGLVN_",input(1))):"" "", 1:input(1))")
+		Do pCompiler.Code.WriteLine(" For n=2:1:5 Set v(n)="" "", input(n)=$S('$D("_tGLVN_",""subs"",n,input(n))):"" "", 1:input(n))")
+		Do pCompiler.Code.WriteLine("")
+		Do pCompiler.Code.WriteLine(" #; Find all rules mapped for each permutation (for input subscripts that exist in the map)")
+		Do pCompiler.Code.WriteLine(" For p=1:1 {")
+		Do pCompiler.Code.WriteLine("  #;  Write ""testing ""_p_"": (""_v(1)_""),(""_v(2)_""),(""_v(3)_""),(""_v(4)_""),(""_v(5)_"")"",!")
+		Do pCompiler.Code.WriteLine("  Set rno="""" For { Set rno=$O("_tGLVN_",v(1),v(2),v(3),v(4),v(5),rno))  Quit:""""=rno  Set r(rno)="""" }")
+		Do pCompiler.Code.WriteLine("  #; find next permutation")
+		Do pCompiler.Code.WriteLine("  For n=1:1 { Quit:n>5  If v(n)'="" "" { Set v(n)="" "" } ElseIf input(n)'="" "" { Set v(n)=input(n) Quit } }")
+		Do pCompiler.Code.WriteLine("  Quit:n>5")
+		Do pCompiler.Code.WriteLine(" }")
+
+		#; first test if there are *any* rules
+		Set tRuleCount = 0
+		For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+			Set tRuleCount = tRuleCount + 1
+		}
+		Do pCompiler.Code.WriteLine(" #; For each mapped rule, test its conditions and if True get its results")
+		Do pCompiler.Code.WriteLine(" Kill ret,err  Set rno="""",tret="""",treas="""",terr=""""")
+		If (tRuleCount > 0) {
+			Do pCompiler.Code.WriteLine(" For { Set rno=$O(r(rno)) Quit:""""=rno")
+			Do pCompiler.Code.WriteLine("  #;  Write ..Name_"": Testing conditions for rule ""_rno,!")
+
+			Do pCompiler.Code.Write(    "  Set rnum=""Rule""_rno  Do $Case(rno,")
+			For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+				Do pCompiler.Code.Write(r_":Rule"_r_",")
+			}
+			Do pCompiler.Code.WriteLine(":Rule0)")
+			Do pCompiler.Code.WriteLine("  If $D(ret) { Set treas=treas_rnum_"","", tret=tret_ret_"";""  "_
+												$S(..DoAll:"Quit:"";""_ret["";stop:""", 1:"Quit:"";""_ret'["";contin:""")_"  Kill ret }")
+			Do pCompiler.Code.WriteLine("  ElseIf $D(err) { Set terr=terr_err_$C(13,10)_""+""_$C(13,10)  Kill err"_
+												$S(..DoAll:"", 1:"  Quit")_" }")
+			Do pCompiler.Code.WriteLine(" }")
+		}
+		Do pCompiler.Code.WriteLine(" Set pRuleDef.%Reason = $E(treas,1,*-1), pRuleDef.%ReturnValue=$E(tret,1,*-1), pRuleDef.%ErrorMsg=$E(terr,1,*-5)")
+		Do pCompiler.Code.WriteLine(" Quit $$$OK")
+		Do pCompiler.Code.WriteLine("Rule0   Set err=""Rule ""_rno_"" not found for RuleSet '"_..HostClass_"."_..Name_"'""")
+		Do pCompiler.Code.WriteLine(" Quit")
+
+		// fill in message map global
+		// this is subscripted by HostClass, Name
+		// followed by Source,MsgClass,MsgVersion,MsgType,Rule#
+
+		// loop over rules, generate map global entries and code for conditions
+		For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+			// generate tag for each set of rule conditions
+			Do pCompiler.Code.Write("Rule"_r)
+
+			// Do pCompiler.Code.WriteLine(" #; Write ""Rule"_r_""",!")
+
+			// get rule to generate code for its condition
+			Set tSC = tRule.GenerateCode(pCompiler,r)  Quit:$$$ISERR(tSC)
+
+			Do pCompiler.Code.WriteLine(" Quit")
+
+			// determine set of subscripts to use for map
+			// if missing use default values from RoutingRule
+			// (use " " for any null values)
+			Set tSource = $S(tRule.Source'="":tRule.Source, ..Source'="":..Source, 1:" ")
+			Set tMsgClass = $S(tRule.MsgClass'="":tRule.MsgClass, ..MsgClass'="":..MsgClass, 1:" ")
+			Set tDocName = $S(tRule.DocName'="":tRule.DocName, ..DocName'="":..DocName, 1:" ")
+			Set tDocCategory = $S(tRule.DocCategory'="":tRule.DocCategory, ..DocCategory'="":..DocCategory, 1:" ")
+			Set tDocType = $S(tRule.DocType'="":tRule.DocType, ..DocType'="":..DocType, 1:" ")
+
+			// now loop over Names and generate an entry for each in the map global
+			For n = 1:1:$L(tDocName,",") { Set tName = $P(tDocName,",",n)
+				// now loop over DocTypes and generate an entry for each in the map global
+				For t = 1:1:$L(tDocType,",") { Set tType = $P(tDocType,",",t)
+					Set tType = $S(tType="":" ",1:tType)
+	
+					// test for local override of category, i.e. "2.3.1:ADT_A04"
+					If tType [ ":" {
+						Set tCategory=$P(tType,":",1), tType=$P(tType,":",2)
+					} Else {
+						Set tCategory = tDocCategory
+					}
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,tSource,tMsgClass,tName,tCategory,tType,r) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",2,tMsgClass) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",3,tName) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",4,tCategory) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",5,tType) = ""
+				}
+			}
+		}
+	} While 0
+
+	Quit tSC
+
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Write !,"Error compiling Routing Rule: ",$ZE,!
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>TopicRuleDefaultData</DefaultData>
+<Data name="TopicRuleDefaultData">
+<Subscript>"TopicRule"</Subscript>
+<Value name="1">
+<Value>DoAll</Value>
+</Value>
+<Value name="2">
+<Value>Source</Value>
+</Value>
+<Value name="3">
+<Value>MsgClass</Value>
+</Value>
+<Value name="4">
+<Value>DocName</Value>
+</Value>
+<Value name="5">
+<Value>DocCategory</Value>
+</Value>
+<Value name="6">
+<Value>DocType</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Router.Action">
+<Description>
+The enhanced version of Action used by the publishRoutineRule
+type of rule sets. It adds actionType publish to the standard
+actions.</Description>
+<Super>Ens.Rule.Router.Action</Super>
+<TimeChanged>61907,57890.610737</TimeChanged>
+<TimeCreated>61899,50443.294679</TimeCreated>
+
+<Property name="Type">
+<Description><![CDATA[
+What type of action this is. The possible values are:<br>
+<i>send</i> Send the message to a target and, if defined, apply a transformation (before sending).<br>
+<i>delete</i> Delete the message.<br>
+<i>delegate</i> Forward the message to a different rule for processing.<br>]]></Description>
+<Type>%String</Type>
+<InitialExpression>"AND"</InitialExpression>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="50"/>
+<Parameter name="VALUELIST" value=",send,delete,stop,contin,delegate,publish"/>
+<Parameter name="XMLNAME" value="type"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Parameter name="NAMESPACE">
+<Description>
+NAMESPACE specifies the XML namespace to be used when projecting the
+class to XML.  if NAMESPACE - "", the default namespace is used for the XML schema
+is used as the namespace for his class.</Description>
+<Type>STRING</Type>
+<Default>http://www.intersystems.com/ens/enh</Default>
+</Parameter>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Router.RoutingRule">
+<Description>
+The enhanced version of RoutingRule. If has the XMLTAG name publishRoutingRule.</Description>
+<Super>Ens.Rule.Router.RoutingRule</Super>
+<TimeChanged>61908,36937.441463</TimeChanged>
+<TimeCreated>61899,51517.465551</TimeCreated>
+
+<Parameter name="NAMESPACE">
+<Description>
+NAMESPACE specifies the XML namespace to be used when projecting the
+class to XML.  if NAMESPACE - "", the default namespace is used for the XML schema
+is used as the namespace for his class.</Description>
+<Type>STRING</Type>
+<Default>http://www.intersystems.com/ens/enh</Default>
+</Parameter>
+
+<Parameter name="XMLNAME">
+<Default>publishRoutingRule</Default>
+</Parameter>
+
+<Property name="Rules">
+<Description>
+Set of rules that make up the routing rule.</Description>
+<Type>Enh.Rule.Router.Rule</Type>
+<Cardinality>children</Cardinality>
+<Inverse>RuleSet</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="XMLNAME" value="rule"/>
+<Parameter name="XMLPROJECTION" value="element"/>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Router.Rule">
+<Description>
+The enhanced version of rule. Actually it is needed just because of
+subclassing of Action.</Description>
+<Super>Ens.Rule.Router.Rule</Super>
+<TimeChanged>61908,35682.279045</TimeChanged>
+<TimeCreated>61899,50508.297821</TimeCreated>
+
+<Parameter name="NAMESPACE">
+<Description>
+NAMESPACE specifies the XML namespace to be used when projecting the
+class to XML.  if NAMESPACE - "", the default namespace is used for the XML schema
+is used as the namespace for his class.</Description>
+<Type>STRING</Type>
+<Default>http://www.intersystems.com/ens/enh</Default>
+</Parameter>
+
+<Property name="Actions">
+<Description>
+Set of actions that are fired if this rule evaluates true.</Description>
+<Type>Enh.Rule.Router.Action</Type>
+<Cardinality>children</Cardinality>
+<Inverse>Rule</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="XMLNAME" value="action"/>
+<Parameter name="XMLPROJECTION" value="ELEMENT"/>
+</Property>
+
+<Property name="RuleSet">
+<Description>
+Parent RuleSet.</Description>
+<Type>Enh.Rule.Router.RoutingRule</Type>
+<Cardinality>parent</Cardinality>
+<Inverse>Rules</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Subscribe.Rule">
+<Description>
+Defines a transformation within the transformationRule set.</Description>
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Persistent,%XML.Adaptor</Super>
+<System>3</System>
+<TimeChanged>61907,57508.707251</TimeChanged>
+<TimeCreated>59591,32403.453055</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Parameter name="XMLIGNORENULL">
+<Description>
+Ensure that we don't get $C(0) for values that are empty strings</Description>
+<Default>1</Default>
+</Parameter>
+
+<Index name="ID">
+<Description>
+Make sure rules are ordered correctly</Description>
+<IdKey>1</IdKey>
+<Properties>RuleNo</Properties>
+</Index>
+
+<Property name="RuleNo">
+<Type>%Integer</Type>
+<InitialExpression>$I(^Ens.Rule.RuleC("RuleNo"))</InitialExpression>
+<Parameter name="XMLPROJECTION" value="none"/>
+</Property>
+
+<Property name="RuleSet">
+<Description>
+Parent RuleSet.</Description>
+<Type>Enh.Rule.Subscribe.TransformationRule</Type>
+<Cardinality>parent</Cardinality>
+<Inverse>Rules</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="Disabled">
+<Description>
+If false, then this rule is enabled; otherwise this rule is not evaluated.</Description>
+<Type>%Boolean</Type>
+<Parameter name="XMLNAME" value="disabled"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+/// If defined, message must be from this source to match this rule.
+Property Source As %String(MAXLEN = 128, XMLNAME = "source", XMLPROJECTION = "attribute");
+*/
+]]></Content>
+</UDLText>
+
+<Property name="MsgClass">
+<Description>
+If defined, message must be of this class type to match this rule.
+If not defined, then the default value defined by the RoutingRule set is used.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="msgClass"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocName">
+<Description><![CDATA[
+If defined, the message must have this logical name in order to match
+this rule.<br>
+This is a comma-delimited list of document names 
+(applies to virtual document messages only).<br>
+Each item in the list is tested against the document type name declared in the document.
+If not defined, then the default value defined by the RoutingRule set is used.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docName"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocCategory">
+<Description><![CDATA[
+If defined, the message must have this document category in order
+to match this rule.<br>
+This is the document structure category name of a document structure name (DocType)
+(applies to virtual document messages only).<br>
+For example in HL7 this is a schema version, e.g. "2.3.1".
+If not defined, then the default value defined by the RoutingRule set is used.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="docCategory"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocType">
+<Description><![CDATA[
+If defined, the message must be of this document type to match 
+this rule.<br>
+This is the document type of a message (applies to virtual documents
+messages only). It indicates the <em>structure</em> of a message.<br>
+If not defined, then the default value defined by the RoutingRule set is used.
+This is a comma-delimited list of document structure types. Each item in the list
+<em>can</em> include a category name, which would override the 
+values provided by <property>DocCategory</property> and the
+RoutingRule set's <property>DocCategory</property> value.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docType"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+/// Set of conditions that must evaluate true for this rule to fire.
+Relationship Conditions As Enh.Rule.Subscribe.Condition(XMLNAME = "condition", XMLPROJECTION = "ELEMENT") [ Cardinality = children, Inverse = Rule ];
+*/
+]]></Content>
+</UDLText>
+
+<Property name="Transformation">
+<Description>
+NAme of a transformation class to by applied to the request received from the publisher.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="255"/>
+<Parameter name="XMLNAME" value="onRequest"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="ReplyTransformation">
+<Description>
+Name of a transformation class to be aplied to the reply sent by the subscriber.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="255"/>
+<Parameter name="XMLNAME" value="onReply"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Method name="GenerateCode">
+<Description><![CDATA[
+Generate code for this rule.<br>
+<var>pRuleNo</var> gives the ordinal position of this rule within the rule set.]]></Description>
+<FormalSpec>pCompiler:Ens.Rule.Compiler,pRuleNo:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=$$$OK, tExpr="", tNeedClose=0, tErrorMsg=""
+	Do {
+		/*
+		If (..Conditions.Count() '= 0) {
+			// loop over conditions, create code
+			For c = 1:1:..Conditions.Count() { Set tCond = ..Conditions.GetAt(c)
+				Set tX = tCond.GetExpression()
+		
+				If (c = 1) { ; no join for first condition
+					Set tExpr = tX
+				} Else {
+					If (tCond.JoinOperator = "OR") {
+						Set tExpr = tExpr _ ")||(" _ tX
+					} Else {
+						Set tExpr = tExpr _ "&&" _ tX
+					}
+				}
+			}
+			Set tExpr="("_tExpr_")"
+			
+			// Now get code for expression
+			Set tCode = ""
+			Set tSC = ##class(Ens.Rule.ExpressionParser).GenerateCode(tExpr, .tCode, .tErrorMsg)
+			Do:(tErrorMsg'="") pCompiler.Code.WriteLine("  // Invalid condition: " _ tExpr)
+			Quit:$$$ISERR(tSC)
+			
+			If $Case(tCode,"":0,"()":0,"""""":0,"("""")":0,:1) {
+				Do pCompiler.Code.WriteLine(" If " _ tCode _ " {")
+				Set tNeedClose = 1
+			}
+		}
+		*/
+		// process return value
+		// don't worry about *reason*; caller will handle that
+		Do pCompiler.Code.WriteLine("  Set ret=""" _ ..Transformation _ ":"_ ..ReplyTransformation _ """")
+	} While 0
+
+	Do:tNeedClose pCompiler.Code.Write(" }")
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>{%%PARENT}("Enh.Rule.Subscribe.TransformationRule.Rules")</DataLocation>
+<DefaultData>RuleDefaultData</DefaultData>
+<IdLocation>^Enh.Rule.SF9B6.TransformatEFD8C("Rules")</IdLocation>
+<IndexLocation>^Enh.Rule.Subscribe.RuleI</IndexLocation>
+<StreamLocation>^Enh.Rule.Subscribe.RuleS</StreamLocation>
+<Data name="RuleDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Disabled</Value>
+</Value>
+<Value name="3">
+<Value>Source</Value>
+</Value>
+<Value name="4">
+<Value>MsgClass</Value>
+</Value>
+<Value name="5">
+<Value>DocName</Value>
+</Value>
+<Value name="6">
+<Value>DocCategory</Value>
+</Value>
+<Value name="7">
+<Value>DocType</Value>
+</Value>
+<Value name="8">
+<Value>Transformation</Value>
+</Value>
+<Value name="9">
+<Value>ReplyTransformation</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Enh.Rule.Subscribe.TransformationRule">
+<Description><![CDATA[
+Defines an Ensemble Business Rule set.
+This is a specific type of Rule Definition used for defining 
+rule-based transformation of subscriber.<br>
+If a rule is fired, it sets <property>%ReturnValue</property> to 
+name of transformation classes to be invoked in order to transform the
+publisher request to the subscriber one and the subscriber reply to
+publisher reply.]]></Description>
+<ClassType>persistent</ClassType>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.RuleDefinition</Super>
+<System>3</System>
+<TimeChanged>61907,57323.115927</TimeChanged>
+<TimeCreated>59591,32403.51098</TimeCreated>
+
+<Parameter name="COMPILABLE">
+<Description>
+Indicates if this Rule Engine supports compilation.</Description>
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="XMLNAME">
+<Default>transformationRule</Default>
+</Parameter>
+
+<Property name="Rules">
+<Type>Enh.Rule.Subscribe.Rule</Type>
+<Cardinality>children</Cardinality>
+<Inverse>RuleSet</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="XMLNAME" value="transformMessage"/>
+<Parameter name="XMLPROJECTION" value="element"/>
+</Property>
+
+<Property name="DoAll">
+<Description>
+Set of rules that make up the routing rule.</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+<Parameter name="XMLNAME" value="doAll"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="Source">
+<Description><![CDATA[
+Provides the default value for <property>Source</property> for
+all rules within this RoutingRule set.<br>
+This is the host name of the Business Service
+that sent this message to the Message Router.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="source"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="MsgClass">
+<Description><![CDATA[
+Provides the default value for <property>MsgClass</property> for
+all rules within this RoutingRule set.<br>
+This is the name of the class used to contain the message.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="msgClass"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocName">
+<Description><![CDATA[
+Provides the default value for <property>DocName</property> for
+all rules within this RoutingRule set.<br>
+This is a comma-delimited list of document names 
+(applies to virtual document messages only).<br>
+Each item in the list is tested against the document type name declared in the document.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docName"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocCategory">
+<Description><![CDATA[
+Provides the default value for <property>DocCategory</property> for
+all rules within this RoutingRule set. 
+(applies to virtual document messages only).<br>
+This is the document structure category name of a document structure name (DocType)
+For example in HL7 this is a schema version, e.g. "2.3.1".]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="128"/>
+<Parameter name="XMLNAME" value="docCategory"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Property name="DocType">
+<Description><![CDATA[
+Provides the default value for <property>DocType</property> for
+all rules within this RoutingRule set.<br>
+This is a comma-delimited list of message types 
+(applies to virtual document messages only).<br>
+It pertains to the <em>structure</em> definition assigned
+in the DocType property of the message.<br>
+Each item in the list is tested against the DocType structure property assigned in the document.
+Each item in the list <em>can</em> may include a category name, which would override the 
+value provided by <property>DocCategory</property>.]]></Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="2000"/>
+<Parameter name="XMLNAME" value="docType"/>
+<Parameter name="XMLPROJECTION" value="attribute"/>
+</Property>
+
+<Method name="Evaluate">
+<Description>
+Evaluate this routing rule.
+The resulting return value is returned via the %ReturnValue property.</Description>
+<FormalSpec>pContext:%RegisteredObject</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Set $ZT = "Trap"
+	Set tEval = 0
+	Set tErrorMsg = ""
+	
+	// return default value of ""
+	Set ..%Reason = "Default"
+	Set ..%ReturnValue = ""
+	Set tEval = 1
+
+Done	
+	Quit tSC
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Set ..%ReturnValue = ""
+	Set ..%ErrorMsg = $ZE
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="GenerateCode">
+<Description>
+Generate executable code for this Rule
+This also creates a routing global as a side effect.</Description>
+<FormalSpec>pCompiler:Ens.Rule.Compiler</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC=$$$OK, $ZT="Trap"
+	Do {
+		// When this is called, we are instantiated and have
+		// the complete set of rules and other properties available
+
+		// remove old map globals
+		Kill ^Ens.Rule.RoutingMap(..HostClass,..FullName)
+		Kill ^Ens.Rule.RoutingMapTargets(..HostClass,..FullName)
+
+		// put rule version number into map global
+		// this gets checked at run time
+		Set ^Ens.Rule.RoutingMap(..HostClass,..FullName) = ..Version
+
+		// map global name: used for code generation
+		// (note: no closing ")"
+		Set tGLVN = "^Ens.Rule.RoutingMap("""_..HostClass_""","""_..FullName_""""
+
+		// generate preamble to compiled routine
+		Do pCompiler.Code.WriteLine(" #; check if Routing global exists and matches our rule version")
+		Do pCompiler.Code.WriteLine(" If $G("_tGLVN_")) '= "_..Version_" {")
+		Do pCompiler.Code.WriteLine("  Quit $$$ERROR($$$GeneralError,""RoutingRule map global version ""_$G("_tGLVN_"))_"" does not exist or is not correct version ("_..Version_")"")")
+		Do pCompiler.Code.WriteLine(" }")
+
+		Do pCompiler.Code.WriteLine(" #; find match within map global; dispatch to rule condition")
+
+		// assume pContext has the following properties
+		// Source,msgClass,docName,docType
+
+		// here we directly look into the map global to see if we have
+		// a match. The tricky part is that if the map has missing items we have to
+		// match on those as well. This means testing all permutations
+		// of possible subscripts. We also have to test the most specific
+		// case first.
+
+		// parse DocType into category and type
+		// set of test values
+		Do pCompiler.Code.WriteLine(" Set input(1) = "" """)
+		Do pCompiler.Code.WriteLine(" Set input(2) = pContext.%ClassName(1)")
+		Do pCompiler.Code.WriteLine(" Set isHL7 = pContext.%Extends(""EnsLib.HL7.Message"")")
+		Do pCompiler.Code.WriteLine(" Set tDocType = $Select(isHL7:pContext.DocType,1:""""), tDocCategory = """"")
+		Do pCompiler.Code.WriteLine(" Set tDocName = $Select(isHL7:pContext.Name,1:"""")")
+		Do pCompiler.Code.WriteLine(" Set:tDocType["":"" tDocCategory = $P(tDocType,"":"",1), tDocType = $P(tDocType,"":"",2)")
+		Do pCompiler.Code.WriteLine(" Set input(3) = $S(tDocName="""":"" "", 1:tDocName)")
+		Do pCompiler.Code.WriteLine(" Set input(4) = $S(tDocCategory="""":"" "", 1:tDocCategory)")
+		Do pCompiler.Code.WriteLine(" Set input(5) = $S(tDocType="""":"" "", 1:tDocType)")
+		Do pCompiler.Code.WriteLine("")
+		Do pCompiler.Code.WriteLine(" #; weed out input subscripts that don't exist in the map")
+		Do pCompiler.Code.WriteLine(" Set v(1)="" "", input(1)=$S(""""=input(1)||'$D("_tGLVN_",input(1))):"" "", 1:input(1))")
+		Do pCompiler.Code.WriteLine(" For n=2:1:5 Set v(n)="" "", input(n)=$S('$D("_tGLVN_",""subs"",n,input(n))):"" "", 1:input(n))")
+		Do pCompiler.Code.WriteLine("")
+		Do pCompiler.Code.WriteLine(" #; Find all rules mapped for each permutation (for input subscripts that exist in the map)")
+		Do pCompiler.Code.WriteLine(" For p=1:1 {")
+		Do pCompiler.Code.WriteLine("  #;  Write ""testing ""_p_"": (""_v(1)_""),(""_v(2)_""),(""_v(3)_""),(""_v(4)_""),(""_v(5)_"")"",!")
+		Do pCompiler.Code.WriteLine("  Set rno="""" For { Set rno=$O("_tGLVN_",v(1),v(2),v(3),v(4),v(5),rno))  Quit:""""=rno  Set r(rno)="""" }")
+		Do pCompiler.Code.WriteLine("  #; find next permutation")
+		Do pCompiler.Code.WriteLine("  For n=1:1 { Quit:n>5  If v(n)'="" "" { Set v(n)="" "" } ElseIf input(n)'="" "" { Set v(n)=input(n) Quit } }")
+		Do pCompiler.Code.WriteLine("  Quit:n>5")
+		Do pCompiler.Code.WriteLine(" }")
+
+		#; first test if there are *any* rules
+		Set tRuleCount = 0
+		For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+			Set tRuleCount = tRuleCount + 1
+		}
+		Do pCompiler.Code.WriteLine(" #; For each mapped rule, test its conditions and if True get its results")
+		Do pCompiler.Code.WriteLine(" Kill ret,err  Set rno="""",tret="""",treas="""",terr=""""")
+		If (tRuleCount > 0) {
+			Do pCompiler.Code.WriteLine(" For { Set rno=$O(r(rno)) Quit:""""=rno")
+			Do pCompiler.Code.WriteLine("  #;  Write ..Name_"": Testing conditions for rule ""_rno,!")
+
+			Do pCompiler.Code.Write(    "  Set rnum=""Rule""_rno  Do $Case(rno,")
+			For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+				Do pCompiler.Code.Write(r_":Rule"_r_",")
+			}
+			Do pCompiler.Code.WriteLine(":Rule0)")
+			Do pCompiler.Code.WriteLine("  If $D(ret) { Set treas=treas_rnum_"","", tret=tret_ret_"";""  "_
+												$S(..DoAll:"Quit:"";""_ret["";stop:""", 1:"Quit:"";""_ret'["";contin:""")_"  Kill ret }")
+			Do pCompiler.Code.WriteLine("  ElseIf $D(err) { Set terr=terr_err_$C(13,10)_""+""_$C(13,10)  Kill err"_
+												$S(..DoAll:"", 1:"  Quit")_" }")
+			Do pCompiler.Code.WriteLine(" }")
+		}
+		Do pCompiler.Code.WriteLine(" Set pRuleDef.%Reason = $E(treas,1,*-1), pRuleDef.%ReturnValue=$E(tret,1,*-1), pRuleDef.%ErrorMsg=$E(terr,1,*-5)")
+		Do pCompiler.Code.WriteLine(" Quit $$$OK")
+		Do pCompiler.Code.WriteLine("Rule0   Set err=""Rule ""_rno_"" not found for RuleSet '"_..HostClass_"."_..Name_"'""")
+		Do pCompiler.Code.WriteLine(" Quit")
+
+		// fill in message map global
+		// this is subscripted by HostClass, Name
+		// followed by Source,MsgClass,MsgVersion,MsgType,Rule#
+
+		// loop over rules, generate map global entries and code for conditions
+		For r = 1:1:..Rules.Count() { Set tRule = ..Rules.GetAt(r)  Continue:tRule.Disabled
+			// generate tag for each set of rule conditions
+			Do pCompiler.Code.Write("Rule"_r)
+
+			// Do pCompiler.Code.WriteLine(" #; Write ""Rule"_r_""",!")
+
+			// get rule to generate code for its condition
+			Set tSC = tRule.GenerateCode(pCompiler,r)  Quit:$$$ISERR(tSC)
+
+			Do pCompiler.Code.WriteLine(" Quit")
+
+			// determine set of subscripts to use for map
+			// if missing use default values from RoutingRule
+			// (use " " for any null values)
+			Set tSource = " "
+			Set tMsgClass = $S(tRule.MsgClass'="":tRule.MsgClass, ..MsgClass'="":..MsgClass, 1:" ")
+			Set tDocName = $S(tRule.DocName'="":tRule.DocName, ..DocName'="":..DocName, 1:" ")
+			Set tDocCategory = $S(tRule.DocCategory'="":tRule.DocCategory, ..DocCategory'="":..DocCategory, 1:" ")
+			Set tDocType = $S(tRule.DocType'="":tRule.DocType, ..DocType'="":..DocType, 1:" ")
+
+			// now loop over Names and generate an entry for each in the map global
+			For n = 1:1:$L(tDocName,",") { Set tName = $P(tDocName,",",n)
+				// now loop over DocTypes and generate an entry for each in the map global
+				For t = 1:1:$L(tDocType,",") { Set tType = $P(tDocType,",",t)
+					Set tType = $S(tType="":" ",1:tType)
+	
+					// test for local override of category, i.e. "2.3.1:ADT_A04"
+					If tType [ ":" {
+						Set tCategory=$P(tType,":",1), tType=$P(tType,":",2)
+					} Else {
+						Set tCategory = tDocCategory
+					}
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,tSource,tMsgClass,tName,tCategory,tType,r) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",2,tMsgClass) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",3,tName) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",4,tCategory) = ""
+					Set ^Ens.Rule.RoutingMap(..HostClass,..FullName,"subs",5,tType) = ""
+				}
+			}
+		}
+	} While 0
+
+	Quit tSC
+
+Trap
+	Set $ZT="",tSC=$$$EnsSystemError
+	Write !,"Error compiling Routing Rule: ",$ZE,!
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>TransformationRuleDefaultData</DefaultData>
+<Data name="TransformationRuleDefaultData">
+<Structure>listnode</Structure>
+<Subscript>"TransformationRule"</Subscript>
+<Value name="1">
+<Value>DoAll</Value>
+</Value>
+<Value name="2">
+<Value>Source</Value>
+</Value>
+<Value name="3">
+<Value>MsgClass</Value>
+</Value>
+<Value name="4">
+<Value>DocName</Value>
+</Value>
+<Value name="5">
+<Value>DocCategory</Value>
+</Value>
+<Value name="6">
+<Value>DocType</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Enh.TransformationReturnedNull">
+<Super>%Exception.AbstractException</Super>
+<TimeChanged>61902,69539.539502</TimeChanged>
+<TimeCreated>61902,69422.831361</TimeCreated>
+
+<Method name="new">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String,transformation:%String</FormalSpec>
+<ReturnType>%Exception.AbstractException</ReturnType>
+<Implementation><![CDATA[..%New(className,,,transformation)
+]]></Implementation>
+</Method>
+
+<Method name="DisplayString">
+<Description>
+This returns a string that represents the exception. Users should feel free
+to modify the format in subclasses</Description>
+<FormalSpec>pLevel:%Integer=0</FormalSpec>
+<Implementation><![CDATA[	Quit "Transformation " _ ..Data _ " on class "_..Name _ " returned NULL."
+]]></Implementation>
+</Method>
+</Class>
+</Export>

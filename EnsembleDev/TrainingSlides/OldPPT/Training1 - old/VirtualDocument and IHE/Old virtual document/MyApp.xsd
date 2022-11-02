@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+            elementFormDefault="qualified" targetNamespace="http://myapp.com"     xmlns:myapp="http://myapp.com">
+  <element name="Patient" type="myapp:Patient"/>
+  <complexType name="Patient">
+    <sequence>
+      <element minOccurs="0" name="Name" type="string"/>
+      <element minOccurs="0" name="FavoriteColors" 
+                   type="myapp:ArrayOfFavoriteColorString" />
+      <element minOccurs="0" name="Address" type="myapp:Address" />
+      <element minOccurs="0" name="Doctor" type="myapp:Doctor" />
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOfFavoriteColorString">
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="FavoriteColor" 
+                   nillable="true" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="Address">
+    <attribute name="MRN" type="string"/>
+    <attribute name="DL" type="string"/>
+    <sequence>
+      <element minOccurs="0" name="Street" type="string"/>
+      <element minOccurs="0" name="City" type="string"/>
+      <element minOccurs="0" name="State" type="string"/>
+      <element minOccurs="0" name="ZIP" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="Doctor">
+    <sequence>
+      <element minOccurs="0" name="Name" type="string"/>
+    </sequence>
+  </complexType>
+</schema>

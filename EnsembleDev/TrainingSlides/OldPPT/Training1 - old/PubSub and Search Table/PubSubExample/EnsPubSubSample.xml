@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="21" zv="Cache for Windows (x86-32) 2007.1.2 (Build 522U)" ts="2007-10-23 12:37:54">
+<Class name="SG.BOlabSubscribeFile">
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.BusinessOperation</Super>
+<TimeCreated>59280,43460.487</TimeCreated>
+
+<Parameter name="INVOCATION">
+<Description>
+2 modes: Queue, InProc</Description>
+<Default>Queue</Default>
+</Parameter>
+
+<Parameter name="ADAPTER">
+<Description>
+Name of the adapter class</Description>
+<Default>EnsLib.File.OutboundAdapter</Default>
+</Parameter>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItem MessageType="EnsLib.PubSub.Target">
+<Method>FileSendReply</Method>
+</MapItem>
+]]></Data>
+</XData>
+
+<Method name="FileSendReply">
+<Description>
+Send an approval to the output file</Description>
+<FormalSpec>pRequest:EnsLib.PubSub.Target,*pResponse:Ens.Response</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	$$$TRACE("write to file "_pRequest.Address)
+	Set tSC=..Adapter.PutLine("lab.txt",pRequest.Name_":"_pRequest.Target_":"_pRequest.Address)
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="SG.BPpubsub">
+<ClassType>persistent</ClassType>
+<Super>Ens.BusinessProcessBPL</Super>
+<TimeCreated>60926,39926.03212</TimeCreated>
+
+<XData name="BPL">
+<Description>
+BPL Definition</Description>
+<XMLNamespace>http://www.intersystems.com/bpl</XMLNamespace>
+<Data><![CDATA[
+<process language='objectscript' request='EnsLib.PubSub.Request' response='EnsLib.PubSub.Response' height='2000' width='2000' >
+<context>
+<property name='targets' type='EnsLib.PubSub.Target' collection='list' />
+<property name='Iterator' type='%String' />
+<property name='target' type='EnsLib.PubSub.Target' />
+</context>
+<sequence xend='550' yend='500' >
+<call name='lab' target='lab' async='1' xpos='550' ypos='200' >
+<request type='EnsLib.PubSub.Request' >
+<assign property='callrequest' value='request' action='set' />
+</request>
+<response type='EnsLib.PubSub.Response' >
+<assign property='response' value='callresponse' action='set' />
+<assign property='context.targets' value='callresponse.TargetList' action='set' />
+</response>
+</call>
+<sync name='sync lab' calls='lab' type='all' xpos='550' ypos='300' />
+<foreach name='foreach target' property='context.targets' key='context.Iterator' xpos='550' ypos='400' xend='550' yend='500' >
+<assign name='target' property='context.target' value='context.targets.GetAt(context.Iterator)' action='set' xpos='550' ypos='200' />
+<alert name='alert6' value='context.target.Name_":"_context.target.Target_":"_context.target.Address' xpos='550' ypos='300' />
+<call name='lab file' target='lab file' async='1' xpos='550' ypos='400' >
+<request type='EnsLib.PubSub.Target' >
+<assign property='callrequest' value='context.target' action='set' />
+</request>
+<response type='Ens.Response' />
+</call>
+</foreach>
+</sequence>
+</process>
+]]></Data>
+</XData>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+</Storage>
+</Class>
+
+
+<Class name="SG.PubSubPROD">
+<Super>Ens.Production</Super>
+<TimeCreated>60926,39705.698376</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="SG.PubSubPROD" TestingEnabled="true" LogGeneralTraceEvents="false">
+  <Description>NewProduction</Description>
+  <ActorPoolSize>2</ActorPoolSize>
+  <Item Name="lab" Category="" ClassName="EnsLib.PubSub.PubSubOperation" PoolSize="1" Enabled="true" Foreground="false" DisableErrorTraps="false" InactivityTimeout="0" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="BPpubsub" Category="" ClassName="SG.BPpubsub" PoolSize="0" Enabled="true" Foreground="false" DisableErrorTraps="false" InactivityTimeout="0" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="lab file" Category="" ClassName="SG.BOlabSubscribeFile" PoolSize="1" Enabled="true" Foreground="false" DisableErrorTraps="false" InactivityTimeout="0" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">0</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Adapter" Name="FilePath">c:\pubsub</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+</Export>

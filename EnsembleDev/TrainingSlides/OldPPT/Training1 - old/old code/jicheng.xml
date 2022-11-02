@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.1 (Build 429U)" ts="2016-06-01 14:41:13">
+<Class name="Deleteme.Test">
+<Super>%RegisteredObject</Super>
+<TimeChanged>64070,34148.456985</TimeChanged>
+<TimeCreated>64070,34148.456985</TimeCreated>
+
+<Method name="TestSQL">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>Name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSSN=""
+	&SQL(select SSN into :tSSN from training_entity.person where Name=:Name)
+	quit tSSN
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="MyService.MyServiceSoap">
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%SOAP.WebClient</Super>
+<TimeChanged>64070,51848.593321</TimeChanged>
+<TimeCreated>64070,51848.585839</TimeCreated>
+
+<Method name="AddOperation">
+<Final>1</Final>
+<FormalSpec>pOperationID:%String,pOperationName:%String,pOperationDate:%String,pPatientId:%String</FormalSpec>
+<ProcedureBlock>1</ProcedureBlock>
+<ReturnType>%xsd.base64Binary</ReturnType>
+<WebMethod>1</WebMethod>
+<SoapBindingStyle>document</SoapBindingStyle>
+<SoapBodyUse>literal</SoapBodyUse>
+<Implementation><![CDATA[ Quit ..WebMethod("AddOperation").Invoke($this,"http://tempuri.org/Operation.WebService.AddOperation",.pOperationID,.pOperationName,.pOperationDate,.pPatientId)
+]]></Implementation>
+</Method>
+
+<Parameter name="LOCATION">
+<Description>
+This is the URL used to access the web service.</Description>
+<Default>http://localhost:57776/csp/training2/Operation.WebService.cls</Default>
+</Parameter>
+
+<Parameter name="NAMESPACE">
+<Description>
+This is the namespace used by the Service</Description>
+<Default>http://tempuri.org</Default>
+</Parameter>
+
+<Parameter name="OUTPUTTYPEATTRIBUTE">
+<Description>
+Use xsi:type attribute for literal types.</Description>
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="SECURITYIN">
+<Description>
+Determines handling of Security header.</Description>
+<Default>ALLOW</Default>
+</Parameter>
+
+<Parameter name="SERVICENAME">
+<Description>
+This is the name of the Service</Description>
+<Default>MyService</Default>
+</Parameter>
+
+<Parameter name="SOAPVERSION">
+<Description>
+This is the SOAP version supported by the service.</Description>
+<Default>1.1</Default>
+</Parameter>
+</Class>
+
+
+<Class name="MyService.Operation.MyServiceSoap">
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%SOAP.WebClient</Super>
+<TimeChanged>64070,45257.476146</TimeChanged>
+<TimeCreated>64070,44958.659491</TimeCreated>
+
+<Parameter name="LOCATION">
+<Description>
+This is the URL used to access the web service.</Description>
+<Default>http://localhost:57776/csp/training2/Operation.WebService.cls</Default>
+</Parameter>
+
+<Parameter name="NAMESPACE">
+<Description>
+This is the namespace used by the Service</Description>
+<Default>http://tempuri.org</Default>
+</Parameter>
+
+<Parameter name="OUTPUTTYPEATTRIBUTE">
+<Description>
+Use xsi:type attribute for literal types.</Description>
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="SECURITYIN">
+<Description>
+Determines handling of Security header.</Description>
+<Default>ALLOW</Default>
+</Parameter>
+
+<Parameter name="SERVICENAME">
+<Description>
+This is the name of the Service</Description>
+<Default>MyService</Default>
+</Parameter>
+
+<Parameter name="SOAPVERSION">
+<Description>
+This is the SOAP version supported by the service.</Description>
+<Default>1.1</Default>
+</Parameter>
+
+<Method name="AddOperation">
+<Final>1</Final>
+<FormalSpec>pOperationID:%String,pOperationName:%String,pOperationDate:%String,pPatientId:%String</FormalSpec>
+<ProcedureBlock>1</ProcedureBlock>
+<ReturnType>%xsd.base64Binary</ReturnType>
+<WebMethod>1</WebMethod>
+<SoapBindingStyle>document</SoapBindingStyle>
+<SoapBodyUse>literal</SoapBodyUse>
+<Implementation><![CDATA[ Quit ..WebMethod("AddOperation").Invoke($this,"http://tempuri.org/Operation.WebService.AddOperation",.pOperationID,.pOperationName,.pOperationDate,.pPatientId)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Operation.MyServiceSoap">
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>64070,51848.594303</TimeChanged>
+<TimeCreated>64070,51848.587253</TimeCreated>
+
+<Method name="AddOperation">
+<FormalSpec>pRequest:Request.AddOperationRequest,*pResponse:Response.AddOperationResponse</FormalSpec>
+<ReturnType>%Library.Status</ReturnType>
+<Implementation><![CDATA[
+ Set ..Adapter.WebServiceClientClass = "MyService.MyServiceSoap"
+ Set tSC = ..Adapter.InvokeMethod("AddOperation",.AddOperationResult,pRequest.pOperationID,pRequest.pOperationName,pRequest.pOperationDate,pRequest.pPatientId)  Quit:$$$ISERR(tSC) tSC
+ Set tSC = pRequest.NewResponse(.pResponse)  Quit:$$$ISERR(tSC) tSC
+ Set pResponse.AddOperationResult=$get(AddOperationResult)
+ Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Parameter name="ADAPTER">
+<Default>EnsLib.SOAP.OutboundAdapter</Default>
+</Parameter>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="Request.AddOperationRequest">
+		<Method>AddOperation</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Request.AddOperationRequest">
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Request</Super>
+<TimeChanged>64070,51848.840334</TimeChanged>
+<TimeCreated>64070,51848.590324</TimeCreated>
+
+<Parameter name="RESPONSECLASSNAME">
+<Default>Response.AddOperationResponse</Default>
+</Parameter>
+
+<Property name="pOperationID">
+<Type>%String</Type>
+</Property>
+
+<Property name="pOperationName">
+<Type>%String</Type>
+</Property>
+
+<Property name="pOperationDate">
+<Type>%String</Type>
+</Property>
+
+<Property name="pPatientId">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>AddOperationRequestDefaultData</DefaultData>
+<Data name="AddOperationRequestDefaultData">
+<Structure>listnode</Structure>
+<Subscript>"AddOperationRequest"</Subscript>
+<Value name="1">
+<Value>pOperationID</Value>
+</Value>
+<Value name="2">
+<Value>pOperationName</Value>
+</Value>
+<Value name="3">
+<Value>pOperationDate</Value>
+</Value>
+<Value name="4">
+<Value>pPatientId</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Response.AddOperationResponse">
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Response</Super>
+<TimeChanged>64070,51848.885145</TimeChanged>
+<TimeCreated>64070,51848.592432</TimeCreated>
+
+<Property name="AddOperationResult">
+<Type>%xsd.base64Binary</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>AddOperationResponseDefaultData</DefaultData>
+<Data name="AddOperationResponseDefaultData">
+<Structure>listnode</Structure>
+<Subscript>"AddOperationResponse"</Subscript>
+<Value name="1">
+<Value>AddOperationResult</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Project name="jincheng" LastModified="2016-06-01 14:40:34.953231">
+  <Items>
+    <ProjectItem name="Deleteme.Test" type="CLS"></ProjectItem>
+    <ProjectItem name="MyService.MyServiceSoap" type="CLS"></ProjectItem>
+    <ProjectItem name="MyService.Operation.MyServiceSoap" type="CLS"></ProjectItem>
+    <ProjectItem name="Operation.MyServiceSoap" type="CLS"></ProjectItem>
+    <ProjectItem name="Request.AddOperationRequest" type="CLS"></ProjectItem>
+    <ProjectItem name="Response.AddOperationResponse" type="CLS"></ProjectItem>
+  </Items>
+</Project>
+</Export>

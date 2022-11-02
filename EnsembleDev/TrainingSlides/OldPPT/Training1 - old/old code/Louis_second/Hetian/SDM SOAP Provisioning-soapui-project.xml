@@ -1,0 +1,1290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="SDM SOAP Provisioning" resourceRoot="${projectDir}" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" activeEnvironment="Default" id="1137de9d-4e13-4caf-abe1-8548715a3710" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MathSoapHttpBinding" type="wsdl" bindingName="{http://example.org/math/}MathSoapHttpBinding" soapVersion="1_1" anonymous="optional" definition="C:/Work/Colombia/SOAP/provisioning.wsdl" id="8f643cb4-ad38-4fd7-8ac0-6640a6e8946d" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/Work/Colombia/SOAP/provisioning.wsdl"><con:part><con:url>file:/C:/Work/Colombia/SOAP/provisioning.wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://example.org/math/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:y="http://example.org/math/" xmlns:ns="http://example.org/math/types/">
+  <types>
+    <xs:schema targetNamespace="http://example.org/math/types/" elementFormDefault="unqualified" attributeFormDefault="unqualified" xmlns="http://example.org/math/types/">
+      <xs:complexType name="MathInput">
+        <xs:sequence>
+          <xs:element name="x" type="xs:double"/>
+          <xs:element name="y" type="xs:double"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="MathOutput">
+        <xs:sequence>
+          <xs:element name="result" type="xs:double"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Add" type="MathInput"/>
+      <xs:element name="AddResponse" type="MathOutput"/>
+      <xs:element name="Subtract" type="MathInput"/>
+      <xs:element name="SubtractResponse" type="MathOutput"/>
+      <xs:element name="Multiply" type="MathInput"/>
+      <xs:element name="MultiplyResponse" type="MathOutput"/>
+      <xs:element name="Divide" type="MathInput"/>
+      <xs:element name="DivideResponse" type="MathOutput"/>
+    </xs:schema>
+  </types>
+  <message name="AddMessage">
+    <part name="parameters" element="ns:Add"/>
+  </message>
+  <message name="AddResponseMessage">
+    <part name="parameters" element="ns:AddResponse"/>
+  </message>
+  <message name="SubtractMessage">
+    <part name="parameters" element="ns:Subtract"/>
+  </message>
+  <message name="SubtractResponseMessage">
+    <part name="parameters" element="ns:SubtractResponse"/>
+  </message>
+  <message name="MultiplyMessage">
+    <part name="parameters" element="ns:Multiply"/>
+  </message>
+  <message name="MultiplyResponseMessage">
+    <part name="parameters" element="ns:MultiplyResponse"/>
+  </message>
+  <message name="DivideMessage">
+    <part name="parameters" element="ns:Divide"/>
+  </message>
+  <message name="DivideResponseMessage">
+    <part name="parameters" element="ns:DivideResponse"/>
+  </message>
+  <portType name="MathInterface">
+    <operation name="Add">
+      <input message="y:AddMessage"/>
+      <output message="y:AddResponseMessage"/>
+    </operation>
+    <operation name="Subtract">
+      <input message="y:SubtractMessage"/>
+      <output message="y:SubtractResponseMessage"/>
+    </operation>
+    <operation name="Multiply">
+      <input message="y:MultiplyMessage"/>
+      <output message="y:MultiplyResponseMessage"/>
+    </operation>
+    <operation name="Divide">
+      <input message="y:DivideMessage"/>
+      <output message="y:DivideResponseMessage"/>
+    </operation>
+  </portType>
+  <binding name="MathSoapHttpBinding" type="y:MathInterface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="Add">
+      <soap:operation soapAction="http://example.org/math/#Add"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="Subtract">
+      <soap:operation soapAction="http://example.org/math/#Subtract"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="Multiply">
+      <soap:operation soapAction="http://example.org/math/#Multiply"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="Divide">
+      <soap:operation soapAction="http://example.org/math/#Divide"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="MathService">
+    <port name="MathEndpoint" binding="y:MathSoapHttpBinding">
+      <soap:address location="http://localhost/math/math.asmx"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:endpoint>http://localhost/math/math.asmx</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://example.org/math/#Add" name="Add" bindingOperationName="Add" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="72652984-92c7-4e99-a75f-4b880a513867"><con:settings/><con:call name="SOAPSUB001-CreateSubscriber - All Possible Fields Present" id="03a3ef33-b826-4b32-8f12-5542c1e35c8e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<set>
+<expr><attr name="NAI"/><value val="testuser@test.com"/></expr>
+<expr><attr name="MSISDN"/><value val="447711306963"/></expr>
+<expr><attr name="IMSI"/><value val="789456123789456"/></expr>
+<expr><attr name="AccountId"/><value val="testUser"/></expr>
+<expr><attr name="BillingDay"/><value val="10"/></expr>
+<expr><attr name="Tier"/><value val="tierValue"/></expr>
+<expr><attr name="Entitlement"/><value val="entitlement1Value,entitlement2Value"/></expr>
+<expr><attr name="Custom1"/><value val="custom1Value"/></expr>
+<expr><attr name="Custom2"/><value val="custom2Value"/></expr>
+<expr><attr name="Custom3"/><value val="custom3Value"/></expr>
+<expr><attr name="Custom4"/><value val="custom4Value"/></expr>
+<expr><attr name="Custom5"/><value val="custom5Value"/></expr>
+<expr><attr name="Custom6"/><value val="custom6Value"/></expr>
+<expr><attr name="Custom7"/><value val="custom7Value"/></expr>
+<expr><attr name="Custom8"/><value val="custom8Value"/></expr>
+<expr><attr name="Custom9"/><value val="custom9Value"/></expr>
+<expr><attr name="Custom10"/><value val="custom10Value"/></expr>
+<expr><attr name="Custom11"/><value val="custom11Value"/></expr>
+<expr><attr name="Custom12"/><value val="custom12Value"/></expr>
+<expr><attr name="Custom13"/><value val="custom13Value"/></expr>
+<expr><attr name="Custom14"/><value val="custom14Value"/></expr>
+<expr><attr name="Custom15"/><value val="custom15Value"/></expr>
+<expr><attr name="Custom16"/><value val="custom16Value"/></expr>
+<expr><attr name="Custom17"/><value val="custom17Value"/></expr>
+<expr><attr name="Custom18"/><value val="custom18Value"/></expr>
+<expr><attr name="Custom19"/><value val="custom19Value"/></expr>
+<expr><attr name="Custom20"/><value val="custom20Value"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB007-Entitlement - AddToSet (adds new value to existing list)" id="e6396245-4db3-4656-9a9c-9d583abf6096"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <oper name="AddToSet" ns="bn">
+ <expr><attr name="Entitlement"/><value val="BRONZE"/></expr>
+ </oper>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB008-Entitlement - RemoveFromSet (removes from existing list)" id="21b0ad45-2d5e-4798-85af-ac18396cf437"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <oper name="RemoveFromSet" ns="bn">
+ <expr><attr name="Entitlement"/><value val="BRONZE"/></expr>
+ </oper>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB009-CustomField - Add" id="16f604da-312e-4920-88ca-c35646bc8ef5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="Custom1"/><op value="="/><value val="SubscriberPlan001"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB010-CustomField - Update" id="8f39f673-4d89-4e36-9a3b-9bdeb32c43d5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="Custom1"/><op value="="/><value val="SubscriberPlan002"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB018-Quota - Fetch Usage" id="e8ae29cd-2a26-4ad8-9ef9-848d93cb49bb"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="Quota"/></expr>
+ </select>
+ <where>
+  <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB020-Fetch Field" id="191ef216-0720-45bd-a6ea-f0c5a9b35ffa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="Entitlement"/></expr>
+ </select>
+ <where>
+  <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB021-Query-Profile - SpecificFields" id="3e1fe378-743a-4ec9-9ec8-c8e34d71c144"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="IMSI"/></expr>
+  <expr><attr name="Entitlement"/></expr>
+  <expr><attr name="BillingDay"/></expr>
+  <expr><attr name="Custom1"/></expr> 
+  <expr><attr name="Custom2"/></expr>
+  <expr><attr name="Custom3"/></expr> 
+  <expr><attr name="AccountID"/></expr>
+ </select>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB024-Delete-Profile" id="475ca099-dd9e-430e-a8a6-a3ad5ffaed8f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="delete" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<where>
+<expr>
+<attr name="MSISDN"/>
+<op value="="/>
+<value val="447711306963"/>
+</expr>
+</where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB011-CustomField - Remove" id="e61fc193-bc45-4714-977d-2631de2ee936"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="Custom1"/><op value="="/><value val="" isnull="y"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB019-Fetch State" id="dca8fc5f-64da-4a3c-aa3d-7600e6400a60"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="State"/></expr>
+ </select>
+ <where>
+  <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB005-Entitlement - Update to GOLD (overwrites existing)" id="eac51bb4-5202-4caa-908c-0f19006438e3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="Entitlement"/><op value="="/><value val="GOLD"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB006-Entitlement - Update to SILVER  (overwrites existing)" id="28b330b3-0b0a-4527-a4ca-d956de35d8d0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="Entitlement"/><op value="="/><value val="SILVER"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB013-DynamicQuota - Add Pass - All Fields Example (multi-line, overwrites existing)" id="8c95cdcc-63be-4359-8136-9b6dfcfe5993"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+  <expr><attr name="DynamicQuota"/><op value="="/><cdata><![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+<definition>
+	<version>1</version>
+	<dynamicquota name="FB">
+		<InstanceId>abcdef</InstanceId>
+		<Type>pass</Type>
+		<Priority>1</Priority>
+		<ActivationDateTime>2014-02-19T14:06:56-05:00</ActivationDateTime>
+		<ExpirationDateTime>2014-02-28T14:07:00-05:00</ExpirationDateTime>
+		<PurchaseDateTime>2014-02-18T14:06:51-05:00</PurchaseDateTime>
+		<Duration>7200</Duration>
+		<InterimReportingInterval>600</InterimReportingInterval>
+		<InitialTime>7200</InitialTime>
+		<InitialTotalVolume>750000000</InitialTotalVolume>
+		<InitialInputVolume>50000000</InitialInputVolume>
+		<InitialOutputVolume>60000000</InitialOutputVolume>
+		<InitialServiceSpecific>15</InitialServiceSpecific>
+	</dynamicquota>
+</definition>
+]]]]]]>><![CDATA[<![CDATA[></cdata></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB017-DynamicQuota - Fetch Current DynamicQuota" id="55187b8b-fdd2-4025-b8e0-700ce7e8ff6c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="DynamicQuota"/></expr>
+ </select>
+ <where>
+  <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB003-CreateSubscriber - Only MSISDN Key" id="0d6f8bfe-bb39-4cd2-a4ca-d057382ce22d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<set>
+<expr><attr name="MSISDN"/><value val="447711306963"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB004-CreateSubscriber - Only NAI Key" id="fd351f8e-382a-4473-b119-1a7e2c0c7b95"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<set>
+<expr><attr name="NAI"/><value val="testuser@test.com"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB002-CreateSubscriber - Only IMSI Key" id="9a233f7c-7c28-4c57-a507-e059cd59f86c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<set>
+<expr><attr name="IMSI"/><value val="789456123789456"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB014-DynamicQuota - Add Pass - DATA pass with just volume and expiration time (overwrites existing)" id="21425fb0-f26d-4740-8f3d-a43f4a36e6a8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+  <expr><attr name="DynamicQuota"/><op value="="/><cdata><![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+  <definition><version>1</version>
+  <dynamicquota name="DATA">
+  <InstanceId>uniqueId-abcdef</InstanceId>
+  <Type>pass</Type>
+  <Priority>1</Priority>
+  <ExpirationDateTime>2014-03-01T00:00:00</ExpirationDateTime>
+  <InitialTotalVolume>50000000</InitialTotalVolume>
+  </dynamicquota>
+  </definition>
+]]]]]]>><![CDATA[<![CDATA[></cdata></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB012-DynamicQuota - Add Pass - All Fields Example (single-line, overwrites existing)" id="322d75f1-e854-4fe8-a348-ba2df1136d8f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+  <expr><attr name="DynamicQuota"/><op value="="/><cdata><![CDATA[<?xml version="1.0" encoding="UTF-8"?><definition><version>1</version><dynamicquota name="DATA"><InstanceId>abcdef</InstanceId><Type>pass</Type><Priority>1</Priority><ActivationDateTime>2014-02-19T14:06:56-05:00</ActivationDateTime><ExpirationDateTime>2014-02-28T14:07:00-05:00</ExpirationDateTime><PurchaseDateTime>2014-02-18T14:06:51-05:00</PurchaseDateTime><Duration>7200</Duration><InterimReportingInterval>600</InterimReportingInterval><InitialTime>7200</InitialTime><InitialTotalVolume>750000000</InitialTotalVolume><InitialInputVolume>50000000</InitialInputVolume><InitialOutputVolume>60000000</InitialOutputVolume><InitialServiceSpecific>15</InitialServiceSpecific></dynamicquota></definition>]]]]]]>><![CDATA[<![CDATA[></cdata></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB015-DynamicQuota - Add Pass - DATA *and* YOUTUBE pass with just volume and expiration time (overwrites existing)" id="d1f435ec-33aa-4129-b5c9-63c2f96a37c3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+  <expr><attr name="DynamicQuota"/><op value="="/><cdata><![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+  <definition><version>1</version>
+  <dynamicquota name="DATA">
+  <InstanceId>uniqueId-abcdef</InstanceId>
+  <Type>pass</Type>
+  <Priority>1</Priority>
+  <ExpirationDateTime>2014-03-01T00:00:00</ExpirationDateTime>
+  <InitialTotalVolume>50000000</InitialTotalVolume>
+  </dynamicquota>
+  <dynamicquota name="YOUTUBE">
+  <InstanceId>uniqueId-uvwxyz</InstanceId>
+  <Type>pass</Type>
+  <Priority>1</Priority>
+  <ExpirationDateTime>2014-03-05T00:00:00</ExpirationDateTime>
+  <InitialTotalVolume>10000000</InitialTotalVolume>
+  </dynamicquota>
+  </definition>
+]]]]]]>><![CDATA[<![CDATA[></cdata></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL001-CreatePool - All Possible Fields Present" id="b5c2ac32-ed1e-42b3-b7ca-991eb26324d0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Pool" ns="policy"/>
+<set>
+<expr><attr name="PoolID"/><value val="PoolAccount0001"/></expr>
+<expr><attr name="BillingDay"/><value val="10"/></expr>
+<expr><attr name="Tier"/><value val="tierValue"/></expr>
+<expr><attr name="Entitlement"/><value val="entitlement1Value,entitlement2Value"/></expr>
+<expr><attr name="Custom1"/><value val="custom1Value"/></expr>
+<expr><attr name="Custom2"/><value val="custom2Value"/></expr>
+<expr><attr name="Custom3"/><value val="custom3Value"/></expr>
+<expr><attr name="Custom4"/><value val="custom4Value"/></expr>
+<expr><attr name="Custom5"/><value val="custom5Value"/></expr>
+<expr><attr name="Custom6"/><value val="custom6Value"/></expr>
+<expr><attr name="Custom7"/><value val="custom7Value"/></expr>
+<expr><attr name="Custom8"/><value val="custom8Value"/></expr>
+<expr><attr name="Custom9"/><value val="custom9Value"/></expr>
+<expr><attr name="Custom10"/><value val="custom10Value"/></expr>
+<expr><attr name="Custom11"/><value val="custom11Value"/></expr>
+<expr><attr name="Custom12"/><value val="custom12Value"/></expr>
+<expr><attr name="Custom13"/><value val="custom13Value"/></expr>
+<expr><attr name="Custom14"/><value val="custom14Value"/></expr>
+<expr><attr name="Custom15"/><value val="custom15Value"/></expr>
+<expr><attr name="Custom16"/><value val="custom16Value"/></expr>
+<expr><attr name="Custom17"/><value val="custom17Value"/></expr>
+<expr><attr name="Custom18"/><value val="custom18Value"/></expr>
+<expr><attr name="Custom19"/><value val="custom19Value"/></expr>
+<expr><attr name="Custom20"/><value val="custom20Value"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL002-CreatePool - Only PoolID key" id="3665843d-dc66-485f-9fde-f47f3a7f4b1c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Pool" ns="policy"/>
+<set>
+<expr><attr name="PoolID"/><value val="PoolAccount0001"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL003-Entitlement - Update to GOLD (overwrites existing)" id="1805b2aa-c632-4a14-bcdb-c15172bc0006"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <expr><attr name="Entitlement"/><op value="="/><value val="GOLD"/></expr>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL004-Entitlement - Update to SILVER (overwrites existing)" id="d4437c2b-1d4b-4de8-8b8f-bd16b6bc319d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <expr><attr name="Entitlement"/><op value="="/><value val="SILVER"/></expr>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL005-Entitlement - AddToSet (adds new value to existing list)" id="1b9a6d5d-8461-4821-ab7d-6d5e26555009"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <oper name="AddToSet" ns="bn">
+ <expr><attr name="Entitlement"/><value val="BRONZE"/></expr>
+ </oper>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL006-Entitlement - RemoveFromSet (removes from existing list)" id="585d3ada-6687-4339-ab12-17710f42fa48"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <oper name="RemoveFromSet" ns="bn">
+ <expr><attr name="Entitlement"/><value val="BRONZE"/></expr>
+ </oper>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL007-CustomField - Add" id="c91c22eb-8dc4-477b-b3fb-6d53418f7c90"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <expr><attr name="Custom20"/><op value="="/><value val="myvalue"/></expr>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL008-CustomField - Update" id="37f16606-8f1c-49e1-805a-5d6b033b6f3d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <expr><attr name="Custom20"/><op value="="/><value val="myNewValue"/></expr>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL009-CustomField - Remove" id="496985dc-259e-47d8-834a-0dd0fd9ec9ee"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <set>
+ <expr><attr name="Custom20"/><op value="="/><value val="" isnull="y"/></expr>
+ </set>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL012-PoolQuota - Fetch Usage" id="aa5f7473-072f-4917-8846-9d047bb003a8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <select>
+  <expr><attr name="PoolQuota"/></expr>
+ </select>
+ <where>
+  <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL013-PoolMember - Add One Entry (any original entries remain)" id="1c0a4303-a895-45b3-af7e-96090db42cbf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="AddPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL014-PoolMember - Add Multiple Entries (any original entries remain)" id="924c71e3-6383-4b05-8adc-6d26faa95aa0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="AddPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306964"/></expr>
+</oper>
+</req>
+<req name="operation" resonly="y">
+<oper name="AddPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306965"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL015-PoolMember - Get Pool Members" id="b81f05e7-deab-4c56-9bfa-f8d3f7346c91"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="GetPoolMembers" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL016-PoolMember - Get Subscriber PoolID" id="3e414180-4d5a-483f-933f-c4b31b9945af"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="GetPoolID" ent="Subscription" ns="global">
+<expr><param name="MSISDN" /><op value="="/><value val="447711306964"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL017-PoolMember - Delete One Entry (other entries remain)" id="d3ecb59f-1511-4087-8416-e9d511b4806a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="delPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306964"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL018-PoolMember - Delete Multiple Entries (other entries remain)" id="e8860729-f05f-4906-b31b-e11cfe3d32d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="operation" resonly="y">
+<oper name="delPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306964"/></expr>
+</oper>
+</req><req name="operation" resonly="y">
+<oper name="delPoolMember" ent="Subscription" ns="global">
+<expr><param name="PoolID" /><op value="="/><value val="PoolAccount0001"/></expr>
+<expr><param name="MSISDN"/><op value="="/><value val="447711306965"/></expr>
+</oper>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB022-Query-Profile - AllPossibleFields" id="e1019106-37ce-4925-b48b-167abbddb09e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="NAI"/></expr>
+  <expr><attr name="MSISDN"/></expr>
+  <expr><attr name="IMSI"/></expr>
+  <expr><attr name="AccountId"/></expr>
+  <expr><attr name="BillingDay"/></expr>
+  <expr><attr name="Tier"/></expr>
+  <expr><attr name="Entitlement"/></expr>
+  <expr><attr name="Custom1"/></expr>
+  <expr><attr name="Custom2"/></expr>
+  <expr><attr name="Custom3"/></expr>
+  <expr><attr name="Custom4"/></expr>
+  <expr><attr name="Custom5"/></expr>
+  <expr><attr name="Custom6"/></expr>
+  <expr><attr name="Custom7"/></expr>
+  <expr><attr name="Custom8"/></expr>
+  <expr><attr name="Custom9"/></expr>
+  <expr><attr name="Custom10"/></expr>
+  <expr><attr name="Custom11"/></expr>
+  <expr><attr name="Custom12"/></expr>
+  <expr><attr name="Custom13"/></expr>
+  <expr><attr name="Custom14"/></expr>
+  <expr><attr name="Custom15"/></expr>
+  <expr><attr name="Custom16"/></expr>
+  <expr><attr name="Custom17"/></expr>
+  <expr><attr name="Custom18"/></expr>
+  <expr><attr name="Custom19"/></expr>
+  <expr><attr name="Custom20"/></expr>
+ </select>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB016-DynamicQuota - Add Pass - DATA pass with additional arbitrary field (overwrites existing)" id="906f96db-45ac-493d-82eb-db97e9967ee9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+  <expr><attr name="DynamicQuota"/><op value="="/><cdata><![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+  <definition><version>1</version>
+  <dynamicquota name="DATA">
+  <InstanceId>uniqueId-abcdef</InstanceId>
+  <Type>pass</Type>
+  <Priority>1</Priority>
+  <ExpirationDateTime>2014-03-01T00:00:00</ExpirationDateTime>
+  <InitialTotalVolume>50000000</InitialTotalVolume>
+  <qoslevel>level1</qoslevel>
+  </dynamicquota>
+  </definition>
+]]]]]]>><![CDATA[<![CDATA[></cdata></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL011-Fetch State" id="4f8bf32f-089f-4e21-b0a9-8dc2cc68b3eb"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <select>
+  <expr><attr name="PoolState"/></expr>
+ </select>
+ <where>
+  <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL010-Fetch Field" id="dad33cf0-f738-4a19-bdd1-5d6c6d71d3c1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <select>
+  <expr><attr name="Custom1"/></expr>
+ </select>
+ <where>
+  <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL020-Query-Profile - AllPossibleFields" id="0e99267a-e8cd-4f52-80cc-9b17d88ef712"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <select>
+  <expr><attr name="BillingDay"/></expr>
+  <expr><attr name="Tier"/></expr>
+  <expr><attr name="Entitlement"/></expr>
+  <expr><attr name="Custom1"/></expr>
+  <expr><attr name="Custom2"/></expr>
+  <expr><attr name="Custom3"/></expr>
+  <expr><attr name="Custom4"/></expr>
+  <expr><attr name="Custom5"/></expr>
+  <expr><attr name="Custom6"/></expr>
+  <expr><attr name="Custom7"/></expr>
+  <expr><attr name="Custom8"/></expr>
+  <expr><attr name="Custom9"/></expr>
+  <expr><attr name="Custom10"/></expr>
+  <expr><attr name="Custom11"/></expr>
+  <expr><attr name="Custom12"/></expr>
+  <expr><attr name="Custom13"/></expr>
+  <expr><attr name="Custom14"/></expr>
+  <expr><attr name="Custom15"/></expr>
+  <expr><attr name="Custom16"/></expr>
+  <expr><attr name="Custom17"/></expr>
+  <expr><attr name="Custom18"/></expr>
+  <expr><attr name="Custom19"/></expr>
+  <expr><attr name="Custom20"/></expr>
+ </select>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL019-Query-Profile - SpecificFields" id="f3ec82dd-d724-4c6e-8f60-d8890731d17f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Pool" ns="policy"/>
+ <select>
+  <expr><attr name="Entitlement"/></expr>
+  <expr><attr name="Custom1"/></expr>
+  <expr><attr name="Custom5"/></expr>
+  <expr><attr name="Custom20"/></expr>
+ </select>
+ <where>
+ <expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+ </where>
+</req>
+
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPPOOL021-Delete-Pool" id="83ec116c-7590-4c05-84a9-ff43a7ff1009"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="delete" resonly="y">
+<ent name="Pool" ns="policy"/>
+<where>
+<expr><attr name="PoolID"/><op value="="/><value val="PoolAccount0001"/></expr>
+</where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call><con:call name="SOAPSUB023-BillingDay - Update" id="8adf4e83-74f3-4ddd-bb65-37f9d83711a7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="BillingDay"/><op value="="/><value val="1"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="447711306963"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://example.org/math/#Divide" name="Divide" bindingOperationName="Divide" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="12f9329c-75be-4f55-a5ee-159f96b1bc9a"><con:settings/></con:operation><con:operation isOneWay="false" action="http://example.org/math/#Multiply" name="Multiply" bindingOperationName="Multiply" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f84b8453-5d87-4767-9e2b-916fd8039193"><con:settings/></con:operation><con:operation isOneWay="false" action="http://example.org/math/#Subtract" name="Subtract" bindingOperationName="Subtract" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b65a9ab1-3ab4-4f87-8660-86ad9bab4a1c"><con:settings/></con:operation></con:interface><con:testSuite name="SDM SOAP TestSuite" id="1a4a5840-13be-4787-9897-ea6612a32ec4"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true" id="80d76d02-b513-4c89-b536-bc588d37bfc9"><con:settings/><con:testStep type="groovy" name="Set number" id="d9733950-93c9-433e-9630-3ab933391d5c"><con:settings/><con:config><script>def randomValue = (long)33900000000+(Math.random()*100000000)
+// testRunner.testCase.setPropertyValue("msisdn", "+" + String.valueOf(randomValue))
+testRunner.testCase.setPropertyValue("msisdnURI", String.valueOf(randomValue))
+// testRunner.testCase.setPropertyValue("msisdn", "+" + String.valueOf(randomValue))
+testRunner.testCase.setPropertyValue("msisdn", String.valueOf(randomValue))
+testRunner.testCase.setPropertyValue("imsi", "2080" + String.valueOf(randomValue))</script></con:config></con:testStep><con:testStep type="request" name="CreateSubscriber - All Possible Fields Present" id="91adc90a-f99c-48dd-a490-5c34bd5227f7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MathSoapHttpBinding</con:interface><con:operation>Add</con:operation><con:request name="CreateSubscriber - All Possible Fields Present" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="49643795-76ae-488a-9219-cda88164178d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="insert" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<set>
+<expr><attr name="NAI"/><value val="${#TestCase#msisdn}@test.com"/></expr>
+<expr><attr name="MSISDN"/><value val="${#TestCase#msisdn}"/></expr>
+<expr><attr name="IMSI"/><value val="${#TestCase#imsi}"/></expr>
+<expr><attr name="AccountId"/><value val="${#TestCase#msisdn}"/></expr>
+<expr><attr name="BillingDay"/><value val="10"/></expr>
+<expr><attr name="Tier"/><value val="tierValue"/></expr>
+<expr><attr name="Entitlement"/><value val="entitlement1Value,entitlement2Value"/></expr>
+<expr><attr name="Custom1"/><value val="custom1Value"/></expr>
+<expr><attr name="Custom2"/><value val="custom2Value"/></expr>
+<expr><attr name="Custom3"/><value val="custom3Value"/></expr>
+<expr><attr name="Custom4"/><value val="custom4Value"/></expr>
+<expr><attr name="Custom5"/><value val="custom5Value"/></expr>
+<expr><attr name="Custom6"/><value val="custom6Value"/></expr>
+<expr><attr name="Custom7"/><value val="custom7Value"/></expr>
+<expr><attr name="Custom8"/><value val="custom8Value"/></expr>
+<expr><attr name="Custom9"/><value val="custom9Value"/></expr>
+<expr><attr name="Custom10"/><value val="custom10Value"/></expr>
+<expr><attr name="Custom11"/><value val="custom11Value"/></expr>
+<expr><attr name="Custom12"/><value val="custom12Value"/></expr>
+<expr><attr name="Custom13"/><value val="custom13Value"/></expr>
+<expr><attr name="Custom14"/><value val="custom14Value"/></expr>
+<expr><attr name="Custom15"/><value val="custom15Value"/></expr>
+<expr><attr name="Custom16"/><value val="custom16Value"/></expr>
+<expr><attr name="Custom17"/><value val="custom17Value"/></expr>
+<expr><attr name="Custom18"/><value val="custom18Value"/></expr>
+<expr><attr name="Custom19"/><value val="custom19Value"/></expr>
+<expr><attr name="Custom20"/><value val="custom20Value"/></expr>
+</set>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" name="SOAP Response" id="3f09f935-6ed2-43f3-a4d8-120d8539c17c"/><con:assertion type="Simple Contains" name="Contains" id="d5e0133a-b075-4585-9dc4-334a59dc17c5"><con:configuration><token>res error="0" affected="1"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay 1" id="057cbd90-26ca-415f-b3e8-48aa3a4dbcc1"><con:settings/><con:config><delay>500</delay></con:config></con:testStep><con:testStep type="request" name="Fetch Custom10" id="b15482fd-1c4c-4c6f-9d71-f1626a181358"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MathSoapHttpBinding</con:interface><con:operation>Add</con:operation><con:request name="Fetch Custom10" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="48556b8e-4ac3-4e02-a524-5ba143cba0c0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="select" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <select>
+  <expr><attr name="Entitlement"/></expr>
+ </select>
+ <where>
+  <expr><attr name="MSISDN"/><op value="="/><value val="${#TestCase#msisdn}"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" name="SOAP Response" id="6ceb5d3a-fc47-4464-aac7-a6e61bbe7143"/><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay 2" id="5512acde-2dd9-4952-a8e5-97419e938a28"><con:settings/><con:config><delay>500</delay></con:config></con:testStep><con:testStep type="request" name="BillingDay - Update" id="f21f7263-3e66-4a42-b1b6-a2391ee5d527"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MathSoapHttpBinding</con:interface><con:operation>Add</con:operation><con:request name="BillingDay - Update" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="96d0f357-9ab1-44ca-8205-813801b46ca9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="update" resonly="y">
+ <ent name="Subscriber" ns="policy"/>
+ <set>
+ <expr><attr name="BillingDay"/><op value="="/><value val="1"/></expr>
+ </set>
+ <where>
+ <expr><attr name="MSISDN"/><op value="="/><value val="${#TestCase#msisdn}"/></expr>
+ </where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" name="SOAP Response" id="b26cc5f8-60cd-47de-bb24-414a32d5ad38"/><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay 3" id="29600eca-6bae-4c46-bc98-31b7986d6397"><con:settings/><con:config><delay>1000</delay></con:config></con:testStep><con:testStep type="request" name="Delete-Profile" id="2888b590-917c-4455-8d0b-22a625eab7f9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MathSoapHttpBinding</con:interface><con:operation>Add</con:operation><con:request name="Delete-Profile" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="643ff2db-a896-49e8-9230-0f12c2d4b83b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.250.80.137:8080/axis/services/MessageService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Header>
+        <ns1:UserName soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns1="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns1:UserName>
+        <ns2:Passwd soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xsi:type="soapenc:string" xmlns:ns2="blueslice.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">admin</ns2:Passwd>
+    </soapenv:Header>
+    <soapenv:Body>
+        <processTransaction xmlns="http://webservice.blueslice.com"><![CDATA[
+<tx>
+<req name="delete" resonly="y">
+<ent name="Subscriber" ns="policy"/>
+<where>
+<expr>
+<attr name="MSISDN"/>
+<op value="="/>
+<value val="${#TestCase#msisdn}"/>
+</expr>
+</where>
+</req>
+</tx>]]]]>><![CDATA[
+        </processTransaction>
+    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" name="SOAP Response" id="02747fa9-f5ec-49bd-ad63-d994d882ba8e"/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://example.org/math/#Add"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:loadTest name="LoadTest 1" id="7aa8d084-90df-4de4-82c4-ce07d4dbbde3"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>60</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties><con:property><con:name>msisdnURI</con:name><con:value>33945199485</con:value></con:property><con:property><con:name>msisdn</con:name><con:value>33945199485</con:value></con:property><con:property><con:name>imsi</con:name><con:value>208033945199485</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

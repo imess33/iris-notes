@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2017-12-31 15:15:08">
+<Project name="DEMOEMR" LastModified="2017-12-30 17:01:29.144348">
+  <Items>
+    <ProjectItem name="EMR" type="PKG"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="EMR.MSG.PatientReq">
+<Super>%RegisteredObject,%XML.Adaptor</Super>
+<TimeChanged>64647,61057.192992</TimeChanged>
+<TimeCreated>64644,55030.005495</TimeCreated>
+
+<Property name="IDCard">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatNo">
+<Type>%String</Type>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Male,Female"/>
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Citizenship">
+<Type>%String</Type>
+</Property>
+
+<Property name="PhoneNumber">
+<Type>%String</Type>
+</Property>
+</Class>
+
+
+<Class name="EMR.MSG.PatientResp">
+<Super>%RegisteredObject,%XML.Adaptor</Super>
+<TimeChanged>64647,60925.499528</TimeChanged>
+<TimeCreated>64644,55030.005495</TimeCreated>
+
+<Property name="Id">
+<Type>%String</Type>
+</Property>
+
+<Property name="IDCard">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatNo">
+<Type>%String</Type>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Male,Female"/>
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Citizenship">
+<Type>%String</Type>
+</Property>
+
+<Property name="PhoneNumber">
+<Type>%String</Type>
+</Property>
+</Class>
+
+
+
+
+<Class name="EMR.Patient">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>64645,55044.39601</TimeChanged>
+<TimeCreated>64644,55030.005495</TimeCreated>
+
+<Property name="IDCard">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatNo">
+<Type>%String</Type>
+</Property>
+
+<Property name="Name">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",Male,Female"/>
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Citizenship">
+<Type>%String</Type>
+</Property>
+
+<Property name="PhoneNumber">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^EMR.PatientD</DataLocation>
+<DefaultData>PatientDefaultData</DefaultData>
+<IdLocation>^EMR.PatientD</IdLocation>
+<IndexLocation>^EMR.PatientI</IndexLocation>
+<StreamLocation>^EMR.PatientS</StreamLocation>
+<Data name="PatientDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>IDCard</Value>
+</Value>
+<Value name="3">
+<Value>PatNo</Value>
+</Value>
+<Value name="4">
+<Value>Name</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>DOB</Value>
+</Value>
+<Value name="7">
+<Value>Citizenship</Value>
+</Value>
+<Value name="8">
+<Value>PhoneNumber</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="EMR.WS.PatientService">
+<Description>
+EMR.WS.PatientService</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%SOAP.WebService</Super>
+<TimeChanged>64647,61043.848856</TimeChanged>
+<TimeCreated>64645,54684.910586</TimeCreated>
+
+<Parameter name="SERVICENAME">
+<Description>
+WebService 的名称.</Description>
+<Default>PatientService</Default>
+</Parameter>
+
+<Parameter name="NAMESPACE">
+<Description>
+WebService 的 SOAP Namespace</Description>
+<Default>http://tempuri.org</Default>
+</Parameter>
+
+<Parameter name="USECLASSNAMESPACES">
+<Description>
+引用类的 命名空间 将在 WSDL 中使用.</Description>
+<Default>1</Default>
+</Parameter>
+
+<Method name="QueryPatient">
+<Description>
+QueryPatient</Description>
+<FormalSpec>pid:%String</FormalSpec>
+<ReturnType>EMR.MSG.PatientResp</ReturnType>
+<WebMethod>1</WebMethod>
+<Implementation><![CDATA[
+	set patInst = ##class(EMR.Patient).%OpenId(pid)
+	set patMsg = ..GetPatientMsg(patInst)
+	Quit patMsg
+]]></Implementation>
+</Method>
+
+<Method name="AddPatient">
+<Description>
+AddPatient</Description>
+<FormalSpec>pat:EMR.MSG.PatientReq</FormalSpec>
+<ReturnType>EMR.MSG.PatientResp</ReturnType>
+<WebMethod>1</WebMethod>
+<Implementation><![CDATA[
+	#dim patInst As EMR.Patient = ..GetPatientInstance(pat)
+	set tSc = patInst.%Save()
+	set patMsg = ..GetPatientMsg(patInst)
+	if $$$ISERR(tSc){quit ""}
+	Quit patMsg
+]]></Implementation>
+</Method>
+
+<Method name="GetPatientInstance">
+<FormalSpec>pat:EMR.MSG.PatientReq</FormalSpec>
+<ReturnType>EMR.Patient</ReturnType>
+<Implementation><![CDATA[
+	#dim patInst As EMR.Patient = ##class(EMR.Patient).%New()
+	set patInst.PatNo = pat.PatNo
+	set patInst.Name = pat.Name
+	set patInst.IDCard = pat.IDCard
+	set patInst.Gender = pat.Gender 
+	set patInst.DOB = pat.DOB 
+	set patInst.Citizenship = pat.Citizenship 
+	set patInst.PhoneNumber = pat.PhoneNumber
+	quit patInst
+]]></Implementation>
+</Method>
+
+<Method name="GetPatientMsg">
+<FormalSpec>patInst:EMR.Patient</FormalSpec>
+<ReturnType>EMR.MSG.PatientResp</ReturnType>
+<Implementation><![CDATA[
+	#dim patMsg As EMR.MSG.PatientResp = ##class(EMR.MSG.PatientResp).%New()
+	set patMsg.Id = patInst.%Id()
+	set patMsg.PatNo = patInst.PatNo
+	set patMsg.Name = patInst.Name
+	set patMsg.IDCard = patInst.IDCard
+	set patMsg.Gender = patInst.Gender
+	set patMsg.DOB = patInst.DOB
+	set patMsg.Citizenship = patInst.Citizenship
+	set patMsg.PhoneNumber = patInst.PhoneNumber
+	quit patMsg
+]]></Implementation>
+</Method>
+</Class>
+</Export>

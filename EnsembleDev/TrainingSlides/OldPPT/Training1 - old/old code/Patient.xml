@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2.1 (Build 801U)" ts="2017-12-31 15:14:08">
+<Class name="CDR.Patient">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>64647,71143.0664</TimeChanged>
+<TimeCreated>64644,55030.005495</TimeCreated>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatientNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="FirstName">
+<Type>%String</Type>
+</Property>
+
+<Property name="LastName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",M,F"/>
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Citizenship">
+<Type>%String</Type>
+</Property>
+
+<Property name="PhoneNumber">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^CDR.PatientD</DataLocation>
+<DefaultData>PatientDefaultData</DefaultData>
+<IdLocation>^CDR.PatientD</IdLocation>
+<IndexLocation>^CDR.PatientI</IndexLocation>
+<StreamLocation>^CDR.PatientS</StreamLocation>
+<Data name="PatientDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>IDNumber</Value>
+</Value>
+<Value name="3">
+<Value>PatientNumber</Value>
+</Value>
+<Value name="4">
+<Value>FirstName</Value>
+</Value>
+<Value name="5">
+<Value>LastName</Value>
+</Value>
+<Value name="6">
+<Value>Gender</Value>
+</Value>
+<Value name="7">
+<Value>DOB</Value>
+</Value>
+<Value name="8">
+<Value>Citizenship</Value>
+</Value>
+<Value name="9">
+<Value>PhoneNumber</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>

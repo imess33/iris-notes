@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2.1 (Build 705U)" ts="2015-11-20 14:44:37">
+<Class name="Demo.HL7.MsgRouter.ABCRoutingRule">
+<Description>
+</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>62979,52331.281074</TimeChanged>
+<TimeCreated>62858,5105.321898</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>EnsLib.HL7.MsgRouter.RuleAssistCompatible</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="" context="EnsLib.HL7.MsgRouter.RoutingEngine" production="">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<when condition="((HL7.ParentId)!=(&quot;&quot;))">
+<send transform="" target="Batch_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<when condition="((HL7.ParentId)!=(&quot;&quot;))">
+<send transform="" target="Batch_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<constraint name="docType" value="FHS,BHS"></constraint>
+<when condition="1">
+<send transform="" target="Batch_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ADT_A08"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ADT_A01"></constraint>
+<when condition="1">
+<send transform="" target="Priority_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ADT_A08"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ADT_A01"></constraint>
+<when condition="1">
+<send transform="" target="ADT_A08_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ORM_O01"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ORM_O01"></constraint>
+<when condition="((HL7.{PIDgrp.PV1grp.PV1:PatientClass})=(&quot;E&quot;))">
+<send transform="" target="Priority_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ORM_O01"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ORM_O01"></constraint>
+<when condition="1">
+<send transform="" target="ORM_O01_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ADT_A31"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ADT_A01"></constraint>
+<when condition="1">
+<send transform="" target="ADT_A31_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ORU_R01"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<constraint name="docType" value="ORU_R01"></constraint>
+<when condition="1">
+<send transform="" target="Extra_Observations"></send>
+<return></return>
+</when>
+</rule>
+<rule name="" disabled="false">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<when condition="1">
+<send transform="" target="Regular_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.ADTLastNameTransform">
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>63795,59746</TimeChanged>
+<TimeCreated>60213,48389</TimeCreated>
+<DependsOn>EnsLib.HL7.Message</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>0</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>0</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='EnsLib.HL7.Message' targetClass='EnsLib.HL7.Message' sourceDocType='Demo.HL7.MsgRouter.Schema:ADT_A01' targetDocType='2.3.1:ADT_A01' create='new' language='objectscript' >
+<assign value='source.{MSH}' property='target.{MSH}' action='set'  />
+<assign value='"ADT"' property='target.{MSH:9.1}' action='set'  />
+<assign value='"A01"' property='target.{MSH:9.2}' action='set'  />
+<assign value='"TEST"' property='target.{MSH:ReceivingApplication}' action='set'  />
+<assign value='source.{EVN}' property='target.{EVN}' action='set'  />
+<assign value='source.{PID}' property='target.{PID}' action='set'  />
+<assign value='"NEWNAME"' property='target.{PID:5.1}' action='set'  />
+<assign value='source.{PD1}' property='target.{PD1}' action='set'  />
+<assign value='source.{NK1(1)}' property='target.{NK1(1)}' action='set'  />
+<assign value='source.{PV1}' property='target.{PV1}' action='set'  />
+<assign value='source.{PV2}' property='target.{PV2}' action='set'  />
+<assign value='source.{DB1(1)}' property='target.{DB1(1)}' action='set'  />
+<assign value='source.{OBX(1)}' property='target.{OBX(1)}' action='set'  />
+<assign value='source.{AL1(1)}' property='target.{AL1(1)}' action='set'  />
+<assign value='source.{DG1(1)}' property='target.{DG1(1)}' action='set'  />
+<assign value='source.{DRG}' property='target.{DRG}' action='set'  />
+<assign value='source.{PR1grp(1)}' property='target.{PR1grp(1)}' action='set'  />
+<assign value='source.{GT1(1)}' property='target.{GT1(1)}' action='set'  />
+<assign value='source.{IN1grp(1)}' property='target.{IN1grp(1)}' action='set'  />
+<assign value='source.{ACC}' property='target.{ACC}' action='set'  />
+<assign value='source.{UB1}' property='target.{UB1}' action='set'  />
+<assign value='source.{UB2}' property='target.{UB2}' action='set'  />
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.AlertManCreationRule">
+<Description>
+</Description>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>63868,33936.831989</TimeChanged>
+<TimeCreated>63868,33339.374982</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>Ens.Alerting.Rule.CreateAlertAssist</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="" context="Ens.Alerting.Context.CreateAlert" production="">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="" disabled="false">
+<when condition="IsRecentManagedAlert(AlertRequest,600,1)">
+<return>0</return>
+</when>
+<when condition="AlertGroups Contains &quot;ABCGroup&quot;">
+<return>1</return>
+</when>
+<when condition="AlertGroups Contains &quot;XYZGroup&quot;">
+<assign property="Owner" value="&quot;AlertUser&quot;"></assign>
+<return>1</return>
+</when>
+<when condition="AlertGroups=&quot;NotImportantAlertGroup&quot;">
+<return>0</return>
+</when>
+<otherwise>
+<return>1</return>
+</otherwise>
+</rule>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.AlertMonitorRule">
+<Description>
+</Description>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>63868,34880.890333</TimeChanged>
+<TimeCreated>63868,34660.548057</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>Ens.Alerting.Rule.OverdueAlertAssist</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="" context="Ens.Alerting.Context.OverdueAlert" production="">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="" disabled="false">
+<when condition="(ManagedAlert.AlertGroups Contains &quot;XYZGroup&quot;)&amp;&amp;(ManagedAlert.EscalationLevel&lt;2)">
+<assign property="ManagedAlert.EscalationLevel" value="ManagedAlert.EscalationLevel+1"></assign>
+</when>
+</rule>
+<return>1</return>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.AlertRule">
+<Description>
+See the AlertTable lookup table for a mapping of alert sources to email addresses. If no match is found in the lookup, EmailAlertTransformation sends the alert to the configured Recipient for the EMailAlertOperation.</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>62858,5105.32698</TimeChanged>
+<TimeCreated>62858,5105.314808</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>EnsLib.MsgRouter.RuleAssist</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="" context="EnsLib.MsgRouter.RoutingEngine" production="">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="">
+<constraint name="msgClass" value="Ens.AlertRequest"></constraint>
+<when condition="1">
+<send transform="Demo.HL7.MsgRouter.EmailAlertTransform" target="EMailAlertOperation"></send>
+<return></return>
+</when>
+</rule>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.EmailAlertTransform">
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>63795,59746</TimeChanged>
+<TimeCreated>63260,3644.868482</TimeCreated>
+<DependsOn>Ens.AlertRequest</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>1</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='Ens.AlertRequest' targetClass='Ens.AlertRequest' create='new' language='objectscript' >
+<assign value='source.SourceConfigName' property='target.SourceConfigName' action='set'  />
+<assign value='source.AlertText' property='target.AlertText' action='set'  />
+<assign value='..Lookup("AlertTable",source.SourceConfigName)' property='target.AlertDestination' action='set'  />
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.Functions">
+<Description>
+Functions to use in rule definitions for the sample message router production.</Description>
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.FunctionSet</Super>
+<TimeChanged>63795,59746</TimeChanged>
+<TimeCreated>60211,45594.129234</TimeCreated>
+
+<Method name="DayOfWeek">
+<Description>
+Returns the ordinal position of the day in the week, 
+where 1 is Sunday, 2 is Monday, and so on.</Description>
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[$zd($H,10)
+]]></Implementation>
+</Method>
+
+<Method name="TimeInSeconds">
+<Description>
+Returns the time as a number of seconds since midnight.</Description>
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[$p($H,",",2)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.NotifyManTransform">
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>63868,58918.53303</TimeChanged>
+<TimeCreated>63868,34069.062368</TimeCreated>
+<DependsOn>Ens.Alerting.NotificationRequest,Ens.Alerting.Context.Notify</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="TREATEMPTYREPEATINGFIELDASNULL">
+<Default>0</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='Ens.Alerting.NotificationRequest' targetClass='Ens.Alerting.Context.Notify' create='new' language='objectscript' >
+<assign value='"Louis.Lu@InterSystems.com"' property='ABCEmail' action='set' />
+<assign value='"942669@qq.com"' property='XYZEmail' action='set' />
+<assign value='"ZLUX300@hotmail.com"' property='EscalatedEmail' action='set' />
+<assign value='"EMailAlertOperation"' property='target.Targets.(1).TargetConfigName' action='set' />
+<assign value='1' property='target.Notify' action='set' />
+<if condition='..Contains(source.ManagedAlert.AlertGroups,"ABCGroup")' >
+<true>
+<assign value='ABCEmail' property='target.Targets.(1).AlertDestinations' action='append' />
+</true>
+</if>
+<if condition='..Contains(source.ManagedAlert.AlertGroups,"XYZGroup")' >
+<true>
+<assign value='XYZEmail' property='target.Targets.(1).AlertDestinations' action='append' />
+</true>
+</if>
+<if condition='source.ManagedAlert.EscalationLevel&gt;0' >
+<true>
+<assign value='EscalatedEmail' property='target.Targets.(1).AlertDestinations' action='append' />
+</true>
+</if>
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.ORMLastNameTransform">
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.DataTransformDTL</Super>
+<TimeChanged>63795,59746</TimeChanged>
+<TimeCreated>60213,48814</TimeCreated>
+<DependsOn>EnsLib.HL7.Message</DependsOn>
+
+<Parameter name="IGNOREMISSINGSOURCE">
+<Default>0</Default>
+</Parameter>
+
+<Parameter name="REPORTERRORS">
+<Default>0</Default>
+</Parameter>
+
+<XData name="DTL">
+<XMLNamespace>http://www.intersystems.com/dtl</XMLNamespace>
+<Data><![CDATA[
+<transform sourceClass='EnsLib.HL7.Message' targetClass='EnsLib.HL7.Message' sourceDocType='Demo.HL7.MsgRouter.Schema:ORM_O01' targetDocType='2.3.1:ORM_O01' create='new' language='objectscript' >
+<assign value='source.{MSH}' property='target.{MSH}' action='set'  />
+<assign value='source.{NTE(1)}' property='target.{NTE(1)}' action='set'  />
+<assign value='source.{ORCgrp(1)}' property='target.{ORCgrp(1)}' action='set'  />
+<assign value='source.{PIDgrp.PID}' property='target.{PIDgrp.PID}' action='set'  />
+<assign value='"NEWNAME"' property='target.{PIDgrp.PID:5.1}' action='set'  />
+</transform>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.Production">
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Production</Super>
+<TimeChanged>63869,36807.917754</TimeChanged>
+<TimeCreated>60208,69187</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="Demo.HL7.MsgRouter.Production" TestingEnabled="false" LogGeneralTraceEvents="false">
+  <Description>Routes HL7 messages based on message source and contents. To learn more, click on ABC_Router or XYZ_Router. Click View Rules to see message routing rules.The production uses a routing process Ens.Alert to route alerts. The rule in Ens.Alert consults a lookup table to see where to send the alert.To demonstrate alerts, give EMailAlertOperation a valid STMP server and Recipient. You may also edit the AlertTable lookup table. Temporarily assign a bad File Path to an enabled file service.</Description>
+  <ActorPoolSize>1</ActorPoolSize>
+  <Setting Target="Adapter" Name="AlertNotificationManager">NotifyMan</Setting>
+  <Setting Target="Adapter" Name="AlertNotificationOperation">EMailAlertOperation</Setting>
+  <Setting Target="Adapter" Name="AlertNotificationRecipients">Louis.Lu@InterSystems.com</Setting>
+  <Item Name="ABC_HL7FileService" Category="" ClassName="EnsLib.HL7.Service.FileService" PoolSize="1" Enabled="true" Foreground="false" Comment="Test source of HL7 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="AckTargetConfigNames"></Setting>
+    <Setting Target="Host" Name="Framing">Flexible</Setting>
+    <Setting Target="Host" Name="TargetConfigNames">ABC_Router</Setting>
+    <Setting Target="Host" Name="SearchTableClass">Demo.HL7.MsgRouter.SearchTable</Setting>
+    <Setting Target="Host" Name="LocalFacilityApplication"></Setting>
+    <Setting Target="Host" Name="AckMode">Never</Setting>
+    <Setting Target="Host" Name="UseAckCommitCodes">1</Setting>
+    <Setting Target="Host" Name="IgnoreInboundAck">1</Setting>
+    <Setting Target="Host" Name="BatchHandling">Batch</Setting>
+    <Setting Target="Host" Name="MessageSchemaCategory">Demo.HL7.MsgRouter.Schema</Setting>
+    <Setting Target="Host" Name="DefCharEncoding">Latin1</Setting>
+    <Setting Target="Host" Name="AlertGracePeriod">0</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\in</Setting>
+    <Setting Target="Adapter" Name="FileSpec">ABC*</Setting>
+    <Setting Target="Adapter" Name="ArchivePath">C:\Practice\inarchive</Setting>
+    <Setting Target="Adapter" Name="WorkPath"></Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="FileAccessTimeout">10</Setting>
+    <Setting Target="Adapter" Name="AppendTimestamp">1</Setting>
+    <Setting Target="Adapter" Name="CallInterval">5</Setting>
+    <Setting Target="Host" Name="AlertGroups">ABCGroup</Setting>
+  </Item>
+  <Item Name="XYZ_HL7FileService" Category="" ClassName="EnsLib.HL7.Service.FileService" PoolSize="1" Enabled="true" Foreground="false" Comment="Test source of HL7 messages." LogTraceEvents="true" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="AckTargetConfigNames"></Setting>
+    <Setting Target="Host" Name="Framing">Flexible</Setting>
+    <Setting Target="Host" Name="TargetConfigNames">XYZ_Router</Setting>
+    <Setting Target="Host" Name="SearchTableClass">Demo.HL7.MsgRouter.SearchTable</Setting>
+    <Setting Target="Host" Name="LocalFacilityApplication"></Setting>
+    <Setting Target="Host" Name="AckMode">Never</Setting>
+    <Setting Target="Host" Name="UseAckCommitCodes">1</Setting>
+    <Setting Target="Host" Name="IgnoreInboundAck">1</Setting>
+    <Setting Target="Host" Name="BatchHandling">1Session</Setting>
+    <Setting Target="Host" Name="MessageSchemaCategory">Demo.HL7.MsgRouter.Schema</Setting>
+    <Setting Target="Host" Name="DefCharEncoding">Latin1</Setting>
+    <Setting Target="Host" Name="AlertGracePeriod">0</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\in</Setting>
+    <Setting Target="Adapter" Name="FileSpec">XYZ*</Setting>
+    <Setting Target="Adapter" Name="ArchivePath">C:\Practice\inarchive</Setting>
+    <Setting Target="Adapter" Name="WorkPath"></Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="FileAccessTimeout">10</Setting>
+    <Setting Target="Adapter" Name="AppendTimestamp">1</Setting>
+    <Setting Target="Adapter" Name="CallInterval">5</Setting>
+    <Setting Target="Host" Name="AlertGroups">XYZGroup</Setting>
+  </Item>
+  <Item Name="ABC_Router" Category="" ClassName="EnsLib.HL7.MsgRouter.RoutingEngine" PoolSize="0" Enabled="true" Foreground="false" Comment="This handles message routing logic." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="AlertOnBadMessage">1</Setting>
+    <Setting Target="Host" Name="BadMessageHandler">BadMessageHandler</Setting>
+    <Setting Target="Host" Name="BusinessRuleName">Demo.HL7.MsgRouter.ABCRoutingRule</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+  </Item>
+  <Item Name="XYZ_Router" Category="" ClassName="EnsLib.HL7.MsgRouter.RoutingEngine" PoolSize="1" Enabled="true" Foreground="false" Comment="This handles message routing logic." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="LocalFacilityApplication">ISC:EnsembleHL7</Setting>
+    <Setting Target="Host" Name="AckType">Application</Setting>
+    <Setting Target="Host" Name="NackCode">Error</Setting>
+    <Setting Target="Host" Name="Validation">dm-z</Setting>
+    <Setting Target="Host" Name="AlertOnBadMessage">1</Setting>
+    <Setting Target="Host" Name="BadMessageHandler">BadMessageHandler</Setting>
+    <Setting Target="Host" Name="BusinessRuleName">Demo.HL7.MsgRouter.XYZRoutingRule</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+  </Item>
+  <Item Name="EMailAlertOperation" Category="" ClassName="EnsLib.EMail.AlertOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Alerts system administrators via e-mail." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">0</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Adapter" Name="SMTPServer">Server3</Setting>
+    <Setting Target="Adapter" Name="SMTPPort">25</Setting>
+    <Setting Target="Adapter" Name="Credentials"></Setting>
+    <Setting Target="Adapter" Name="Recipient">Louis.Lu@InterSystems.com,ZLUX300@hotmail.com</Setting>
+    <Setting Target="Adapter" Name="Cc"></Setting>
+    <Setting Target="Adapter" Name="From">abc@Server3</Setting>
+    <Setting Target="Host" Name="IncludeManagedAlertHistory">1</Setting>
+    <Setting Target="Adapter" Name="SSLConfig"></Setting>
+  </Item>
+  <Item Name="ADT_A08_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Destination for ADT_A08 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_ADT_A08_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="ORM_O01_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Destination for ORM_O01 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_ORM_O01_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="ADT_A31_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Destination for ADT_A31 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_ADT_A31_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="Priority_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Priority destination for HL7 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Priority_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="Extra_Observations" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Destination for doctor notes/observations." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Extra_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+    <Setting Target="Host" Name="AlertGroups">NotImportantAlertGroup</Setting>
+  </Item>
+  <Item Name="Regular_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Default destination for HL7 messages." LogTraceEvents="true" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Regular_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+    <Setting Target="Host" Name="AlertGroups">ABCGroup,XYZGroup</Setting>
+  </Item>
+  <Item Name="Other_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Special destination for HL7 messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Other_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="BadMessageHandler" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="Destination for bad messages." LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Bad_%F.txt</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">15</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">AsciiLF</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="Batch_FileOperation" Category="" ClassName="EnsLib.HL7.Operation.FileOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+    <Setting Target="Host" Name="InactivityTimeout">0</Setting>
+    <Setting Target="Host" Name="Filename">%H%M_Batch_%F.txt</Setting>
+    <Setting Target="Host" Name="AutoBatchParentSegs">1</Setting>
+    <Setting Target="Host" Name="Separators"><![CDATA[|^~\&]]]]><![CDATA[></Setting>
+    <Setting Target="Host" Name="SearchTableClass"></Setting>
+    <Setting Target="Host" Name="DefCharEncoding">Latin1</Setting>
+    <Setting Target="Host" Name="AlertRetryGracePeriod">0</Setting>
+    <Setting Target="Host" Name="RetryInterval">5</Setting>
+    <Setting Target="Host" Name="FailureTimeout">-1</Setting>
+    <Setting Target="Host" Name="AlertOnError">1</Setting>
+    <Setting Target="Host" Name="ArchiveIO">0</Setting>
+    <Setting Target="Host" Name="Framing">Ascii115/101</Setting>
+    <Setting Target="Adapter" Name="FilePath">C:\Practice\out</Setting>
+    <Setting Target="Adapter" Name="Overwrite">0</Setting>
+    <Setting Target="Adapter" Name="Charset">Default</Setting>
+    <Setting Target="Adapter" Name="OpenTimeout">5</Setting>
+  </Item>
+  <Item Name="Ens.Alert" Category="" ClassName="Ens.Alerting.AlertManager" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="CreateManagedAlertRule">Demo.HL7.MsgRouter.AlertManCreationRule</Setting>
+  </Item>
+  <Item Name="NotifyMan" Category="" ClassName="Ens.Alerting.NotificationManager" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="NotificationTransform">Demo.HL7.MsgRouter.NotifyManTransform</Setting>
+  </Item>
+  <Item Name="AlertMon" Category="" ClassName="Ens.Alerting.AlertMonitor" PoolSize="1" Enabled="false" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Host" Name="OverdueAlertRule">Demo.HL7.MsgRouter.AlertMonitorRule</Setting>
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Demo.HL7.MsgRouter.XYZRoutingRule">
+<Description>
+Routing from the XYZ message source.</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>Ens.Rule.Definition</Super>
+<TimeChanged>62858,5105.889956</TimeChanged>
+<TimeCreated>62858,5105.884151</TimeCreated>
+
+<Parameter name="RuleAssistClass">
+<Default>EnsLib.HL7.MsgRouter.RuleAssistCompatible</Default>
+</Parameter>
+
+<XData name="RuleDefinition">
+<XMLNamespace>http://www.intersystems.com/rule</XMLNamespace>
+<Data><![CDATA[
+<ruleDefinition alias="" context="EnsLib.HL7.MsgRouter.RoutingEngine" production="">
+<ruleSet name="" effectiveBegin="" effectiveEnd="">
+<rule name="">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<when condition="((HL7.ParentId)!=(&quot;&quot;))">
+<send transform="" target="Batch_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="2.3.1"></constraint>
+<constraint name="docType" value="FHS,BHS"></constraint>
+<when condition="1">
+<send transform="" target="Batch_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ADT_A08"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ADT_A01"></constraint>
+<when condition="(Contains(HL7.{PID:PatientName(1).familylastname},&quot;&lt;S&gt;&quot;))||(StartsWith(HL7.{PID:PatientName(1).familylastname},&quot;Z&quot;))">
+<send transform="Demo.HL7.MsgRouter.ADTLastNameTransform" target="Other_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docName" value="ORM_O01"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<constraint name="docType" value="ORM_O01"></constraint>
+<when condition="(StartsWith(HL7.{PIDgrp.PID:PatientName(1).familylastname},&quot;S&quot;))||(StartsWith(HL7.{PIDgrp.PID:PatientName(1).familylastname},&quot;Z&quot;))">
+<send transform="Demo.HL7.MsgRouter.ORMLastNameTransform" target="Other_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+<rule name="">
+<constraint name="msgClass" value="EnsLib.HL7.Message"></constraint>
+<constraint name="docCategory" value="Demo.HL7.MsgRouter.Schema"></constraint>
+<when condition="1">
+<send transform="" target="Regular_FileOperation"></send>
+<return></return>
+</when>
+</rule>
+</ruleSet>
+</ruleDefinition>
+]]></Data>
+</XData>
+</Class>
+</Export>

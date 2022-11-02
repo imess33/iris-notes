@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2.1 (Build 705U)" ts="2015-11-18 17:56:24">
+<Class name="EnsTrain.BO.ToSample">
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>63874,64547.413763</TimeChanged>
+<TimeCreated>63874,58776.853645</TimeCreated>
+
+<Parameter name="ADAPTER">
+<Default>EnsLib.SQL.OutboundAdapter</Default>
+</Parameter>
+
+<Property name="Adapter">
+<Type>EnsLib.SQL.OutboundAdapter</Type>
+</Property>
+
+<Parameter name="INVOCATION">
+<Default>Queue</Default>
+</Parameter>
+
+<Method name="GetPersonByName">
+<FormalSpec>pRequest:EnsTrain.Msg.reqPersonByName,*pResponse:EnsTrain.Msg.respPerson</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+   Set pResponse = ##class(EnsTrain.Msg.respPerson).%New()
+   //need to pass tResult by reference explicitly in ObjectScript
+   //Use an adapter to run a query in the Person database.
+   Set tSC = ..Adapter.ExecuteQuery(.tResult,"Select * from Sample.Person where Name='"_pRequest.Name_"'")
+
+ //Get the result
+   If tResult.Next() {
+     Set pResponse.Name = tResult.Get("Name")
+     Set pResponse.DOB = $zdh(tResult.Get("DOB"),3)
+     Set pResponse.SSN = tResult.Get("SSN")
+     Set pResponse.State = tResult.Get("Home_State")
+   } Else {
+   //Handle no result for example
+     Set pResponse.Name = pRequest.Name
+   }
+   Quit $$$OK
+]]></Implementation>
+</Method>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="EnsTrain.Msg.reqPersonByName"> 
+		<Method>GetPersonByName</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="EnsTrain.Entity.Person">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63874,57758.43625</TimeChanged>
+<TimeCreated>63874,57554.550451</TimeCreated>
+
+<Property name="Name">
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="SSN">
+<Type>%String</Type>
+</Property>
+
+<Property name="State">
+<Type>%String</Type>
+</Property>
+
+<Property name="Tag">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^EnsTrain.Entity.PersonD</DataLocation>
+<DefaultData>PersonDefaultData</DefaultData>
+<IdLocation>^EnsTrain.Entity.PersonD</IdLocation>
+<IndexLocation>^EnsTrain.Entity.PersonI</IndexLocation>
+<StreamLocation>^EnsTrain.Entity.PersonS</StreamLocation>
+<Data name="PersonDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>DOB</Value>
+</Value>
+<Value name="4">
+<Value>SSN</Value>
+</Value>
+<Value name="5">
+<Value>State</Value>
+</Value>
+<Value name="6">
+<Value>Tag</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="EnsTrain.Msg.reqPersonByName">
+<Description>
+request person details by person name根据姓名返回详细信息</Description>
+<Super>Ens.Request</Super>
+<TimeChanged>63874,57132.385376</TimeChanged>
+<TimeCreated>63874,57131.979103</TimeCreated>
+
+<Property name="Name">
+<Description>
+姓名</Description>
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>reqPersonByNameDefaultData</DefaultData>
+<Data name="reqPersonByNameDefaultData">
+<Structure>listnode</Structure>
+<Subscript>"reqPersonByName"</Subscript>
+<Value name="1">
+<Value>Name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="EnsTrain.Msg.respPerson">
+<Super>Ens.Response,EnsTrain.Entity.Person</Super>
+<TimeChanged>63874,57688.426836</TimeChanged>
+<TimeCreated>63874,57564.591503</TimeCreated>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>respPersonDefaultData</DefaultData>
+<Data name="respPersonDefaultData">
+<Subscript>"respPerson"</Subscript>
+<Value name="1">
+<Value>Name</Value>
+</Value>
+<Value name="2">
+<Value>DOB</Value>
+</Value>
+<Value name="3">
+<Value>SSN</Value>
+</Value>
+<Value name="4">
+<Value>State</Value>
+</Value>
+<Value name="5">
+<Value>Tag</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="EnsTrain.PersonSample">
+<Super>Ens.Production</Super>
+<TimeChanged>63874,60586.262808</TimeChanged>
+<TimeCreated>63874,58144.78259</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="EnsTrain.PersonSample" TestingEnabled="true" LogGeneralTraceEvents="false">
+  <Description></Description>
+  <ActorPoolSize>2</ActorPoolSize>
+  <Item Name="ToSample" Category="" ClassName="EnsTrain.BO.ToSample" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+    <Setting Target="Adapter" Name="DSN">SamplesDB</Setting>
+    <Setting Target="Adapter" Name="Credentials">Sample</Setting>
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+</Export>

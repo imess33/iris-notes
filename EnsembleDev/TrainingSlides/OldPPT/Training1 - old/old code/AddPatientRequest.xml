@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26" zv="IRIS for Windows (x86-64) 2018.1.2 (Build 626U)" ts="2018-12-20 10:52:44">
+<Class name="CDR.BP.MSG.AddPatientRequest">
+<Super>Ens.Request</Super>
+<TimeChanged>64647,66246.952629</TimeChanged>
+<TimeCreated>64647,66181.004721</TimeCreated>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="PatientNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="FirstName">
+<Type>%String</Type>
+</Property>
+
+<Property name="LastName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="VALUELIST" value=",M,F"/>
+</Property>
+
+<Property name="DOB">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Citizenship">
+<Type>%String</Type>
+</Property>
+
+<Property name="PhoneNumber">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>AddPatientRequestDefaultData</DefaultData>
+<Data name="AddPatientRequestDefaultData">
+<Structure>listnode</Structure>
+<Subscript>"AddPatientRequest"</Subscript>
+<Value name="1">
+<Value>IDNumber</Value>
+</Value>
+<Value name="2">
+<Value>PatientNumber</Value>
+</Value>
+<Value name="3">
+<Value>FirstName</Value>
+</Value>
+<Value name="4">
+<Value>LastName</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>DOB</Value>
+</Value>
+<Value name="7">
+<Value>Citizenship</Value>
+</Value>
+<Value name="8">
+<Value>PhoneNumber</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>
